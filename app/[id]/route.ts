@@ -18,8 +18,6 @@ export async function GET(
     
     // Look up the URL in the database
     const urlRecord = await Url.findByPk(id);
-
-    console.log("URL FOUND:", urlRecord);
     
     // If URL doesn't exist, return 404
     if (!urlRecord) {

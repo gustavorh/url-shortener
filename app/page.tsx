@@ -7,6 +7,8 @@ export default function Home() {
   const [shortUrl, setShortUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hasExpiration, setHasExpiration] = useState(false);
+  const [expirationDate, setExpirationDate] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -15,12 +17,18 @@ export default function Home() {
     setShortUrl("");
     
     try {
+      const payload: any = { originalUrl: url };
+      
+      if (hasExpiration && expirationDate) {
+        payload.expirationDate = expirationDate;
+      }
+      
       const response = await fetch('/api/shorten-url', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ originalUrl: url }),
+        body: JSON.stringify(payload),
       });
       
       if (!response.ok) {
@@ -34,6 +42,34 @@ export default function Home() {
       setError(err instanceof Error ? err.message : 'Error al acortar la URL');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getDefaultDateTime = () => {
+    const now = new Date();
+    now.setDate(now.getDate() + 7);
+    return now.toISOString().slice(0, 16);
+  };
+
+  // Format date to YYYY-MM-DD HH:MM:SS
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    
+    // Get components with leading zeros where needed
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
+  const handleExpirationToggle = (isChecked: boolean) => {
+    setHasExpiration(isChecked);
+    if (isChecked && !expirationDate) {
+      setExpirationDate(getDefaultDateTime());
     }
   };
 
@@ -115,11 +151,49 @@ export default function Home() {
                     required
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://ejemplo.com/mi-pagina-con-url-muy-larga"
+                    placeholder="https://..."
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
+              
+              <div className="flex items-center space-x-2">
+                <div className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    id="expiration-toggle" 
+                    checked={hasExpiration}
+                    onChange={(e) => handleExpirationToggle(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div 
+                    className={`w-11 h-6 rounded-full peer-focus:ring-2 peer-focus:ring-gray-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${hasExpiration ? 'bg-blue-600 dark:bg-blue-500 after:translate-x-full' : 'bg-gray-300 dark:bg-gray-700'}`}
+                    onClick={() => handleExpirationToggle(!hasExpiration)}
+                  ></div>
+                  <span className="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+                    Establecer fecha de expiración
+                  </span>
+                </div>
+              </div>
+              
+              {hasExpiration && (
+                <div>
+                  <label htmlFor="expiration-date" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                    Selecciona la fecha y hora de expiración
+                  </label>
+                  <input
+                    id="expiration-date"
+                    type="datetime-local"
+                    value={expirationDate}
+                    onChange={(e) => setExpirationDate(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    min={new Date().toISOString().slice(0, 16)}
+                  />
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Formato: AAAA-MM-DDThh:mm
+                  </p>
+                </div>
+              )}
               
               <button
                 type="submit"
@@ -158,6 +232,11 @@ export default function Home() {
                     </svg>
                   </button>
                 </div>
+                {hasExpiration && expirationDate && (
+                  <p className="mt-2 text-sm text-green-700 dark:text-green-300">
+                    Este enlace expirará el: {formatDateTime(expirationDate)}
+                  </p>
+                )}
               </div>
             )}
           </div>

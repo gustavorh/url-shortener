@@ -126,7 +126,7 @@ export default async function RecentUrls() {
                         </a>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">
-                        {url.expirationDate ? 
+                        {url.dataValues.expirationDate ? 
                           safeFormatDate(url.dataValues.expirationDate) : 
                           <span className="text-gray-500 dark:text-gray-400">Sin expiración</span>
                         }
