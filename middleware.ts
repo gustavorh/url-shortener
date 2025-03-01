@@ -4,35 +4,52 @@ import type { NextRequest } from 'next/server';
 // Function to log request details via API
 const logRequestViaAPI = async (req: NextRequest) => {
   try {
+    // Don't log requests to static assets, images, etc.
     const url = req.url;
-    const method = req.method;
-    const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    const userAgent = req.headers.get('user-agent') || 'unknown';
+    if (url.includes('/_next/') || url.includes('/favicon.ico')) {
+      return;
+    }
     
     // Don't log requests to the logging endpoint itself to avoid infinite loops
     if (url.includes('/api/log-request')) {
       return;
     }
     
+    const method = req.method;
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+    
     // Build the API URL using the request's origin
     const origin = req.nextUrl.origin;
     const apiUrl = `${origin}/api/log-request`;
     
-    await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        method,
-        url,
-        ip,
-        userAgent
-      }),
-    });
+    // Set a timeout for the fetch request to avoid blocking
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+    
+    try {
+      await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          method,
+          url,
+          ip,
+          userAgent
+        }),
+        signal: controller.signal
+      });
+    } catch (fetchError: any) {
+      // Don't throw the error up, just log it
+      console.error('Error sending log to API (database logging failed):', fetchError.message);
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (error) {
     // Log error to console but don't interrupt request processing
-    console.error('Error sending log to API:', error);
+    console.error('Error in request logging middleware:', error);
   }
 };
 

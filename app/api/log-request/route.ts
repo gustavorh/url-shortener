@@ -1,35 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { format } from 'date-fns';
+import { Log } from '../../../models';
 
-// Define the path for the log file
-const LOG_FILE_PATH = path.join(process.cwd(), 'logs', 'request-logs.txt');
-
-// Ensure logs directory exists
-const ensureLogsDirectoryExists = () => {
-  const logsDir = path.join(process.cwd(), 'logs');
-  if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir, { recursive: true });
-  }
-};
+// Configure this route to use the Node.js runtime instead of Edge
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
     // Parse the request body to get the log data
     const logData = await request.json();
     
-    // Format the timestamp
-    const timestamp = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
-    
-    // Create the log entry
-    const logEntry = `[${timestamp}] ${logData.method} ${logData.url} - IP: ${logData.ip} - User-Agent: ${logData.userAgent}\n`;
-    
-    // Ensure the logs directory exists
-    ensureLogsDirectoryExists();
-    
-    // Append log entry to file
-    fs.appendFileSync(LOG_FILE_PATH, logEntry);
+    // Create a log entry in the database
+    await Log.create({
+      method: logData.method,
+      url: logData.url,
+      ip: logData.ip,
+      userAgent: logData.userAgent,
+      // timestamp defaults to now
+    });
     
     return NextResponse.json({ success: true });
   } catch (error) {
