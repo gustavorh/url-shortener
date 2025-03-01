@@ -12,6 +12,7 @@ const safeFormatDate = (dateValue: any) => {
 
 export default async function RecentUrls() {
   // Define baseUrl for shortened URLs
+  // TODO: REFACTOR
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
                  (process.env.NODE_ENV === "production" 
                    ? "https://cortala.pivotnode.net" 
@@ -22,7 +23,6 @@ export default async function RecentUrls() {
     order: [['creationDate', 'DESC']],
     limit: 10
   });
-  console.log("RECENT URLS:",recentUrls);
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
