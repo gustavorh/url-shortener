@@ -1,6 +1,6 @@
 'use client';
 import Link from "next/link";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -9,6 +9,14 @@ export default function Home() {
   const [error, setError] = useState("");
   const [hasExpiration, setHasExpiration] = useState(false);
   const [expirationDate, setExpirationDate] = useState("");
+
+  // Update the expiration date when the toggle changes
+  useEffect(() => {
+    if (hasExpiration) {
+      // Set default expiration to current date + 1 day
+      setExpirationDate(getDefaultExpirationDate());
+    }
+  }, [hasExpiration]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,7 +28,8 @@ export default function Home() {
       const payload: any = { originalUrl: url };
       
       if (hasExpiration && expirationDate) {
-        payload.expirationDate = expirationDate;
+        // Convert the displayed date format (dd/mm/yyyy hh:mm) to ISO format for API
+        payload.expirationDate = formatDateForAPI(expirationDate);
       }
       
       const response = await fetch('/api/shorten-url', {
@@ -45,32 +54,68 @@ export default function Home() {
     }
   };
 
-  const getDefaultDateTime = () => {
+  // Get default expiration date (current date + 1 day)
+  const getDefaultExpirationDate = () => {
     const now = new Date();
-    now.setDate(now.getDate() + 7);
-    return now.toISOString().slice(0, 16);
+    now.setDate(now.getDate() + 1);
+    
+    // Format as dd/mm/yyyy hh:mm
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  // Format date to YYYY-MM-DD HH:MM:SS
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
+  // Get current date formatted for example
+  const getCurrentDateExample = () => {
+    const now = new Date();
     
-    // Get components with leading zeros where needed
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
     
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
+  // Convert from dd/mm/yyyy hh:mm to ISO format for API
+  const formatDateForAPI = (dateString: string) => {
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('/');
+    const [hours, minutes] = timePart ? timePart.split(':') : ['00', '00'];
+    
+    // Create ISO format: YYYY-MM-DDTHH:MM:SS
+    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+  };
+
+  // Check if the selected date is valid (at least 5 minutes in the future)
+  const isValidExpirationDate = (dateString: string) => {
+    try {
+      const [datePart, timePart] = dateString.split(' ');
+      const [day, month, year] = datePart.split('/').map(Number);
+      const [hours, minutes] = timePart ? timePart.split(':').map(Number) : [0, 0];
+      
+      const inputDate = new Date(year, month - 1, day, hours, minutes);
+      const minDate = new Date();
+      minDate.setMinutes(minDate.getMinutes() + 5);
+      
+      return inputDate >= minDate;
+    } catch (error) {
+      return false;
+    }
   };
 
   const handleExpirationToggle = (isChecked: boolean) => {
     setHasExpiration(isChecked);
-    if (isChecked && !expirationDate) {
-      setExpirationDate(getDefaultDateTime());
-    }
+  };
+
+  // Handle manual date input changes
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExpirationDate(e.target.value);
   };
 
   return (
@@ -179,25 +224,38 @@ export default function Home() {
               {hasExpiration && (
                 <div>
                   <label htmlFor="expiration-date" className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                    Selecciona la fecha y hora de expiración
+                    Fecha y hora de expiración
                   </label>
                   <input
                     id="expiration-date"
-                    type="datetime-local"
+                    type="text"
                     value={expirationDate}
-                    onChange={(e) => setExpirationDate(e.target.value)}
+                    onChange={handleDateChange}
+                    placeholder="dd/mm/yyyy hh:mm"
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    min={new Date().toISOString().slice(0, 16)}
                   />
                   <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Formato: AAAA-MM-DDThh:mm
+                    Formato: dd/mm/yyyy hh:mm (por ejemplo, {getCurrentDateExample()})
                   </p>
+                  <div className="mt-2 flex items-start space-x-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Por defecto, se ha establecido un tiempo de expiración de 1 día. Puedes modificarlo según tus necesidades.
+                    </p>
+                  </div>
+                  {expirationDate && !isValidExpirationDate(expirationDate) && (
+                    <p className="mt-1 text-sm text-red-500">
+                      La fecha de expiración debe ser al menos 5 minutos en el futuro
+                    </p>
+                  )}
                 </div>
               )}
               
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (hasExpiration && !isValidExpirationDate(expirationDate))}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700 transition duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Procesando...' : 'Acortar URL'}
@@ -234,7 +292,7 @@ export default function Home() {
                 </div>
                 {hasExpiration && expirationDate && (
                   <p className="mt-2 text-sm text-green-700 dark:text-green-300">
-                    Este enlace expirará el: {formatDateTime(expirationDate)}
+                    Este enlace expirará el: {expirationDate}
                   </p>
                 )}
               </div>
