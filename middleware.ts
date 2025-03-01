@@ -19,15 +19,18 @@ const logRequestViaAPI = async (req: NextRequest) => {
     const ip = req.headers.get('x-forwarded-for') || 'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
     
-    // Build the API URL using the request's origin
-    const origin = req.nextUrl.origin;
-    const apiUrl = `${origin}/api/log-request`;
+    // Build the API URL using the request's origin and host
+    // Using absolute URL with protocol to avoid Edge Runtime issues
+    const host = req.headers.get('host');
+    const protocol = req.headers.get('x-forwarded-proto') || 'https';
+    const apiUrl = `${protocol}://${host}/api/log-request`;
     
     // Set a timeout for the fetch request to avoid blocking
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
     
     try {
+      // Use fetch with keepalive to ensure the request completes even if the page navigates away
       await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -39,11 +42,12 @@ const logRequestViaAPI = async (req: NextRequest) => {
           ip,
           userAgent
         }),
-        signal: controller.signal
+        signal: controller.signal,
+        keepalive: true
       });
     } catch (fetchError: any) {
       // Don't throw the error up, just log it
-      console.error('Error sending log to API (database logging failed):', fetchError.message);
+      console.error('Error sending log to API:', fetchError.message);
     } finally {
       clearTimeout(timeoutId);
     }
@@ -56,7 +60,9 @@ const logRequestViaAPI = async (req: NextRequest) => {
 // Middleware function
 export function middleware(request: NextRequest) {
   // Don't block the response - log asynchronously
-  logRequestViaAPI(request).catch(console.error);
+  logRequestViaAPI(request).catch(error => {
+    console.error('Error in middleware logging:', error);
+  });
   
   // Continue with the request
   return NextResponse.next();

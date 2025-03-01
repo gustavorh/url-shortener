@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error writing to request log:', error);
-    return NextResponse.json({ success: false, error: 'Failed to log request' }, { status: 500 });
+    // Return a 200 status even on error to prevent failures from affecting the user experience
+    return NextResponse.json({ success: false, error: 'Failed to log request' }, { status: 200 });
   }
 } 
