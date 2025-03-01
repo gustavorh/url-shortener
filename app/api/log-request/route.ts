@@ -9,11 +9,18 @@ export async function POST(request: NextRequest) {
     // Parse the request body to get the log data
     const logData = await request.json();
     
+    // Get the real client IP by checking common proxy headers
+    const realIp = 
+      request.headers.get('cf-connecting-ip') || // Cloudflare-specific header
+      request.headers.get('x-forwarded-for')?.split(',')[0] || // Standard proxy header (first IP is the client)
+      request.headers.get('x-real-ip') || // Another common header
+      logData.ip; // Fallback to the provided IP
+    
     // Create a log entry in the database
     await Log.create({
       method: logData.method,
       url: logData.url,
-      ip: logData.ip,
+      ip: realIp, // Use the real client IP
       userAgent: logData.userAgent,
       // timestamp defaults to now
     });
