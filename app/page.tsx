@@ -272,12 +272,21 @@ export default function Home() {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg">
                 <h3 className="text-lg font-medium text-green-800 dark:text-green-200 mb-2">¡URL acortada con éxito!</h3>
                 <div className="flex items-center gap-2">
-                  <input 
+                  {/* <input 
                     type="text"
                     readOnly
                     value={shortUrl}
                     className="flex-1 p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded text-gray-800 dark:text-white"
-                  />
+                  /> */}
+                  {/* Clickable Link */}
+                <a 
+                  href={shortUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded text-gray-800 dark:text-white text-blue-600 dark:text-blue-400 hover:underline font-medium break-all"
+                >
+                  {shortUrl}
+                </a>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(shortUrl);
