@@ -11,6 +11,12 @@ const safeFormatDate = (dateValue: any) => {
 };
 
 export default async function RecentUrls() {
+  // Define baseUrl for shortened URLs
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                 (process.env.NODE_ENV === "production" 
+                   ? "https://cortala.pivotnode.net" 
+                   : "http://localhost:3000");
+  
   // Fetch the 10 most recent URLs from the database
   const recentUrls = await Url.findAll({
     order: [['creationDate', 'DESC']],
@@ -111,12 +117,12 @@ export default async function RecentUrls() {
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">
                         <a 
-                          href={`http://localhost:3000/${url.dataValues.id}`} 
+                          href={`${baseUrl}/${url.dataValues.id}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="hover:underline text-blue-600 dark:text-blue-400"
                         >
-                          {`http://localhost:3000/${url.dataValues.id}`}
+                          {`${baseUrl}/${url.dataValues.id}`}
                         </a>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">
