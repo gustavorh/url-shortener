@@ -3,10 +3,11 @@ import { Url } from '@/models';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    // Ensure params is properly handled
+    // Properly await and handle params in Next.js App Router
+    const params = context.params;
     const id = params.id;
     
     if (!id) {
@@ -16,8 +17,8 @@ export async function GET(
       );
     }
     
-    // Look up the URL in the database
-    const urlRecord = await Url.findByPk(id);
+    // Look up the URL in the database and force plain object return
+    const urlRecord = await Url.findByPk(id, { raw: true });
     
     // If URL doesn't exist, return 404
     if (!urlRecord) {
@@ -28,7 +29,12 @@ export async function GET(
     }
     
     // Check if the URL has expired
-    if (urlRecord.expirationDate && new Date() > urlRecord.expirationDate) {
+    console.log("URL RECORD:", urlRecord);
+    const expirationDate = urlRecord.expirationDate;
+    const currentDate = new Date();
+    
+    if (expirationDate && currentDate > new Date(expirationDate)) {
+      console.log("URL expired - Current date:", currentDate, "Expiration date:", expirationDate);
       return NextResponse.json(
         { error: 'URL has expired' },
         { status: 410 } // Gone
@@ -36,7 +42,9 @@ export async function GET(
     }
     
     // Ensure originalUrl exists and is properly formatted
-    if (!urlRecord.dataValues.originalUrl) {
+    const originalUrl = urlRecord.originalUrl;
+    
+    if (!originalUrl) {
       return NextResponse.json(
         { error: 'Original URL is missing' },
         { status: 500 }
@@ -44,13 +52,28 @@ export async function GET(
     }
     
     // Ensure the URL has a protocol
-    let originalUrl = urlRecord.dataValues.originalUrl;
-    if (!/^https?:\/\//i.test(originalUrl)) {
-      originalUrl = 'https://' + originalUrl;
+    let redirectUrl = originalUrl.trim();
+    
+    // Check if the URL has a valid protocol
+    if (!/^(https?|ftp):\/\//i.test(redirectUrl)) {
+      redirectUrl = 'https://' + redirectUrl;
     }
     
-    // Redirect to the original URL
-    return NextResponse.redirect(originalUrl, { status: 302 });
+    // Make sure the URL is properly formatted
+    try {
+      // This will throw an error if the URL is invalid
+      new URL(redirectUrl);
+      console.log("Redirecting to:", redirectUrl);
+      
+      // Redirect to the original URL
+      return NextResponse.redirect(redirectUrl, { status: 302 });
+    } catch (error) {
+      console.error("Invalid URL format:", redirectUrl, error);
+      return NextResponse.json(
+        { error: 'Invalid URL format' },
+        { status: 500 }
+      );
+    }
     
   } catch (error) {
     console.error('Error redirecting URL:', error);
