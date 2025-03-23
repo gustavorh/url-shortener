@@ -15,6 +15,7 @@ export const Url = sequelize.define(
 
     createdAt: {
       type: DataTypes.DATE,
+      defaultValue: Date.now,
     },
   },
   { timestamps: false }
