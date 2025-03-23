@@ -19,17 +19,18 @@ export async function POST(request: NextRequest) {
   // Generate uuid
   let uuid: string = generateUuid();
   /*console.log("UUID: ", uuid);*/
-
+  
   // Collision checking
-  const collision = await Url.findByPk(uuid); // If no collision null value is taken
+  let collision = await Url.findByPk(uuid); // If no collision null value is taken
   while (collision != null) {
-    console.log("Collision detected! - ", collision);
+    console.log("Collision detected! - ", collision.dataValues.id);
     uuid = generateUuid();
     console.log("Newly generated UUID: ", uuid);
+    collision = null;
   }
 
   // Persist data
-  const urlObject = await Url.create({ id: uuid, url: body.url });
+  const urlObject2 = await Url.create({ id: uuid, url: body.url });
 
-  return NextResponse.json({ response: urlObject }, { status: 201 });
+  return NextResponse.json({ response: urlObject2 }, { status: 201 });
 }
