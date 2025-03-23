@@ -21,4 +21,4 @@ export const Url = sequelize.define(
   { timestamps: false }
 );
 
-sequelize.sync({ force: true });
+sequelize.sync({ alter: true });
