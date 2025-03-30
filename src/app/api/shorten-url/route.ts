@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log("Collision detected! - ", collision.dataValues.id);
     uuid = generateUuid();
     console.log("Newly generated UUID: ", uuid);
-    collision = null;
+    collision = await Url.findByPk(uuid);
   }
 
   // Persist data
