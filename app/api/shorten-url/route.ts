@@ -16,6 +16,7 @@ const bodySchema = z.object({
   originalUrl: z.string().min(1, "La URL es obligatoria"),
   expirationDate: z.string().optional(),
   customAlias: z.string().optional(),
+  password: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
       expirationDate: parsed.data.expirationDate
         ? new Date(parsed.data.expirationDate)
         : null,
+      password: parsed.data.password,
       userId: await getCurrentUserId(),
     });
 

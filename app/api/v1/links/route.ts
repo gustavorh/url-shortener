@@ -40,10 +40,8 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
-  const { url, customAlias, expirationDate } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { url, customAlias, expirationDate, password } = (body ??
+    {}) as Record<string, unknown>;
   if (typeof url !== "string" || !url) {
     return NextResponse.json(
       { error: "El campo 'url' es obligatorio" },
@@ -57,6 +55,7 @@ export async function POST(request: NextRequest) {
       customAlias: typeof customAlias === "string" ? customAlias : null,
       expirationDate:
         typeof expirationDate === "string" ? new Date(expirationDate) : null,
+      password: typeof password === "string" ? password : null,
       userId,
     });
     return NextResponse.json(
