@@ -1,0 +1,99 @@
+import { fn, col } from "sequelize";
+import { Click } from "@/models";
+
+export interface DailyCount {
+  date: string;
+  count: number;
+}
+
+export interface LabeledCount {
+  label: string;
+  count: number;
+}
+
+export interface LinkStats {
+  total: number;
+  byDay: DailyCount[];
+  topReferrers: LabeledCount[];
+  byDevice: LabeledCount[];
+  byBrowser: LabeledCount[];
+}
+
+type GroupableColumn = "referrer" | "deviceType" | "browser";
+
+/** Total clicks for a single link. */
+export async function getTotalClicks(urlId: string): Promise<number> {
+  return Click.count({ where: { urlId } });
+}
+
+/** Clicks per calendar day for a link, oldest first. */
+export async function getClicksByDay(urlId: string): Promise<DailyCount[]> {
+  const rows = (await Click.findAll({
+    attributes: [
+      [fn("DATE", col("timestamp")), "date"],
+      [fn("COUNT", col("id")), "count"],
+    ],
+    where: { urlId },
+    group: [fn("DATE", col("timestamp"))],
+    order: [[fn("DATE", col("timestamp")), "ASC"]],
+    raw: true,
+  })) as unknown as { date: string | Date; count: number }[];
+
+  return rows.map((row) => ({
+    date: String(row.date).slice(0, 10),
+    count: Number(row.count),
+  }));
+}
+
+/** Top values of a column for a link, ordered by frequency. */
+async function getGroupedCounts(
+  urlId: string,
+  column: GroupableColumn,
+  limit: number
+): Promise<LabeledCount[]> {
+  const rows = (await Click.findAll({
+    attributes: [column, [fn("COUNT", col("id")), "count"]],
+    where: { urlId },
+    group: [column],
+    order: [[fn("COUNT", col("id")), "DESC"]],
+    limit,
+    raw: true,
+  })) as unknown as Array<Record<string, unknown>>;
+
+  return rows.map((row) => {
+    const raw = row[column];
+    const label =
+      raw === null || raw === undefined || raw === ""
+        ? "Desconocido"
+        : String(raw);
+    return { label, count: Number(row.count) };
+  });
+}
+
+/** Full analytics bundle for a single link. */
+export async function getLinkStats(urlId: string): Promise<LinkStats> {
+  const [total, byDay, topReferrers, byDevice, byBrowser] = await Promise.all([
+    getTotalClicks(urlId),
+    getClicksByDay(urlId),
+    getGroupedCounts(urlId, "referrer", 8),
+    getGroupedCounts(urlId, "deviceType", 8),
+    getGroupedCounts(urlId, "browser", 8),
+  ]);
+  return { total, byDay, topReferrers, byDevice, byBrowser };
+}
+
+/** Click counts keyed by urlId, for a set of links (dashboard listing). */
+export async function getClickCounts(
+  urlIds: string[]
+): Promise<Map<string, number>> {
+  if (urlIds.length === 0) return new Map();
+
+  const rows = (await Click.findAll({
+    attributes: ["urlId", [fn("COUNT", col("id")), "count"]],
+    where: { urlId: urlIds },
+    group: ["urlId"],
+    raw: true,
+  })) as unknown as { urlId: string; count: number }[];
+
+  return new Map(rows.map((row) => [row.urlId, Number(row.count)]));
+}
