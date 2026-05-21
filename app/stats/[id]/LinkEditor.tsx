@@ -10,9 +10,10 @@ interface LinkEditorProps {
   initialExpiration: string | null;
   initialTags: string | null;
   initialMaxClicks: number | null;
+  initialDisabled: boolean;
 }
 
-// Edits a link's title, destination, expiration and tags in one place.
+// Edits a link's title, destination, expiration, tags and state.
 export function LinkEditor({
   linkId,
   initialTitle,
@@ -20,6 +21,7 @@ export function LinkEditor({
   initialExpiration,
   initialTags,
   initialMaxClicks,
+  initialDisabled,
 }: LinkEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle ?? "");
@@ -29,6 +31,7 @@ export function LinkEditor({
   const [maxClicks, setMaxClicks] = useState(
     initialMaxClicks != null ? String(initialMaxClicks) : ""
   );
+  const [disabled, setDisabled] = useState(initialDisabled);
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState("");
 
@@ -37,7 +40,8 @@ export function LinkEditor({
     url !== initialUrl ||
     expiration !== (initialExpiration ?? "") ||
     tags !== (initialTags ?? "") ||
-    maxClicks !== (initialMaxClicks != null ? String(initialMaxClicks) : "");
+    maxClicks !== (initialMaxClicks != null ? String(initialMaxClicks) : "") ||
+    disabled !== initialDisabled;
 
   const save = async () => {
     setStatus("saving");
@@ -52,6 +56,7 @@ export function LinkEditor({
           expirationDate: expiration || null,
           tags,
           maxClicks: maxClicks ? Number(maxClicks) : null,
+          disabled,
         }),
       });
       if (!response.ok) {
@@ -163,6 +168,22 @@ export function LinkEditor({
             className="input"
           />
         </div>
+
+        <label className="flex items-center gap-3 cursor-pointer select-none pt-1">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={disabled}
+            onChange={(e) => {
+              setDisabled(e.target.checked);
+              setStatus("idle");
+            }}
+          />
+          <span className="relative h-6 w-11 rounded-full bg-gray-300 dark:bg-gray-600 peer-checked:bg-amber-500 transition-colors after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Pausar enlace (deja de redirigir)
+          </span>
+        </label>
 
         {error && (
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>

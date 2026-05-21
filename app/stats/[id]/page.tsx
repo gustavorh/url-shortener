@@ -119,6 +119,7 @@ export default async function StatsPage({
               }
               initialTags={url.tags ?? null}
               initialMaxClicks={url.maxClicks ?? null}
+              initialDisabled={!!url.disabled}
             />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
