@@ -26,6 +26,8 @@ export interface CreateLinkInput {
   userId?: string | null;
   /** Optional plaintext password — hashed before storage. */
   password?: string | null;
+  /** Optional click limit; the link stops resolving once reached. */
+  maxClicks?: number | null;
 }
 
 export interface CreatedLink {
@@ -93,6 +95,7 @@ export async function createShortLink(
     expirationDate: input.expirationDate ?? null,
     userId: input.userId ?? null,
     passwordHash,
+    maxClicks: input.maxClicks ?? null,
   });
   metrics.linksCreated.inc();
 

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
-  const { url, customAlias, expirationDate, password } = (body ??
+  const { url, customAlias, expirationDate, password, maxClicks } = (body ??
     {}) as Record<string, unknown>;
   if (typeof url !== "string" || !url) {
     return NextResponse.json(
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       expirationDate:
         typeof expirationDate === "string" ? new Date(expirationDate) : null,
       password: typeof password === "string" ? password : null,
+      maxClicks: typeof maxClicks === "number" ? maxClicks : null,
       userId,
     });
     return NextResponse.json(

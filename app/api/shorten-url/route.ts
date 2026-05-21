@@ -17,6 +17,7 @@ const bodySchema = z.object({
   expirationDate: z.string().optional(),
   customAlias: z.string().optional(),
   password: z.string().optional(),
+  maxClicks: z.number().int().positive().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
         ? new Date(parsed.data.expirationDate)
         : null,
       password: parsed.data.password,
+      maxClicks: parsed.data.maxClicks,
       userId: await getCurrentUserId(),
     });
 
