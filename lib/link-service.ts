@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { Url } from "@/models";
 import {
   validateAndNormalizeUrl,
@@ -23,6 +24,8 @@ export interface CreateLinkInput {
   customAlias?: string | null;
   expirationDate?: Date | null;
   userId?: string | null;
+  /** Optional plaintext password — hashed before storage. */
+  password?: string | null;
 }
 
 export interface CreatedLink {
@@ -81,11 +84,15 @@ export async function createShortLink(
     );
   }
 
+  const password = input.password?.trim();
+  const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+
   const created = await Url.create({
     id,
     originalUrl,
     expirationDate: input.expirationDate ?? null,
     userId: input.userId ?? null,
+    passwordHash,
   });
   metrics.linksCreated.inc();
 
