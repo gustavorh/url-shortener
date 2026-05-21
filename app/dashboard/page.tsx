@@ -7,6 +7,7 @@ import { Url } from "@/models";
 import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
 import { AppSidebar } from "../components/AppSidebar";
+import { CopyButton } from "../components/CopyButton";
 import { DashboardControls } from "./DashboardControls";
 
 // Always reflect the latest links/clicks.
@@ -194,14 +195,17 @@ export default async function DashboardPage({
                           className="border-b border-gray-100 dark:border-gray-700/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
                         >
                           <td className="p-4">
-                            <a
-                              href={`${baseUrl}/${url.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                            >
-                              /{url.id}
-                            </a>
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={`${baseUrl}/${url.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                              >
+                                /{url.id}
+                              </a>
+                              <CopyButton value={`${baseUrl}/${url.id}`} />
+                            </div>
                           </td>
                           <td className="p-4 max-w-xs text-gray-600 dark:text-gray-300">
                             <a
