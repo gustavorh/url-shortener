@@ -44,6 +44,15 @@ export async function GET(
       );
     }
 
+    // Password-protected links route through the unlock gate; the click is
+    // recorded there once the password is verified.
+    if (urlRecord.passwordProtected) {
+      return NextResponse.redirect(
+        new URL(`/unlock/${id}`, request.url),
+        { status: 302 }
+      );
+    }
+
     // Pick the destination: device override, A/B rotation, or the base URL.
     const chosen = chooseDestination(
       originalUrl,

@@ -6,6 +6,8 @@ export interface ResolvedLink {
   originalUrl: string;
   expirationDate: string | null;
   targets: TargetRule[];
+  /** True when the link requires a password before redirecting. */
+  passwordProtected: boolean;
 }
 
 const CACHE_TTL_SECONDS = 3600;
@@ -41,6 +43,7 @@ export async function resolveLink(id: string): Promise<ResolvedLink | null> {
       kind: target.kind,
       device: target.device ?? null,
     })),
+    passwordProtected: !!record.passwordHash,
   };
   await cacheSet(cacheKey(id), JSON.stringify(resolved), CACHE_TTL_SECONDS);
   return resolved;
