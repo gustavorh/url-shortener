@@ -51,7 +51,15 @@ export default async function StatsPage({
             >
               ← Volver al panel
             </Link>
-            <DeleteLinkButton linkId={id} />
+            <div className="flex items-center gap-4">
+              <a
+                href={`/api/links/${id}/export`}
+                className="text-sm text-gray-500 dark:text-gray-400 hover:underline"
+              >
+                Exportar CSV
+              </a>
+              <DeleteLinkButton linkId={id} />
+            </div>
           </div>
 
           <div className="mt-4 mb-8 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
