@@ -8,26 +8,30 @@ interface LinkEditorProps {
   initialTitle: string | null;
   initialUrl: string;
   initialExpiration: string | null;
+  initialTags: string | null;
 }
 
-// Edits a link's title, destination and expiration in one place.
+// Edits a link's title, destination, expiration and tags in one place.
 export function LinkEditor({
   linkId,
   initialTitle,
   initialUrl,
   initialExpiration,
+  initialTags,
 }: LinkEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle ?? "");
   const [url, setUrl] = useState(initialUrl);
   const [expiration, setExpiration] = useState(initialExpiration ?? "");
+  const [tags, setTags] = useState(initialTags ?? "");
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState("");
 
   const dirty =
     title !== (initialTitle ?? "") ||
     url !== initialUrl ||
-    expiration !== (initialExpiration ?? "");
+    expiration !== (initialExpiration ?? "") ||
+    tags !== (initialTags ?? "");
 
   const save = async () => {
     setStatus("saving");
@@ -40,6 +44,7 @@ export function LinkEditor({
           title,
           originalUrl: url,
           expirationDate: expiration || null,
+          tags,
         }),
       });
       if (!response.ok) {
@@ -105,6 +110,26 @@ export function LinkEditor({
             value={expiration}
             onChange={(e) => {
               setExpiration(e.target.value);
+              setStatus("idle");
+            }}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label className="label" htmlFor="edit-tags">
+            Etiquetas{" "}
+            <span className="font-normal text-gray-400">
+              (separadas por comas)
+            </span>
+          </label>
+          <input
+            id="edit-tags"
+            type="text"
+            value={tags}
+            placeholder="marketing, campaña-q1"
+            onChange={(e) => {
+              setTags(e.target.value);
               setStatus("idle");
             }}
             className="input"

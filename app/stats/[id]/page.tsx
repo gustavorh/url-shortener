@@ -108,6 +108,7 @@ export default async function StatsPage({
                   ? format(new Date(url.expirationDate), "yyyy-MM-dd'T'HH:mm")
                   : null
               }
+              initialTags={url.tags ?? null}
             />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
