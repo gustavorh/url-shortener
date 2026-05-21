@@ -1,0 +1,11 @@
+const path = require("node:path");
+
+// sequelize-cli runs outside Next.js, so it never auto-loads `.env`.
+require("dotenv").config();
+
+module.exports = {
+  config: path.resolve("config", "database.cjs"),
+  "migrations-path": path.resolve("migrations"),
+  "seeders-path": path.resolve("seeders"),
+  "models-path": path.resolve("models"),
+};

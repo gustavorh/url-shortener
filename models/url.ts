@@ -22,7 +22,7 @@ class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttr
 Url.init(
   {
     id: {
-      type: DataTypes.STRING(5),
+      type: DataTypes.STRING(32),
       primaryKey: true,
       allowNull: false,
     },
