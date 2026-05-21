@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { ThemeToggle } from "./ThemeToggle";
 
 type ActiveItem = "home" | "dashboard";
 
@@ -138,7 +139,10 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
               </Link>
             </div>
           )}
-          <p className="mt-4 px-1.5 text-xs text-gray-400 dark:text-gray-500">
+          <div className="mt-4">
+            <ThemeToggle />
+          </div>
+          <p className="mt-3 px-1.5 text-xs text-gray-400 dark:text-gray-500">
             © {new Date().getFullYear()} Cortala
           </p>
         </div>
