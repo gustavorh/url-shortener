@@ -8,7 +8,7 @@ import { AppSidebar } from "../../components/AppSidebar";
 import { StatsCharts } from "./StatsCharts";
 import { LinkTargetsManager } from "./LinkTargetsManager";
 import { QrCustomizer } from "./QrCustomizer";
-import { LinkTitleEditor } from "./LinkTitleEditor";
+import { LinkEditor } from "./LinkEditor";
 import { DeleteLinkButton } from "./DeleteLinkButton";
 
 export const dynamic = "force-dynamic";
@@ -96,12 +96,19 @@ export default async function StatsPage({
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-              <LinkTitleEditor linkId={id} initialTitle={url.title ?? null} />
-            </div>
           </div>
 
           <div className="space-y-6 mb-6">
+            <LinkEditor
+              linkId={id}
+              initialTitle={url.title ?? null}
+              initialUrl={url.originalUrl}
+              initialExpiration={
+                url.expirationDate
+                  ? format(new Date(url.expirationDate), "yyyy-MM-dd'T'HH:mm")
+                  : null
+              }
+            />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
           </div>
