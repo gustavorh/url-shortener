@@ -10,6 +10,7 @@ import {
   assertNotSSRF,
   UrlValidationError,
 } from "@/lib/url-validation";
+import { parseTags, serializeTags } from "@/lib/tags";
 
 export const runtime = "nodejs";
 
@@ -17,6 +18,7 @@ const patchSchema = z.object({
   title: z.string().trim().max(120).optional(),
   originalUrl: z.string().min(1).optional(),
   expirationDate: z.string().nullable().optional(),
+  tags: z.string().optional(),
 });
 
 // PATCH /api/links/[id] — updates the title, destination or expiration.
@@ -47,10 +49,15 @@ export async function PATCH(
     title?: string | null;
     originalUrl?: string;
     expirationDate?: Date | null;
+    tags?: string | null;
   } = {};
 
   if (parsed.data.title !== undefined) {
     updates.title = parsed.data.title || null;
+  }
+
+  if (parsed.data.tags !== undefined) {
+    updates.tags = serializeTags(parseTags(parsed.data.tags));
   }
 
   if (parsed.data.expirationDate !== undefined) {
