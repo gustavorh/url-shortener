@@ -1,6 +1,7 @@
 import { UAParser } from "ua-parser-js";
 import { Click } from "@/models";
 import { resolveClientIp } from "./request-ip";
+import { resolveCountry } from "./geo";
 
 /**
  * Records a click on a short link. Fire-and-forget: any failure is swallowed
@@ -13,12 +14,14 @@ export async function recordClick(
   try {
     const userAgent = headers.get("user-agent") || "";
     const parsed = new UAParser(userAgent).getResult();
+    const ip = resolveClientIp(headers);
 
     await Click.create({
       urlId,
-      ip: resolveClientIp(headers),
+      ip,
       userAgent: userAgent || null,
       referrer: headers.get("referer") || null,
+      country: resolveCountry(headers, ip),
       // ua-parser-js leaves device.type empty for desktops.
       deviceType: parsed.device.type || "desktop",
       browser: parsed.browser.name || null,

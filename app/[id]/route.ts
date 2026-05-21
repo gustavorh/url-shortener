@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Url } from "@/models";
 import { recordClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
+import { resolveLink } from "@/lib/link-resolver";
 
 // Click tracking touches MySQL, so this route must run on the Node runtime.
 export const runtime = "nodejs";
@@ -20,7 +20,8 @@ export async function GET(
       );
     }
 
-    const urlRecord = await Url.findByPk(id, { raw: true });
+    // Cache-aside lookup: served from Redis when configured, else MySQL.
+    const urlRecord = await resolveLink(id);
 
     if (!urlRecord) {
       return NextResponse.json({ error: "URL not found" }, { status: 404 });

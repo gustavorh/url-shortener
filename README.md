@@ -62,6 +62,25 @@ El esquema lo gobiernan las migraciones de `migrations/` (no se usa
 `model.sync()`). Para los tests de integración se utiliza una base de datos
 separada definida en `DB_NAME_TEST`.
 
+## API pública REST
+
+Genera una clave en **Mi panel → Claves de API** y autentícate con la
+cabecera `Authorization: Bearer <clave>`.
+
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| `POST` | `/api/v1/links` | Crea un enlace. Body: `{ "url", "customAlias?", "expirationDate?" }` |
+| `GET` | `/api/v1/links` | Lista tus enlaces. Query: `?limit=&offset=` |
+| `GET` | `/api/v1/links/:id` | Detalle de un enlace |
+| `GET` | `/api/v1/links/:id/stats` | Analítica de un enlace |
+
+```bash
+curl -X POST https://tu-dominio/api/v1/links \
+  -H "Authorization: Bearer crtl_..." \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://ejemplo.com"}'
+```
+
 ## Despliegue
 
 Hay un `Dockerfile` multi-stage. Las migraciones se ejecutan manualmente
