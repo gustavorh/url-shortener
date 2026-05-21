@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { AppSidebar } from "../../components/AppSidebar";
+import { AccountSecurity } from "./AccountSecurity";
 
 export default function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -178,7 +179,9 @@ export default function ProfilePage() {
             </button>
           </form>
 
-          <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
+          <AccountSecurity />
+
+          <div className="mt-8 card p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
               Tus datos
             </h2>
