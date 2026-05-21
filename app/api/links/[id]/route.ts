@@ -5,14 +5,21 @@ import { z } from "zod";
 import { Url } from "@/models";
 import { getCurrentUserId } from "@/lib/auth-helpers";
 import { invalidateLink } from "@/lib/link-resolver";
+import {
+  validateAndNormalizeUrl,
+  assertNotSSRF,
+  UrlValidationError,
+} from "@/lib/url-validation";
 
 export const runtime = "nodejs";
 
 const patchSchema = z.object({
   title: z.string().trim().max(120).optional(),
+  originalUrl: z.string().min(1).optional(),
+  expirationDate: z.string().nullable().optional(),
 });
 
-// PATCH /api/links/[id] — currently updates the link's display title.
+// PATCH /api/links/[id] — updates the title, destination or expiration.
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -24,7 +31,7 @@ export async function PATCH(
 
   const { id } = await params;
   const link = await Url.findByPk(id);
-  if (!link || link.userId !== userId) {
+  if (!link || link.userId !== userId || link.deletedAt) {
     return NextResponse.json(
       { error: "Enlace no encontrado" },
       { status: 404 }
@@ -36,9 +43,40 @@ export async function PATCH(
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
+  const updates: {
+    title?: string | null;
+    originalUrl?: string;
+    expirationDate?: Date | null;
+  } = {};
+
   if (parsed.data.title !== undefined) {
-    await link.update({ title: parsed.data.title || null });
+    updates.title = parsed.data.title || null;
   }
+
+  if (parsed.data.expirationDate !== undefined) {
+    updates.expirationDate = parsed.data.expirationDate
+      ? new Date(parsed.data.expirationDate)
+      : null;
+  }
+
+  // A new destination is validated and SSRF-checked, like on creation.
+  if (parsed.data.originalUrl !== undefined) {
+    try {
+      const normalized = validateAndNormalizeUrl(parsed.data.originalUrl);
+      await assertNotSSRF(normalized);
+      updates.originalUrl = normalized;
+    } catch (error) {
+      if (error instanceof UrlValidationError) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+      throw error;
+    }
+  }
+
+  await link.update(updates);
+  // The cached destination/expiration is now stale.
+  await invalidateLink(id);
+
   return NextResponse.json({ ok: true });
 }
 
@@ -65,4 +103,3 @@ export async function DELETE(
   await invalidateLink(id);
   return NextResponse.json({ deleted: true });
 }
-
