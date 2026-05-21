@@ -5,6 +5,7 @@ import {
   UrlValidationError,
 } from "./url-validation";
 import { generateUniqueSlug, validateCustomAlias } from "./slug";
+import { isUrlUnsafe } from "./safe-browsing";
 import { metrics } from "./metrics";
 
 /** Error carrying the HTTP status a route handler should return. */
@@ -49,6 +50,14 @@ export async function createShortLink(
       throw new LinkCreationError(error.message, 400);
     }
     throw error;
+  }
+
+  // Reject URLs flagged as malicious (no-op unless Safe Browsing is enabled).
+  if (await isUrlUnsafe(originalUrl)) {
+    throw new LinkCreationError(
+      "La URL fue marcada como insegura y no puede acortarse",
+      400
+    );
   }
 
   let id: string;
