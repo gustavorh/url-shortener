@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { Url, LinkTarget } from "@/models";
+import { Url, LinkTarget, Click } from "@/models";
 import { recordClick } from "@/lib/analytics";
 import { chooseDestination } from "@/lib/redirect-resolver";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
@@ -31,6 +31,15 @@ export async function POST(
   }
   if (link.expirationDate && new Date() > new Date(link.expirationDate)) {
     return NextResponse.json({ error: "El enlace ha expirado" }, { status: 410 });
+  }
+  if (link.maxClicks != null) {
+    const clicks = await Click.count({ where: { urlId: id } });
+    if (clicks >= link.maxClicks) {
+      return NextResponse.json(
+        { error: "El enlace alcanzó su límite de clics" },
+        { status: 410 }
+      );
+    }
   }
 
   const matches = await bcrypt.compare(password, link.passwordHash);

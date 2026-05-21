@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Click } from "@/models";
 import { recordClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
 import { resolveLink } from "@/lib/link-resolver";
@@ -42,6 +43,18 @@ export async function GET(
         { error: "Original URL is missing" },
         { status: 500 }
       );
+    }
+
+    // Stop resolving once the click limit is reached.
+    if (urlRecord.maxClicks !== null) {
+      const clicks = await Click.count({ where: { urlId: id } });
+      if (clicks >= urlRecord.maxClicks) {
+        metrics.redirects.inc({ result: "expired" });
+        return NextResponse.json(
+          { error: "Link click limit reached" },
+          { status: 410 }
+        );
+      }
     }
 
     // Password-protected links route through the unlock gate; the click is
