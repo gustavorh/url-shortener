@@ -1,5 +1,5 @@
 import { fn, col } from "sequelize";
-import { Click } from "@/models";
+import { Click, Url } from "@/models";
 
 export interface DailyCount {
   date: string;
@@ -134,6 +134,28 @@ export async function getRecentClicks(
     browser: row.browser ?? null,
     referrer: row.referrer ?? null,
   }));
+}
+
+export interface UserTotals {
+  links: number;
+  clicks: number;
+}
+
+/** Total active links and total clicks across all of a user's links. */
+export async function getUserTotals(userId: string): Promise<UserTotals> {
+  const links = await Url.count({ where: { userId, deletedAt: null } });
+  const clicks = await Click.count({
+    include: [
+      {
+        model: Url,
+        as: "url",
+        attributes: [],
+        where: { userId, deletedAt: null },
+        required: true,
+      },
+    ],
+  });
+  return { links, clicks };
 }
 
 /** Click counts keyed by urlId, for a set of links (dashboard listing). */
