@@ -47,6 +47,7 @@ export default function Home() {
 
   const [url, setUrl] = useState("");
   const [customAlias, setCustomAlias] = useState("");
+  const [password, setPassword] = useState("");
   const [result, setResult] = useState<ShortenResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -78,6 +79,7 @@ export default function Home() {
         originalUrl: string;
         expirationDate?: string;
         customAlias?: string;
+        password?: string;
       } = { originalUrl: finalUrl };
 
       if (hasExpiration && expirationDate) {
@@ -85,6 +87,9 @@ export default function Home() {
       }
       if (customAlias.trim()) {
         payload.customAlias = customAlias.trim();
+      }
+      if (password) {
+        payload.password = password;
       }
 
       const response = await fetch("/api/shorten-url", {
@@ -200,6 +205,21 @@ export default function Home() {
                 <p className="field-hint">
                   3-32 caracteres: letras, números, guion o guion bajo.
                 </p>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="label">
+                  Contraseña{" "}
+                  <span className="font-normal text-gray-400">(opcional)</span>
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Protege el enlace con una contraseña"
+                  className="input"
+                />
               </div>
 
               <div>
