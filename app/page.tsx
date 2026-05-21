@@ -27,6 +27,21 @@ const UTM_FIELDS: { key: keyof UtmParams; label: string }[] = [
   { key: "content", label: "Content (utm_content)" },
 ];
 
+const FEATURES = [
+  {
+    title: "Alias a tu medida",
+    description: "Elige el código corto o deja que lo generemos por ti.",
+  },
+  {
+    title: "Analítica real",
+    description: "Mide clics, dispositivos y países de cada enlace.",
+  },
+  {
+    title: "Códigos QR",
+    description: "Genera y descarga un QR para cada enlace al instante.",
+  },
+];
+
 export default function Home() {
   const { data: session } = useSession();
 
@@ -35,6 +50,7 @@ export default function Home() {
   const [result, setResult] = useState<ShortenResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
   const [hasExpiration, setHasExpiration] = useState(false);
   const [expirationDate, setExpirationDate] = useState("");
   const [showUtm, setShowUtm] = useState(false);
@@ -51,6 +67,7 @@ export default function Home() {
     setIsLoading(true);
     setError("");
     setResult(null);
+    setCopied(false);
 
     try {
       // Apply UTM parameters to the destination URL before shortening.
@@ -116,30 +133,42 @@ export default function Home() {
     }
   };
 
+  const copyShortUrl = () => {
+    if (!result) return;
+    navigator.clipboard.writeText(result.shortUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="flex min-h-screen">
       <AppSidebar active="home" />
 
-      <main className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
-              Acorta tus enlaces en segundos
+      <main className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0">
+        <div className="max-w-3xl mx-auto">
+          {/* Hero */}
+          <div className="text-center mb-10">
+            <span className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+              Rápido · gratuito · sin fricción
+            </span>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+              Acorta tus enlaces{" "}
+              <span className="bg-gradient-to-r from-indigo-500 to-violet-500 bg-clip-text text-transparent">
+                en segundos
+              </span>
             </h1>
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-              Crea links cortos, personalízalos con tu propio alias y mide
-              cada clic.
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
+              Crea links cortos, personalízalos con tu propio alias y mide cada
+              clic.
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8 mb-10 border border-gray-200 dark:border-gray-700">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Shortener form */}
+          <div className="card p-6 md:p-8">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label
-                  htmlFor="url"
-                  className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
-                >
-                  Ingresa el enlace que quieres acortar
+                <label htmlFor="url" className="label">
+                  Enlace que quieres acortar
                 </label>
                 <input
                   id="url"
@@ -149,17 +178,14 @@ export default function Home() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="input"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="custom-alias"
-                  className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
-                >
+                <label htmlFor="custom-alias" className="label">
                   Alias personalizado{" "}
-                  <span className="text-gray-400">(opcional)</span>
+                  <span className="font-normal text-gray-400">(opcional)</span>
                 </label>
                 <input
                   id="custom-alias"
@@ -169,9 +195,9 @@ export default function Home() {
                   placeholder="mi-enlace"
                   pattern="[a-zA-Z0-9_-]{3,32}"
                   title="Entre 3 y 32 caracteres: letras, números, guion o guion bajo"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="input"
                 />
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="field-hint">
                   3-32 caracteres: letras, números, guion o guion bajo.
                 </p>
               </div>
@@ -180,16 +206,18 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setShowUtm(!showUtm)}
-                  className="text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
-                  <span className="text-xs">{showUtm ? "▾" : "▸"}</span>
+                  <span className="text-xs text-indigo-500">
+                    {showUtm ? "▾" : "▸"}
+                  </span>
                   Parámetros UTM de campaña (opcional)
                 </button>
                 {showUtm && (
                   <div className="mt-3 grid sm:grid-cols-2 gap-3">
                     {UTM_FIELDS.map(({ key, label }) => (
                       <div key={key}>
-                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                           {label}
                         </label>
                         <input
@@ -198,7 +226,7 @@ export default function Home() {
                           onChange={(e) =>
                             setUtm({ ...utm, [key]: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="input py-2 text-sm"
                         />
                       </div>
                     ))}
@@ -206,28 +234,22 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="flex items-center space-x-2">
+              <label className="inline-flex items-center gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
-                  id="expiration-toggle"
+                  className="sr-only peer"
                   checked={hasExpiration}
                   onChange={(e) => setHasExpiration(e.target.checked)}
-                  className="h-4 w-4"
                 />
-                <label
-                  htmlFor="expiration-toggle"
-                  className="text-sm font-medium text-gray-800 dark:text-gray-200"
-                >
+                <span className="relative h-6 w-11 rounded-full bg-gray-300 dark:bg-gray-600 peer-checked:bg-indigo-600 transition-colors after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Establecer fecha de expiración
-                </label>
-              </div>
+                </span>
+              </label>
 
               {hasExpiration && (
                 <div>
-                  <label
-                    htmlFor="expiration-date"
-                    className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
-                  >
+                  <label htmlFor="expiration-date" className="label">
                     Fecha y hora de expiración
                   </label>
                   <input
@@ -236,14 +258,14 @@ export default function Home() {
                     value={expirationDate}
                     onChange={(e) => setExpirationDate(e.target.value)}
                     placeholder="dd/mm/yyyy hh:mm"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="input"
                   />
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="field-hint">
                     Formato: dd/mm/yyyy hh:mm (por ejemplo,{" "}
                     {getCurrentDateExample()})
                   </p>
                   {expirationDate && !isValidExpirationDate(expirationDate) && (
-                    <p className="mt-1 text-sm text-red-500">
+                    <p className="mt-1.5 text-sm text-red-500">
                       La fecha debe ser al menos 5 minutos en el futuro
                     </p>
                   )}
@@ -256,21 +278,24 @@ export default function Home() {
                   isLoading ||
                   (hasExpiration && !isValidExpirationDate(expirationDate))
                 }
-                className="w-full flex justify-center py-3 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-primary w-full py-3"
               >
                 {isLoading ? "Procesando..." : "Acortar URL"}
               </button>
             </form>
 
             {error && (
-              <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              <div className="mt-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
                 {error}
               </div>
             )}
 
             {result && (
-              <div className="mt-6 p-4 bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg">
-                <h3 className="text-lg font-medium text-green-800 dark:text-green-200 mb-3">
+              <div className="mt-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-emerald-800 dark:text-emerald-300 mb-3">
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-emerald-500 text-white text-xs">
+                    ✓
+                  </span>
                   ¡URL acortada con éxito!
                 </h3>
                 <div className="flex items-center gap-2">
@@ -278,18 +303,16 @@ export default function Home() {
                     href={result.shortUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded text-blue-600 dark:text-blue-400 hover:underline font-medium break-all"
+                    className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:underline font-medium break-all"
                   >
                     {result.shortUrl}
                   </a>
                   <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(result.shortUrl);
-                    }}
-                    className="p-2 bg-gray-200 dark:bg-gray-700 rounded text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+                    onClick={copyShortUrl}
+                    className="btn-secondary shrink-0"
                     title="Copiar al portapapeles"
                   >
-                    Copiar
+                    {copied ? "Copiado ✓" : "Copiar"}
                   </button>
                 </div>
 
@@ -298,30 +321,30 @@ export default function Home() {
                   <img
                     src={`/api/qr/${result.id}`}
                     alt="Código QR del enlace"
-                    width={140}
-                    height={140}
-                    className="rounded border border-gray-200 dark:border-gray-700 bg-white"
+                    width={132}
+                    height={132}
+                    className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white"
                   />
                   <div className="space-y-2 text-sm">
                     <a
                       href={`/api/qr/${result.id}`}
                       download={`qr-${result.id}.png`}
-                      className="inline-block text-blue-600 dark:text-blue-400 hover:underline"
+                      className="inline-block font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
                     >
                       Descargar código QR
                     </a>
                     {session ? (
                       <Link
                         href={`/stats/${result.id}`}
-                        className="block text-blue-600 dark:text-blue-400 hover:underline"
+                        className="block font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
                       >
-                        Ver estadísticas del enlace
+                        Ver estadísticas del enlace →
                       </Link>
                     ) : (
                       <p className="text-gray-600 dark:text-gray-400">
                         <Link
                           href="/login"
-                          className="text-blue-600 dark:text-blue-400 hover:underline"
+                          className="text-indigo-600 dark:text-indigo-400 hover:underline"
                         >
                           Inicia sesión
                         </Link>{" "}
@@ -332,6 +355,20 @@ export default function Home() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Feature highlights */}
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {FEATURES.map((feature) => (
+              <div key={feature.title} className="card p-5">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {feature.title}
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </main>
