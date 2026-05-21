@@ -9,7 +9,8 @@ import { resolveCountry } from "./geo";
  */
 export async function recordClick(
   headers: Headers,
-  urlId: string
+  urlId: string,
+  targetUrl?: string | null
 ): Promise<void> {
   try {
     const userAgent = headers.get("user-agent") || "";
@@ -26,6 +27,7 @@ export async function recordClick(
       deviceType: parsed.device.type || "desktop",
       browser: parsed.browser.name || null,
       os: parsed.os.name || null,
+      targetUrl: targetUrl ?? null,
     });
   } catch (error) {
     console.error(`Failed to record click for "${urlId}":`, error);

@@ -12,6 +12,7 @@ interface ClickAttributes {
   deviceType?: string | null;
   browser?: string | null;
   os?: string | null;
+  targetUrl?: string | null;
 }
 
 interface ClickCreationAttributes
@@ -33,6 +34,7 @@ class Click
   public deviceType?: string | null;
   public browser?: string | null;
   public os?: string | null;
+  public targetUrl?: string | null;
 }
 
 Click.init(
@@ -59,6 +61,7 @@ Click.init(
     deviceType: { type: DataTypes.STRING(20), allowNull: true },
     browser: { type: DataTypes.STRING(50), allowNull: true },
     os: { type: DataTypes.STRING(50), allowNull: true },
+    targetUrl: { type: DataTypes.STRING(2048), allowNull: true },
   },
   {
     sequelize,

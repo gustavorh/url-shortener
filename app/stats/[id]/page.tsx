@@ -6,6 +6,7 @@ import { Url } from "@/models";
 import { getLinkStats } from "@/lib/stats-queries";
 import { AppSidebar } from "../../components/AppSidebar";
 import { StatsCharts } from "./StatsCharts";
+import { LinkTargetsManager } from "./LinkTargetsManager";
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +99,10 @@ export default async function StatsPage({
                 />
               </div>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <LinkTargetsManager linkId={id} />
           </div>
 
           <StatsCharts stats={stats} />
