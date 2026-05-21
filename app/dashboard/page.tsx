@@ -1,26 +1,60 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
+import { Op, type WhereOptions } from "sequelize";
 import { auth } from "@/auth";
 import { Url } from "@/models";
 import { getClickCounts } from "@/lib/stats-queries";
 import { AppSidebar } from "../components/AppSidebar";
+import { DashboardControls } from "./DashboardControls";
 
 // Always reflect the latest links/clicks.
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+type SortOption = "recent" | "oldest" | "clicks";
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; sort?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/login");
   }
 
+  const { q, sort: sortParam } = await searchParams;
+  const query = (q ?? "").trim();
+  const sort: SortOption =
+    sortParam === "oldest" || sortParam === "clicks" ? sortParam : "recent";
+
+  const where: WhereOptions = { userId: session.user.id, deletedAt: null };
+  if (query) {
+    const term = `%${query}%`;
+    Object.assign(where, {
+      [Op.or]: [
+        { id: { [Op.like]: term } },
+        { originalUrl: { [Op.like]: term } },
+        { title: { [Op.like]: term } },
+      ],
+    });
+  }
+
   const urls = await Url.findAll({
-    where: { userId: session.user.id, deletedAt: null },
-    order: [["creationDate", "DESC"]],
+    where,
+    order: [["creationDate", sort === "oldest" ? "ASC" : "DESC"]],
     raw: true,
   });
   const clickCounts = await getClickCounts(urls.map((url) => url.id));
+
+  // Sorting by clicks happens in memory — counts live in a separate table.
+  if (sort === "clicks") {
+    urls.sort(
+      (a, b) =>
+        (clickCounts.get(b.id) ?? 0) - (clickCounts.get(a.id) ?? 0)
+    );
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const totalClicks = [...clickCounts.values()].reduce((a, b) => a + b, 0);
 
@@ -30,7 +64,7 @@ export default async function DashboardPage() {
 
       <main className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Mi panel
@@ -53,17 +87,23 @@ export default async function DashboardPage() {
             </div>
           </div>
 
+          <DashboardControls query={query} sort={sort} />
+
           {urls.length === 0 ? (
-            <div className="card p-10 text-center">
+            <div className="card p-10 text-center mt-4">
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Aún no tienes enlaces. Crea el primero desde el inicio.
+                {query
+                  ? `Sin resultados para “${query}”.`
+                  : "Aún no tienes enlaces. Crea el primero desde el inicio."}
               </p>
-              <Link href="/" className="btn-primary">
-                Acortar una URL
-              </Link>
+              {!query && (
+                <Link href="/" className="btn-primary">
+                  Acortar una URL
+                </Link>
+              )}
             </div>
           ) : (
-            <div className="card overflow-x-auto">
+            <div className="card overflow-x-auto mt-4">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
