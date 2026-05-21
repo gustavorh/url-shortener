@@ -8,6 +8,7 @@ export const RESERVED_SLUGS: ReadonlySet<string> = new Set([
   "dashboard",
   "stats",
   "qr",
+  "u",
   "recientes",
   "_next",
   "favicon.ico",

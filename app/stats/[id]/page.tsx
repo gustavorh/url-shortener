@@ -7,6 +7,8 @@ import { getLinkStats } from "@/lib/stats-queries";
 import { AppSidebar } from "../../components/AppSidebar";
 import { StatsCharts } from "./StatsCharts";
 import { LinkTargetsManager } from "./LinkTargetsManager";
+import { QrCustomizer } from "./QrCustomizer";
+import { LinkTitleEditor } from "./LinkTitleEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -80,29 +82,24 @@ export default async function StatsPage({
                   )}
                 </p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-3xl font-extrabold text-gray-900 dark:text-white">
-                    {stats.total}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    clic{stats.total === 1 ? "" : "s"} en total
-                  </p>
-                </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/api/qr/${url.id}`}
-                  alt="Código QR del enlace"
-                  width={88}
-                  height={88}
-                  className="rounded border border-gray-200 dark:border-gray-700 bg-white"
-                />
+              <div className="text-right shrink-0">
+                <p className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                  {stats.total}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  clic{stats.total === 1 ? "" : "s"} en total
+                </p>
               </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <LinkTitleEditor linkId={id} initialTitle={url.title ?? null} />
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="space-y-6 mb-6">
             <LinkTargetsManager linkId={id} />
+            <QrCustomizer linkId={id} />
           </div>
 
           <StatsCharts stats={stats} />
