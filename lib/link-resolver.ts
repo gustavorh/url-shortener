@@ -10,6 +10,8 @@ export interface ResolvedLink {
   passwordProtected: boolean;
   /** Click limit; null means unlimited. */
   maxClicks: number | null;
+  /** True when the owner has paused the link. */
+  disabled: boolean;
 }
 
 const CACHE_TTL_SECONDS = 3600;
@@ -47,6 +49,7 @@ export async function resolveLink(id: string): Promise<ResolvedLink | null> {
     })),
     passwordProtected: !!record.passwordHash,
     maxClicks: record.maxClicks ?? null,
+    disabled: !!record.disabled,
   };
   await cacheSet(cacheKey(id), JSON.stringify(resolved), CACHE_TTL_SECONDS);
   return resolved;

@@ -29,6 +29,12 @@ export async function POST(
   if (!link || link.deletedAt || !link.passwordHash) {
     return NextResponse.json({ error: "Enlace no encontrado" }, { status: 404 });
   }
+  if (link.disabled) {
+    return NextResponse.json(
+      { error: "El enlace está pausado" },
+      { status: 410 }
+    );
+  }
   if (link.expirationDate && new Date() > new Date(link.expirationDate)) {
     return NextResponse.json({ error: "El enlace ha expirado" }, { status: 410 });
   }
