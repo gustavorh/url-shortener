@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
         originalUrl: created.originalUrl,
         expirationDate: created.expirationDate,
         creationDate: created.creationDate,
+        reused: created.reused,
       },
       { status: 201 }
     );

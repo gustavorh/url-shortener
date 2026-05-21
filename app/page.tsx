@@ -9,6 +9,7 @@ import { appendUtmParams, hasAnyUtm, UtmParams } from "@/lib/utm";
 interface ShortenResult {
   shortUrl: string;
   id: string;
+  reused: boolean;
 }
 
 const EMPTY_UTM: UtmParams = {
@@ -103,7 +104,11 @@ export default function Home() {
         throw new Error(data.error || "Error al acortar la URL");
       }
 
-      setResult({ shortUrl: data.shortUrl, id: data.id });
+      setResult({
+        shortUrl: data.shortUrl,
+        id: data.id,
+        reused: !!data.reused,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al acortar la URL");
     } finally {
@@ -316,7 +321,9 @@ export default function Home() {
                   <span className="grid h-5 w-5 place-items-center rounded-full bg-emerald-500 text-white text-xs">
                     ✓
                   </span>
-                  ¡URL acortada con éxito!
+                  {result.reused
+                    ? "Ya tenías este enlace — reutilizado"
+                    : "¡URL acortada con éxito!"}
                 </h3>
                 <div className="flex items-center gap-2">
                   <a
