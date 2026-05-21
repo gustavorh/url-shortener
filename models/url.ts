@@ -11,6 +11,7 @@ interface UrlAttributes {
   tags?: string | null;
   passwordHash?: string | null;
   maxClicks?: number | null;
+  disabled?: boolean;
   deletedAt?: Date | null;
 }
 
@@ -24,6 +25,7 @@ interface UrlCreationAttributes
     | 'tags'
     | 'passwordHash'
     | 'maxClicks'
+    | 'disabled'
     | 'deletedAt'
   > {
   expirationDate?: Date | null;
@@ -33,6 +35,7 @@ interface UrlCreationAttributes
   tags?: string | null;
   passwordHash?: string | null;
   maxClicks?: number | null;
+  disabled?: boolean;
   deletedAt?: Date | null;
 }
 
@@ -46,6 +49,7 @@ class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttr
   public tags?: string | null;
   public passwordHash?: string | null;
   public maxClicks?: number | null;
+  public disabled?: boolean;
   public deletedAt?: Date | null;
 }
 
@@ -88,6 +92,11 @@ Url.init(
     maxClicks: {
       type: DataTypes.INTEGER,
       allowNull: true,
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     deletedAt: {
       type: DataTypes.DATE,
