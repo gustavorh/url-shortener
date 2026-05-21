@@ -100,6 +100,42 @@ export async function getLinkStats(urlId: string): Promise<LinkStats> {
   };
 }
 
+export interface RecentClick {
+  timestamp: string;
+  country: string | null;
+  deviceType: string | null;
+  browser: string | null;
+  referrer: string | null;
+}
+
+/** The most recent clicks for a link, newest first. */
+export async function getRecentClicks(
+  urlId: string,
+  limit = 15
+): Promise<RecentClick[]> {
+  const rows = (await Click.findAll({
+    where: { urlId },
+    order: [["timestamp", "DESC"]],
+    limit,
+    attributes: ["timestamp", "country", "deviceType", "browser", "referrer"],
+    raw: true,
+  })) as unknown as Array<{
+    timestamp: string | Date;
+    country: string | null;
+    deviceType: string | null;
+    browser: string | null;
+    referrer: string | null;
+  }>;
+
+  return rows.map((row) => ({
+    timestamp: new Date(row.timestamp).toISOString(),
+    country: row.country ?? null,
+    deviceType: row.deviceType ?? null,
+    browser: row.browser ?? null,
+    referrer: row.referrer ?? null,
+  }));
+}
+
 /** Click counts keyed by urlId, for a set of links (dashboard listing). */
 export async function getClickCounts(
   urlIds: string[]
