@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import mysql2 from "mysql2";
 
-// Database connection with environment variables
+// Database connection with environment variables.
 const sequelize = new Sequelize(
   process.env.DB_NAME || "url_shortener",
   process.env.DB_USER || "root",
@@ -23,17 +23,11 @@ const sequelize = new Sequelize(
   }
 );
 
-// Test the connection
-const testConnection = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("Database connection established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
+// Verify connectivity on demand. Not called at import time on purpose:
+// importing a model must not open a connection (it breaks unit tests and
+// makes cold starts slower). Schema is managed by migrations, not sync().
+export const testConnection = async (): Promise<void> => {
+  await sequelize.authenticate();
 };
-
-// Initialize connection
-testConnection();
 
 export default sequelize;

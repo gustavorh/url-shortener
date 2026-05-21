@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cortala — URL Shortener
+
+Acortador de URLs full-stack construido con **Next.js 15 (App Router)**, **React 19**,
+**TypeScript**, **Sequelize** y **MySQL**. Incluye cuentas de usuario, analítica por
+enlace, alias personalizados, códigos QR y una base de ingeniería con migraciones,
+tests y CI.
+
+## Stack
+
+- **Frontend / Backend:** Next.js 15, React 19, TypeScript, Tailwind CSS 4
+- **Datos:** MySQL + Sequelize 6 (migraciones con `sequelize-cli`)
+- **Auth:** Auth.js (next-auth v5), sesiones JWT, contraseñas con `bcryptjs`
+- **Tests:** Vitest (unitarios + integración) · CI con GitHub Actions
 
 ## Getting Started
 
-First, run the development server:
+1. Instala dependencias:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copia las variables de entorno y ajústalas:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   cp .env.example .env
+   # genera un secreto para Auth.js:
+   openssl rand -base64 32   # pega el valor en AUTH_SECRET
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Crea la base de datos en MySQL (la que indicaste en `DB_NAME`) y aplica las
+   migraciones:
 
-## Learn More
+   ```bash
+   npm run db:migrate
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Arranca el servidor de desarrollo:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   Abre [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Script | Descripción |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo (Turbopack) |
+| `npm run build` / `npm start` | Build y arranque en producción |
+| `npm run lint` / `npm run typecheck` | Linting y chequeo de tipos |
+| `npm run test` | Tests en modo watch |
+| `npm run test:run` | Toda la suite una vez |
+| `npm run test:unit` / `npm run test:integration` | Solo unitarios / solo integración |
+| `npm run db:migrate` | Aplica las migraciones pendientes |
+| `npm run db:migrate:undo` | Revierte la última migración |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Base de datos
+
+El esquema lo gobiernan las migraciones de `migrations/` (no se usa
+`model.sync()`). Para los tests de integración se utiliza una base de datos
+separada definida en `DB_NAME_TEST`.
+
+## Despliegue
+
+Hay un `Dockerfile` multi-stage. Las migraciones se ejecutan manualmente
+(`npm run db:migrate`) contra la base de datos destino antes de levantar la app.
