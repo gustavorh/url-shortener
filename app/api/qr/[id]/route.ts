@@ -5,8 +5,15 @@ import { buildShortUrl } from "@/lib/short-url";
 
 export const runtime = "nodejs";
 
-// GET /api/qr/[id] — returns a PNG QR code for the short link, generated
-// on demand (not stored) and cached at the edge for a day.
+const HEX_PATTERN = /^[0-9a-fA-F]{6}$/;
+
+// Reads a 6-digit hex color query param, falling back to a default.
+function readColor(value: string | null, fallback: string): string {
+  return value && HEX_PATTERN.test(value) ? `#${value}` : fallback;
+}
+
+// GET /api/qr/[id] — PNG QR code for the short link, generated on demand.
+// Optional ?dark= and ?light= 6-digit hex params customize the colors.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -19,11 +26,16 @@ export async function GET(
       return NextResponse.json({ error: "URL not found" }, { status: 404 });
     }
 
+    const { searchParams } = request.nextUrl;
+    const dark = readColor(searchParams.get("dark"), "#000000");
+    const light = readColor(searchParams.get("light"), "#ffffff");
+
     const shortUrl = buildShortUrl(request, id);
     const png = await QRCode.toBuffer(shortUrl, {
       width: 320,
       margin: 1,
       errorCorrectionLevel: "M",
+      color: { dark, light },
     });
 
     return new NextResponse(new Uint8Array(png), {

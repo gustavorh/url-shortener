@@ -5,6 +5,7 @@ import Url from "./url";
 import User from "./user";
 import Click from "./click";
 import ApiKey from "./apikey";
+import LinkTarget from "./linktarget";
 
 // Associations. onDelete CASCADE mirrors the foreign keys defined in the
 // migrations so behaviour is consistent whether the schema comes from
@@ -19,13 +20,21 @@ User.hasMany(ApiKey, {
   onDelete: "CASCADE",
 });
 ApiKey.belongsTo(User, { foreignKey: "userId", as: "user" });
+Url.hasMany(LinkTarget, {
+  foreignKey: "urlId",
+  as: "targets",
+  onDelete: "CASCADE",
+});
+// alias "link" (not "url") avoids colliding with LinkTarget's own `url` column.
+LinkTarget.belongsTo(Url, { foreignKey: "urlId", as: "link" });
 
 const models = {
   Url,
   User,
   Click,
   ApiKey,
+  LinkTarget,
 };
 
-export { Url, User, Click, ApiKey };
+export { Url, User, Click, ApiKey, LinkTarget };
 export default models;

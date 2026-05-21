@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { recordClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
 import { resolveLink } from "@/lib/link-resolver";
+import { chooseDestination } from "@/lib/redirect-resolver";
 
 // Click tracking touches MySQL, so this route must run on the Node runtime.
 export const runtime = "nodejs";
@@ -40,20 +41,27 @@ export async function GET(
       );
     }
 
+    // Pick the destination: device override, A/B rotation, or the base URL.
+    const chosen = chooseDestination(
+      originalUrl,
+      urlRecord.targets,
+      request.headers.get("user-agent") || ""
+    );
+
     let redirectUrl: string;
     try {
-      redirectUrl = validateAndNormalizeUrl(originalUrl);
+      redirectUrl = validateAndNormalizeUrl(chosen.url);
     } catch (error) {
-      console.error("Stored URL is invalid:", originalUrl, error);
+      console.error("Destination URL is invalid:", chosen.url, error);
       return NextResponse.json(
         { error: "Invalid URL format" },
         { status: 500 }
       );
     }
 
-    // Record the click before redirecting. recordClick swallows its own
-    // errors, so a logging failure can never break the redirect.
-    await recordClick(request.headers, id);
+    // Record the click (with the served destination) before redirecting.
+    // recordClick swallows its own errors, so logging can never break it.
+    await recordClick(request.headers, id, redirectUrl);
 
     return NextResponse.redirect(redirectUrl, { status: 302 });
   } catch (error) {

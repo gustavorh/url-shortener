@@ -105,6 +105,12 @@ export function StatsCharts({ stats }: { stats: LinkStats }) {
         <BreakdownChart data={stats.byCountry} />
       </ChartCard>
 
+      {stats.byTarget.length > 1 && (
+        <ChartCard title="Destinos servidos (A/B · dispositivo)">
+          <BreakdownChart data={stats.byTarget} />
+        </ChartCard>
+      )}
+
       <ChartCard title="Principales orígenes (referrers)">
         {stats.topReferrers.length === 0 ? (
           <EmptyState />
