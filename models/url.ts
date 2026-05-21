@@ -4,19 +4,24 @@ import sequelize from '../lib/db';
 interface UrlAttributes {
   id: string;
   originalUrl: string;
-  expirationDate?: Date;
+  expirationDate?: Date | null;
   creationDate: Date;
+  userId?: string | null;
 }
 
-interface UrlCreationAttributes extends Omit<UrlAttributes, 'creationDate'> {
+interface UrlCreationAttributes
+  extends Omit<UrlAttributes, 'creationDate' | 'expirationDate' | 'userId'> {
+  expirationDate?: Date | null;
   creationDate?: Date;
+  userId?: string | null;
 }
 
 class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttributes {
   public id!: string;
   public originalUrl!: string;
-  public expirationDate?: Date;
+  public expirationDate?: Date | null;
   public creationDate!: Date;
+  public userId?: string | null;
 }
 
 Url.init(
@@ -38,6 +43,10 @@ Url.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+    },
+    userId: {
+      type: DataTypes.STRING(36),
+      allowNull: true,
     },
   },
   {
