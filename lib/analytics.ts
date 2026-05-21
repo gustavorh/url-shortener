@@ -2,6 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { Click } from "@/models";
 import { resolveClientIp } from "./request-ip";
 import { resolveCountry } from "./geo";
+import { anonymizeIp } from "./anonymize-ip";
 import { metrics } from "./metrics";
 
 /**
@@ -16,14 +17,16 @@ export async function recordClick(
   try {
     const userAgent = headers.get("user-agent") || "";
     const parsed = new UAParser(userAgent).getResult();
-    const ip = resolveClientIp(headers);
+    // Resolve the country from the real IP, then store only an anonymized IP.
+    const rawIp = resolveClientIp(headers);
+    const country = resolveCountry(headers, rawIp);
 
     await Click.create({
       urlId,
-      ip,
+      ip: anonymizeIp(rawIp),
       userAgent: userAgent || null,
       referrer: headers.get("referer") || null,
-      country: resolveCountry(headers, ip),
+      country,
       // ua-parser-js leaves device.type empty for desktops.
       deviceType: parsed.device.type || "desktop",
       browser: parsed.browser.name || null,

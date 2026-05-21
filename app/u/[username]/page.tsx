@@ -39,6 +39,7 @@ export default async function PublicProfilePage({
   const links = await Url.findAll({
     where: {
       userId: user.id,
+      deletedAt: null,
       [Op.or]: [
         { expirationDate: null },
         { expirationDate: { [Op.gt]: now } },

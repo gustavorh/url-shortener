@@ -22,7 +22,7 @@ export async function GET(
 
   const { id } = await params;
   const link = await Url.findByPk(id, { raw: true });
-  if (!link || link.userId !== userId) {
+  if (!link || link.userId !== userId || link.deletedAt) {
     return NextResponse.json(
       { error: "Enlace no encontrado" },
       { status: 404 }

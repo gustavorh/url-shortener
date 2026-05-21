@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { AppSidebar } from "../../components/AppSidebar";
 
 export default function ProfilePage() {
@@ -11,6 +12,14 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [error, setError] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    await fetch("/api/account", { method: "DELETE" });
+    await signOut({ callbackUrl: "/" });
+  };
 
   useEffect(() => {
     fetch("/api/profile")
@@ -168,6 +177,52 @@ export default function ProfilePage() {
                   : "Guardar perfil"}
             </button>
           </form>
+
+          <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+              Tus datos
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              Descarga toda tu información o elimina tu cuenta de forma
+              permanente.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="/api/account/export"
+                download
+                className="py-2 px-4 rounded-lg text-sm font-medium text-gray-800 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+              >
+                Descargar mis datos
+              </a>
+              {!confirmDelete ? (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="py-2 px-4 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  Eliminar mi cuenta
+                </button>
+              ) : (
+                <span className="flex flex-wrap items-center gap-3 text-sm">
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Esto borra todo de forma permanente.
+                  </span>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="font-medium text-red-600 dark:text-red-400 hover:underline disabled:opacity-70"
+                  >
+                    {deleting ? "Eliminando..." : "Confirmar"}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="text-gray-500 dark:text-gray-400 hover:underline"
+                  >
+                    Cancelar
+                  </button>
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

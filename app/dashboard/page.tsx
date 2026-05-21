@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   }
 
   const urls = await Url.findAll({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, deletedAt: null },
     order: [["creationDate", "DESC"]],
     raw: true,
   });

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Url } from "@/models";
 import { getCurrentUserId } from "@/lib/auth-helpers";
+import { invalidateLink } from "@/lib/link-resolver";
 
 export const runtime = "nodejs";
 
@@ -40,3 +41,28 @@ export async function PATCH(
   }
   return NextResponse.json({ ok: true });
 }
+
+// DELETE /api/links/[id] — soft-deletes the link (row and analytics kept).
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const link = await Url.findByPk(id);
+  if (!link || link.userId !== userId || link.deletedAt) {
+    return NextResponse.json(
+      { error: "Enlace no encontrado" },
+      { status: 404 }
+    );
+  }
+
+  await link.update({ deletedAt: new Date() });
+  await invalidateLink(id);
+  return NextResponse.json({ deleted: true });
+}
+

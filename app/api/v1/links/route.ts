@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
   const offset = Math.max(Number(searchParams.get("offset")) || 0, 0);
 
   const { rows, count } = await Url.findAndCountAll({
-    where: { userId },
+    where: { userId, deletedAt: null },
     order: [["creationDate", "DESC"]],
     limit,
     offset,
