@@ -8,9 +8,11 @@ import { useState, FormEvent } from "react";
 export function DashboardControls({
   query,
   sort,
+  tag,
 }: {
   query: string;
   sort: string;
+  tag?: string;
 }) {
   const router = useRouter();
   const [q, setQ] = useState(query);
@@ -19,6 +21,8 @@ export function DashboardControls({
     const params = new URLSearchParams();
     if (nextQuery.trim()) params.set("q", nextQuery.trim());
     if (nextSort !== "recent") params.set("sort", nextSort);
+    // Preserve the active tag filter across searches and sorts.
+    if (tag) params.set("tag", tag);
     const qs = params.toString();
     router.push(qs ? `/dashboard?${qs}` : "/dashboard");
   };

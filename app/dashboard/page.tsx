@@ -5,6 +5,7 @@ import { Op, type WhereOptions } from "sequelize";
 import { auth } from "@/auth";
 import { Url } from "@/models";
 import { getClickCounts } from "@/lib/stats-queries";
+import { splitTags } from "@/lib/tags";
 import { AppSidebar } from "../components/AppSidebar";
 import { DashboardControls } from "./DashboardControls";
 
@@ -17,7 +18,12 @@ const PAGE_SIZE = 20;
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    sort?: string;
+    page?: string;
+    tag?: string;
+  }>;
 }) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -26,6 +32,7 @@ export default async function DashboardPage({
 
   const params = await searchParams;
   const query = (params.q ?? "").trim();
+  const tag = (params.tag ?? "").trim().toLowerCase();
   const sort: SortOption =
     params.sort === "oldest" || params.sort === "clicks"
       ? params.sort
@@ -43,6 +50,10 @@ export default async function DashboardPage({
         { title: { [Op.like]: term } },
       ],
     });
+  }
+  // Loose substring match — adequate for the small per-user tag space.
+  if (tag) {
+    Object.assign(where, { tags: { [Op.like]: `%${tag}%` } });
   }
 
   let urls;
@@ -76,6 +87,7 @@ export default async function DashboardPage({
   const pageHref = (target: number) => {
     const qs = new URLSearchParams();
     if (query) qs.set("q", query);
+    if (tag) qs.set("tag", tag);
     if (sort !== "recent") qs.set("sort", sort);
     if (target > 1) qs.set("page", String(target));
     const s = qs.toString();
@@ -110,16 +122,30 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          <DashboardControls query={query} sort={sort} />
+          <DashboardControls query={query} sort={sort} tag={tag} />
+
+          {tag && (
+            <div className="mt-3 flex items-center gap-2 text-sm">
+              <span className="text-gray-500 dark:text-gray-400">
+                Filtrando por etiqueta:
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                #{tag}
+                <Link href="/dashboard" className="hover:text-indigo-900 dark:hover:text-indigo-100">
+                  ✕
+                </Link>
+              </span>
+            </div>
+          )}
 
           {urls.length === 0 ? (
             <div className="card p-10 text-center mt-4">
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                {query
-                  ? `Sin resultados para “${query}”.`
+                {query || tag
+                  ? "Sin resultados para este filtro."
                   : "Aún no tienes enlaces. Crea el primero desde el inicio."}
               </p>
-              {!query && (
+              {!query && !tag && (
                 <Link href="/" className="btn-primary">
                   Acortar una URL
                 </Link>
@@ -140,59 +166,75 @@ export default async function DashboardPage({
                     </tr>
                   </thead>
                   <tbody>
-                    {urls.map((url) => (
-                      <tr
-                        key={url.id}
-                        className="border-b border-gray-100 dark:border-gray-700/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
-                      >
-                        <td className="p-4">
-                          <a
-                            href={`${baseUrl}/${url.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                          >
-                            /{url.id}
-                          </a>
-                        </td>
-                        <td className="p-4 max-w-xs truncate text-gray-600 dark:text-gray-300">
-                          <a
-                            href={url.originalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:underline"
-                            title={url.originalUrl}
-                          >
-                            {url.title || url.originalUrl}
-                          </a>
-                        </td>
-                        <td className="p-4 text-right font-semibold text-gray-900 dark:text-white">
-                          {clickCounts.get(url.id) ?? 0}
-                        </td>
-                        <td className="p-4 text-gray-500 dark:text-gray-400">
-                          {format(
-                            new Date(url.creationDate),
-                            "yyyy-MM-dd HH:mm"
-                          )}
-                        </td>
-                        <td className="p-4 text-gray-500 dark:text-gray-400">
-                          {url.expirationDate
-                            ? format(
-                                new Date(url.expirationDate),
-                                "yyyy-MM-dd HH:mm"
-                              )
-                            : "—"}
-                        </td>
-                        <td className="p-4">
-                          <Link
-                            href={`/stats/${url.id}`}
-                            className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                          >
-                            Estadísticas
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
+                    {urls.map((url) => {
+                      const tags = splitTags(url.tags);
+                      return (
+                        <tr
+                          key={url.id}
+                          className="border-b border-gray-100 dark:border-gray-700/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
+                        >
+                          <td className="p-4">
+                            <a
+                              href={`${baseUrl}/${url.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                            >
+                              /{url.id}
+                            </a>
+                          </td>
+                          <td className="p-4 max-w-xs text-gray-600 dark:text-gray-300">
+                            <a
+                              href={url.originalUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block truncate hover:underline"
+                              title={url.originalUrl}
+                            >
+                              {url.title || url.originalUrl}
+                            </a>
+                            {tags.length > 0 && (
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {tags.map((t) => (
+                                  <Link
+                                    key={t}
+                                    href={`/dashboard?tag=${encodeURIComponent(t)}`}
+                                    className="px-1.5 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-500/15 dark:hover:text-indigo-300"
+                                  >
+                                    #{t}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 text-right font-semibold text-gray-900 dark:text-white">
+                            {clickCounts.get(url.id) ?? 0}
+                          </td>
+                          <td className="p-4 text-gray-500 dark:text-gray-400">
+                            {format(
+                              new Date(url.creationDate),
+                              "yyyy-MM-dd HH:mm"
+                            )}
+                          </td>
+                          <td className="p-4 text-gray-500 dark:text-gray-400">
+                            {url.expirationDate
+                              ? format(
+                                  new Date(url.expirationDate),
+                                  "yyyy-MM-dd HH:mm"
+                                )
+                              : "—"}
+                          </td>
+                          <td className="p-4">
+                            <Link
+                              href={`/stats/${url.id}`}
+                              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                            >
+                              Estadísticas
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
