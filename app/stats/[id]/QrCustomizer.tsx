@@ -45,7 +45,7 @@ export function QrCustomizer({ linkId }: { linkId: string }) {
           <a
             href={src}
             download={`qr-${linkId}.png`}
-            className="inline-block py-2 px-4 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800"
+            className="btn-primary"
           >
             Descargar PNG
           </a>

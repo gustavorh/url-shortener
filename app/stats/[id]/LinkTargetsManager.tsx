@@ -157,7 +157,7 @@ export function LinkTargetsManager({ linkId }: { linkId: string }) {
         <button
           type="submit"
           disabled={isLoading}
-          className="py-2 px-4 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-70"
+          className="btn-primary"
         >
           Añadir
         </button>

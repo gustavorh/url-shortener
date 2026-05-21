@@ -108,7 +108,7 @@ export default function ApiKeysPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="py-2.5 px-5 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-70"
+              className="btn-primary"
             >
               {isLoading ? "Creando..." : "Crear clave"}
             </button>

@@ -168,7 +168,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={status === "saving"}
-              className="py-2.5 px-5 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-70"
+              className="btn-primary"
             >
               {status === "saving"
                 ? "Guardando..."

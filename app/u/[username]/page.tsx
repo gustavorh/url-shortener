@@ -52,10 +52,10 @@ export default async function PublicProfilePage({
   const displayName = user.name || user.username || "Cortala";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 py-16 px-6">
+    <div className="min-h-screen py-16 px-6">
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-full bg-gray-900 dark:bg-gray-700 text-white text-3xl font-bold flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-3xl font-bold flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
             {displayName.charAt(0).toUpperCase()}
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -78,7 +78,7 @@ export default async function PublicProfilePage({
                 href={`${baseUrl}/${link.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 text-center font-medium text-gray-900 dark:text-white hover:shadow-md hover:border-gray-400 dark:hover:border-gray-500 transition"
+                className="card block p-4 text-center font-medium text-gray-900 dark:text-white hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition"
               >
                 {link.title || link.originalUrl}
               </a>
