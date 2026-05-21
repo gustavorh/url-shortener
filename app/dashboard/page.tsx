@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Op, type WhereOptions } from "sequelize";
 import { auth } from "@/auth";
 import { Url } from "@/models";
-import { getClickCounts } from "@/lib/stats-queries";
+import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
 import { AppSidebar } from "../components/AppSidebar";
 import { DashboardControls } from "./DashboardControls";
@@ -83,6 +83,9 @@ export default async function DashboardPage({
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totals = await getUserTotals(session.user.id);
+  const avgClicks =
+    totals.links > 0 ? Math.round(totals.clicks / totals.links) : 0;
 
   const pageHref = (target: number) => {
     const qs = new URLSearchParams();
@@ -120,6 +123,23 @@ export default async function DashboardPage({
                 Importar URLs
               </Link>
             </div>
+          </div>
+
+          <div className="mb-5 grid gap-4 sm:grid-cols-3">
+            {[
+              { label: "Enlaces", value: totals.links },
+              { label: "Clics totales", value: totals.clicks },
+              { label: "Clics por enlace", value: avgClicks },
+            ].map((stat) => (
+              <div key={stat.label} className="card p-5">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
 
           <DashboardControls query={query} sort={sort} tag={tag} />
