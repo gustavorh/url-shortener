@@ -29,15 +29,23 @@ export default async function DashboardPage() {
 
       <main className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Mi panel
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">
-              {urls.length} enlace{urls.length === 1 ? "" : "s"} ·{" "}
-              {[...clickCounts.values()].reduce((a, b) => a + b, 0)} clics en
-              total
-            </p>
+          <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Mi panel
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
+                {urls.length} enlace{urls.length === 1 ? "" : "s"} ·{" "}
+                {[...clickCounts.values()].reduce((a, b) => a + b, 0)} clics en
+                total
+              </p>
+            </div>
+            <Link
+              href="/dashboard/import"
+              className="py-2 px-4 rounded-lg text-sm font-medium text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              Importar URLs
+            </Link>
           </div>
 
           {urls.length === 0 ? (

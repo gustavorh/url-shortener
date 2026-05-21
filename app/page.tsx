@@ -4,11 +4,28 @@ import Link from "next/link";
 import { useState, FormEvent, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { AppSidebar } from "./components/AppSidebar";
+import { appendUtmParams, hasAnyUtm, UtmParams } from "@/lib/utm";
 
 interface ShortenResult {
   shortUrl: string;
   id: string;
 }
+
+const EMPTY_UTM: UtmParams = {
+  source: "",
+  medium: "",
+  campaign: "",
+  term: "",
+  content: "",
+};
+
+const UTM_FIELDS: { key: keyof UtmParams; label: string }[] = [
+  { key: "source", label: "Source (utm_source)" },
+  { key: "medium", label: "Medium (utm_medium)" },
+  { key: "campaign", label: "Campaign (utm_campaign)" },
+  { key: "term", label: "Term (utm_term)" },
+  { key: "content", label: "Content (utm_content)" },
+];
 
 export default function Home() {
   const { data: session } = useSession();
@@ -20,6 +37,8 @@ export default function Home() {
   const [error, setError] = useState("");
   const [hasExpiration, setHasExpiration] = useState(false);
   const [expirationDate, setExpirationDate] = useState("");
+  const [showUtm, setShowUtm] = useState(false);
+  const [utm, setUtm] = useState<UtmParams>(EMPTY_UTM);
 
   useEffect(() => {
     if (hasExpiration) {
@@ -34,11 +53,15 @@ export default function Home() {
     setResult(null);
 
     try {
+      // Apply UTM parameters to the destination URL before shortening.
+      const finalUrl =
+        showUtm && hasAnyUtm(utm) ? appendUtmParams(url, utm) : url;
+
       const payload: {
         originalUrl: string;
         expirationDate?: string;
         customAlias?: string;
-      } = { originalUrl: url };
+      } = { originalUrl: finalUrl };
 
       if (hasExpiration && expirationDate) {
         payload.expirationDate = formatDateForAPI(expirationDate);
@@ -151,6 +174,36 @@ export default function Home() {
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   3-32 caracteres: letras, números, guion o guion bajo.
                 </p>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowUtm(!showUtm)}
+                  className="text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2"
+                >
+                  <span className="text-xs">{showUtm ? "▾" : "▸"}</span>
+                  Parámetros UTM de campaña (opcional)
+                </button>
+                {showUtm && (
+                  <div className="mt-3 grid sm:grid-cols-2 gap-3">
+                    {UTM_FIELDS.map(({ key, label }) => (
+                      <div key={key}>
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          {label}
+                        </label>
+                        <input
+                          type="text"
+                          value={utm[key] ?? ""}
+                          onChange={(e) =>
+                            setUtm({ ...utm, [key]: e.target.value })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center space-x-2">
