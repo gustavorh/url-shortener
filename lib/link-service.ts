@@ -5,6 +5,7 @@ import {
   UrlValidationError,
 } from "./url-validation";
 import { generateUniqueSlug, validateCustomAlias } from "./slug";
+import { metrics } from "./metrics";
 
 /** Error carrying the HTTP status a route handler should return. */
 export class LinkCreationError extends Error {
@@ -77,6 +78,7 @@ export async function createShortLink(
     expirationDate: input.expirationDate ?? null,
     userId: input.userId ?? null,
   });
+  metrics.linksCreated.inc();
 
   return {
     id,

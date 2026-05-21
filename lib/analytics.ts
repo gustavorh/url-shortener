@@ -2,6 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { Click } from "@/models";
 import { resolveClientIp } from "./request-ip";
 import { resolveCountry } from "./geo";
+import { metrics } from "./metrics";
 
 /**
  * Records a click on a short link. Fire-and-forget: any failure is swallowed
@@ -29,6 +30,7 @@ export async function recordClick(
       os: parsed.os.name || null,
       targetUrl: targetUrl ?? null,
     });
+    metrics.clicksRecorded.inc();
   } catch (error) {
     console.error(`Failed to record click for "${urlId}":`, error);
   }

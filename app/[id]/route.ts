@@ -3,6 +3,7 @@ import { recordClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
 import { resolveLink } from "@/lib/link-resolver";
 import { chooseDestination } from "@/lib/redirect-resolver";
+import { metrics } from "@/lib/metrics";
 
 // Click tracking touches MySQL, so this route must run on the Node runtime.
 export const runtime = "nodejs";
@@ -25,12 +26,14 @@ export async function GET(
     const urlRecord = await resolveLink(id);
 
     if (!urlRecord) {
+      metrics.redirects.inc({ result: "not_found" });
       return NextResponse.json({ error: "URL not found" }, { status: 404 });
     }
 
     // Reject expired links.
     const { expirationDate, originalUrl } = urlRecord;
     if (expirationDate && new Date() > new Date(expirationDate)) {
+      metrics.redirects.inc({ result: "expired" });
       return NextResponse.json({ error: "URL has expired" }, { status: 410 });
     }
 
@@ -62,6 +65,7 @@ export async function GET(
     // Record the click (with the served destination) before redirecting.
     // recordClick swallows its own errors, so logging can never break it.
     await recordClick(request.headers, id, redirectUrl);
+    metrics.redirects.inc({ result: "ok" });
 
     return NextResponse.redirect(redirectUrl, { status: 302 });
   } catch (error) {
