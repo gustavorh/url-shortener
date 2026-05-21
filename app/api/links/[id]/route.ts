@@ -19,6 +19,7 @@ const patchSchema = z.object({
   originalUrl: z.string().min(1).optional(),
   expirationDate: z.string().nullable().optional(),
   tags: z.string().optional(),
+  maxClicks: z.number().int().positive().nullable().optional(),
 });
 
 // PATCH /api/links/[id] — updates the title, destination or expiration.
@@ -50,6 +51,7 @@ export async function PATCH(
     originalUrl?: string;
     expirationDate?: Date | null;
     tags?: string | null;
+    maxClicks?: number | null;
   } = {};
 
   if (parsed.data.title !== undefined) {
@@ -58,6 +60,10 @@ export async function PATCH(
 
   if (parsed.data.tags !== undefined) {
     updates.tags = serializeTags(parseTags(parsed.data.tags));
+  }
+
+  if (parsed.data.maxClicks !== undefined) {
+    updates.maxClicks = parsed.data.maxClicks;
   }
 
   if (parsed.data.expirationDate !== undefined) {

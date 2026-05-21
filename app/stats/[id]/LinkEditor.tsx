@@ -9,6 +9,7 @@ interface LinkEditorProps {
   initialUrl: string;
   initialExpiration: string | null;
   initialTags: string | null;
+  initialMaxClicks: number | null;
 }
 
 // Edits a link's title, destination, expiration and tags in one place.
@@ -18,12 +19,16 @@ export function LinkEditor({
   initialUrl,
   initialExpiration,
   initialTags,
+  initialMaxClicks,
 }: LinkEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle ?? "");
   const [url, setUrl] = useState(initialUrl);
   const [expiration, setExpiration] = useState(initialExpiration ?? "");
   const [tags, setTags] = useState(initialTags ?? "");
+  const [maxClicks, setMaxClicks] = useState(
+    initialMaxClicks != null ? String(initialMaxClicks) : ""
+  );
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState("");
 
@@ -31,7 +36,8 @@ export function LinkEditor({
     title !== (initialTitle ?? "") ||
     url !== initialUrl ||
     expiration !== (initialExpiration ?? "") ||
-    tags !== (initialTags ?? "");
+    tags !== (initialTags ?? "") ||
+    maxClicks !== (initialMaxClicks != null ? String(initialMaxClicks) : "");
 
   const save = async () => {
     setStatus("saving");
@@ -45,6 +51,7 @@ export function LinkEditor({
           originalUrl: url,
           expirationDate: expiration || null,
           tags,
+          maxClicks: maxClicks ? Number(maxClicks) : null,
         }),
       });
       if (!response.ok) {
@@ -130,6 +137,27 @@ export function LinkEditor({
             placeholder="marketing, campaña-q1"
             onChange={(e) => {
               setTags(e.target.value);
+              setStatus("idle");
+            }}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label className="label" htmlFor="edit-max-clicks">
+            Límite de clics{" "}
+            <span className="font-normal text-gray-400">
+              (vacío = sin límite)
+            </span>
+          </label>
+          <input
+            id="edit-max-clicks"
+            type="number"
+            min={1}
+            value={maxClicks}
+            placeholder="Sin límite"
+            onChange={(e) => {
+              setMaxClicks(e.target.value);
               setStatus("idle");
             }}
             className="input"
