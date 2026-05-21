@@ -38,6 +38,11 @@ Un proyecto que demuestra arquitectura de sistemas y dominio del stack moderno d
 - **Rotación A/B** de varios destinos con seguimiento de variante
 - **Pausar y reactivar** enlaces sin eliminarlos
 
+**Cuenta y experiencia**
+- **Gestión de cuenta**: cambio de contraseña y de correo
+- Tema **claro / oscuro / sistema** con preferencia recordada
+- Estados de carga, página 404 propia y detección de URLs duplicadas
+
 **Plataforma**
 - **API REST pública** v1 autenticada con API keys
 - Páginas **link-in-bio** públicas (`/u/usuario`)
