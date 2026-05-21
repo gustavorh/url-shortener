@@ -81,6 +81,20 @@ curl -X POST https://tu-dominio/api/v1/links \
   -d '{"url":"https://ejemplo.com"}'
 ```
 
+## Observabilidad y operación
+
+- `GET /api/health` — estado del servicio (base de datos y caché); responde
+  `503` si la base de datos no está disponible.
+- `GET /api/metrics` — métricas en formato Prometheus (enlaces creados,
+  redirecciones por resultado, clics, y métricas de proceso de Node).
+
+Variables de entorno opcionales:
+
+- `REDIS_URL` — activa el caché de redirección y el rate limiting
+  distribuido. Sin ella, la app usa MySQL y límites en memoria.
+- `SAFE_BROWSING_API_KEY` — valida cada URL contra Google Safe Browsing
+  (malware/phishing) antes de acortarla.
+
 ## Despliegue
 
 Hay un `Dockerfile` multi-stage. Las migraciones se ejecutan manualmente

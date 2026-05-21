@@ -9,6 +9,7 @@ import { StatsCharts } from "./StatsCharts";
 import { LinkTargetsManager } from "./LinkTargetsManager";
 import { QrCustomizer } from "./QrCustomizer";
 import { LinkTitleEditor } from "./LinkTitleEditor";
+import { DeleteLinkButton } from "./DeleteLinkButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +27,8 @@ export default async function StatsPage({
 
   const url = await Url.findByPk(id, { raw: true });
   // Ownership check. Use notFound() rather than a 403 so the existence of
-  // another user's link is not revealed.
-  if (!url || url.userId !== session.user.id) {
+  // another user's link is not revealed. Soft-deleted links are also hidden.
+  if (!url || url.userId !== session.user.id || url.deletedAt) {
     notFound();
   }
 
@@ -43,12 +44,15 @@ export default async function StatsPage({
 
       <main className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0">
         <div className="max-w-4xl mx-auto">
-          <Link
-            href="/dashboard"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline"
-          >
-            ← Volver al panel
-          </Link>
+          <div className="flex items-center justify-between gap-4">
+            <Link
+              href="/dashboard"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:underline"
+            >
+              ← Volver al panel
+            </Link>
+            <DeleteLinkButton linkId={id} />
+          </div>
 
           <div className="mt-4 mb-8 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">

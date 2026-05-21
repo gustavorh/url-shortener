@@ -23,8 +23,8 @@ export async function GET(
 
   const { id } = await params;
   const link = await Url.findByPk(id, { raw: true });
-  // Hide existence of links owned by other users.
-  if (!link || link.userId !== userId) {
+  // Hide links owned by other users, and soft-deleted ones.
+  if (!link || link.userId !== userId || link.deletedAt) {
     return NextResponse.json(
       { error: "Enlace no encontrado" },
       { status: 404 }

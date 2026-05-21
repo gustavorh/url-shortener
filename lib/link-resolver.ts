@@ -23,7 +23,8 @@ export async function resolveLink(id: string): Promise<ResolvedLink | null> {
   }
 
   const record = await Url.findByPk(id, { raw: true });
-  if (!record) return null;
+  // Soft-deleted links behave as if they do not exist.
+  if (!record || record.deletedAt) return null;
 
   const targetRows = await LinkTarget.findAll({
     where: { urlId: id },

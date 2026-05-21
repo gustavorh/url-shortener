@@ -8,17 +8,19 @@ interface UrlAttributes {
   creationDate: Date;
   userId?: string | null;
   title?: string | null;
+  deletedAt?: Date | null;
 }
 
 interface UrlCreationAttributes
   extends Omit<
     UrlAttributes,
-    'creationDate' | 'expirationDate' | 'userId' | 'title'
+    'creationDate' | 'expirationDate' | 'userId' | 'title' | 'deletedAt'
   > {
   expirationDate?: Date | null;
   creationDate?: Date;
   userId?: string | null;
   title?: string | null;
+  deletedAt?: Date | null;
 }
 
 class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttributes {
@@ -28,6 +30,7 @@ class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttr
   public creationDate!: Date;
   public userId?: string | null;
   public title?: string | null;
+  public deletedAt?: Date | null;
 }
 
 Url.init(
@@ -56,6 +59,10 @@ Url.init(
     },
     title: {
       type: DataTypes.STRING(120),
+      allowNull: true,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
   },
