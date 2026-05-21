@@ -17,9 +17,10 @@ export interface LinkStats {
   topReferrers: LabeledCount[];
   byDevice: LabeledCount[];
   byBrowser: LabeledCount[];
+  byCountry: LabeledCount[];
 }
 
-type GroupableColumn = "referrer" | "deviceType" | "browser";
+type GroupableColumn = "referrer" | "deviceType" | "browser" | "country";
 
 /** Total clicks for a single link. */
 export async function getTotalClicks(urlId: string): Promise<number> {
@@ -72,14 +73,16 @@ async function getGroupedCounts(
 
 /** Full analytics bundle for a single link. */
 export async function getLinkStats(urlId: string): Promise<LinkStats> {
-  const [total, byDay, topReferrers, byDevice, byBrowser] = await Promise.all([
-    getTotalClicks(urlId),
-    getClicksByDay(urlId),
-    getGroupedCounts(urlId, "referrer", 8),
-    getGroupedCounts(urlId, "deviceType", 8),
-    getGroupedCounts(urlId, "browser", 8),
-  ]);
-  return { total, byDay, topReferrers, byDevice, byBrowser };
+  const [total, byDay, topReferrers, byDevice, byBrowser, byCountry] =
+    await Promise.all([
+      getTotalClicks(urlId),
+      getClicksByDay(urlId),
+      getGroupedCounts(urlId, "referrer", 8),
+      getGroupedCounts(urlId, "deviceType", 8),
+      getGroupedCounts(urlId, "browser", 8),
+      getGroupedCounts(urlId, "country", 8),
+    ]);
+  return { total, byDay, topReferrers, byDevice, byBrowser, byCountry };
 }
 
 /** Click counts keyed by urlId, for a set of links (dashboard listing). */

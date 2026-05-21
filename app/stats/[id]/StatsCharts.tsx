@@ -101,6 +101,10 @@ export function StatsCharts({ stats }: { stats: LinkStats }) {
         </ChartCard>
       </div>
 
+      <ChartCard title="Países">
+        <BreakdownChart data={stats.byCountry} />
+      </ChartCard>
+
       <ChartCard title="Principales orígenes (referrers)">
         {stats.topReferrers.length === 0 ? (
           <EmptyState />
