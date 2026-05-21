@@ -123,6 +123,13 @@ export default async function DashboardPage({
               <Link href="/dashboard/import" className="btn-secondary">
                 Importar URLs
               </Link>
+              <a
+                href="/api/links/export-all"
+                download
+                className="btn-secondary"
+              >
+                Exportar CSV
+              </a>
             </div>
           </div>
 
