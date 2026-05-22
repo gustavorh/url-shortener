@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { Url } from "@/models";
 import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
+import { faviconUrl } from "@/lib/favicon";
 import { AppSidebar } from "../components/AppSidebar";
 import { CopyButton } from "../components/CopyButton";
 import { DashboardControls } from "./DashboardControls";
@@ -219,10 +220,22 @@ export default async function DashboardPage({
                               href={url.originalUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block truncate hover:underline"
+                              className="flex items-center gap-2 truncate hover:underline"
                               title={url.originalUrl}
                             >
-                              {url.title || url.originalUrl}
+                              {faviconUrl(url.originalUrl) && (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img
+                                  src={faviconUrl(url.originalUrl)!}
+                                  alt=""
+                                  width={16}
+                                  height={16}
+                                  className="shrink-0 rounded-sm"
+                                />
+                              )}
+                              <span className="truncate">
+                                {url.title || url.originalUrl}
+                              </span>
                             </a>
                             {tags.length > 0 && (
                               <div className="mt-1 flex flex-wrap gap-1">
