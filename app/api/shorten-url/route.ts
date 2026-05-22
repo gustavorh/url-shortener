@@ -18,6 +18,7 @@ const bodySchema = z.object({
   customAlias: z.string().optional(),
   password: z.string().optional(),
   maxClicks: z.number().int().positive().optional(),
+  activeFrom: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -51,6 +52,9 @@ export async function POST(request: NextRequest) {
         : null,
       password: parsed.data.password,
       maxClicks: parsed.data.maxClicks,
+      activeFrom: parsed.data.activeFrom
+        ? new Date(parsed.data.activeFrom)
+        : null,
       userId: await getCurrentUserId(),
     });
 

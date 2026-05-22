@@ -28,6 +28,8 @@ export interface CreateLinkInput {
   password?: string | null;
   /** Optional click limit; the link stops resolving once reached. */
   maxClicks?: number | null;
+  /** Optional scheduled activation; the link is inactive until then. */
+  activeFrom?: Date | null;
 }
 
 export interface CreatedLink {
@@ -116,6 +118,7 @@ export async function createShortLink(
     userId: input.userId ?? null,
     passwordHash,
     maxClicks: input.maxClicks ?? null,
+    activeFrom: input.activeFrom ?? null,
   });
   metrics.linksCreated.inc();
 
