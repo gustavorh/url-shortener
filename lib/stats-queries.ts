@@ -1,5 +1,13 @@
-import { fn, col } from "sequelize";
+import { fn, col, Op, type WhereOptions } from "sequelize";
 import { Click, Url } from "@/models";
+
+// Builds a click WHERE clause for one link, optionally limited to clicks
+// at or after `since`.
+function clickWhere(urlId: string, since?: Date): WhereOptions {
+  return since
+    ? { urlId, timestamp: { [Op.gte]: since } }
+    : { urlId };
+}
 
 export interface DailyCount {
   date: string;
@@ -29,14 +37,15 @@ export interface LinkStats {
 
 /** Clicks bucketed by hour of day (0-23), all 24 buckets present. */
 export async function getClicksByHour(
-  urlId: string
+  urlId: string,
+  since?: Date
 ): Promise<HourlyCount[]> {
   const rows = (await Click.findAll({
     attributes: [
       [fn("HOUR", col("timestamp")), "hour"],
       [fn("COUNT", col("id")), "count"],
     ],
-    where: { urlId },
+    where: clickWhere(urlId, since),
     group: [fn("HOUR", col("timestamp"))],
     raw: true,
   })) as unknown as { hour: number; count: number }[];
@@ -59,18 +68,24 @@ type GroupableColumn =
   | "targetUrl";
 
 /** Total clicks for a single link. */
-export async function getTotalClicks(urlId: string): Promise<number> {
-  return Click.count({ where: { urlId } });
+export async function getTotalClicks(
+  urlId: string,
+  since?: Date
+): Promise<number> {
+  return Click.count({ where: clickWhere(urlId, since) });
 }
 
 /** Clicks per calendar day for a link, oldest first. */
-export async function getClicksByDay(urlId: string): Promise<DailyCount[]> {
+export async function getClicksByDay(
+  urlId: string,
+  since?: Date
+): Promise<DailyCount[]> {
   const rows = (await Click.findAll({
     attributes: [
       [fn("DATE", col("timestamp")), "date"],
       [fn("COUNT", col("id")), "count"],
     ],
-    where: { urlId },
+    where: clickWhere(urlId, since),
     group: [fn("DATE", col("timestamp"))],
     order: [[fn("DATE", col("timestamp")), "ASC"]],
     raw: true,
@@ -86,11 +101,12 @@ export async function getClicksByDay(urlId: string): Promise<DailyCount[]> {
 async function getGroupedCounts(
   urlId: string,
   column: GroupableColumn,
-  limit: number
+  limit: number,
+  since?: Date
 ): Promise<LabeledCount[]> {
   const rows = (await Click.findAll({
     attributes: [column, [fn("COUNT", col("id")), "count"]],
-    where: { urlId },
+    where: clickWhere(urlId, since),
     group: [column],
     order: [[fn("COUNT", col("id")), "DESC"]],
     limit,
@@ -107,8 +123,11 @@ async function getGroupedCounts(
   });
 }
 
-/** Full analytics bundle for a single link. */
-export async function getLinkStats(urlId: string): Promise<LinkStats> {
+/** Full analytics bundle for a single link, optionally since a date. */
+export async function getLinkStats(
+  urlId: string,
+  since?: Date
+): Promise<LinkStats> {
   const [
     total,
     byDay,
@@ -119,14 +138,14 @@ export async function getLinkStats(urlId: string): Promise<LinkStats> {
     byCountry,
     byTarget,
   ] = await Promise.all([
-    getTotalClicks(urlId),
-    getClicksByDay(urlId),
-    getClicksByHour(urlId),
-    getGroupedCounts(urlId, "referrerDomain", 8),
-    getGroupedCounts(urlId, "deviceType", 8),
-    getGroupedCounts(urlId, "browser", 8),
-    getGroupedCounts(urlId, "country", 8),
-    getGroupedCounts(urlId, "targetUrl", 8),
+    getTotalClicks(urlId, since),
+    getClicksByDay(urlId, since),
+    getClicksByHour(urlId, since),
+    getGroupedCounts(urlId, "referrerDomain", 8, since),
+    getGroupedCounts(urlId, "deviceType", 8, since),
+    getGroupedCounts(urlId, "browser", 8, since),
+    getGroupedCounts(urlId, "country", 8, since),
+    getGroupedCounts(urlId, "targetUrl", 8, since),
   ]);
   return {
     total,
