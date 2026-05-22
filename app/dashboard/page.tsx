@@ -113,6 +113,16 @@ export default async function DashboardPage({
   const avgClicks =
     totals.links > 0 ? Math.round(totals.clicks / totals.links) : 0;
 
+  // Distinct tags across all the user's links, for the filter cloud.
+  const tagRows = await Url.findAll({
+    where: { userId: session.user.id, deletedAt: null },
+    attributes: ["tags"],
+    raw: true,
+  });
+  const allTags = [
+    ...new Set(tagRows.flatMap((row) => splitTags(row.tags))),
+  ].sort();
+
   const pageHref = (target: number) => {
     const qs = new URLSearchParams();
     if (query) qs.set("q", query);
@@ -176,6 +186,24 @@ export default async function DashboardPage({
           </div>
 
           <DashboardControls query={query} sort={sort} tag={tag} />
+
+          {allTags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {allTags.map((t) => (
+                <Link
+                  key={t}
+                  href={`/dashboard?tag=${encodeURIComponent(t)}`}
+                  className={
+                    t === tag
+                      ? "px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-600 text-white"
+                      : "px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-500/15 dark:hover:text-indigo-300"
+                  }
+                >
+                  #{t}
+                </Link>
+              ))}
+            </div>
+          )}
 
           {tag && (
             <div className="mt-3 flex items-center gap-2 text-sm">
