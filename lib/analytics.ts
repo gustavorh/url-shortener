@@ -3,6 +3,7 @@ import { Click } from "@/models";
 import { resolveClientIp } from "./request-ip";
 import { resolveCountry } from "./geo";
 import { anonymizeIp } from "./anonymize-ip";
+import { referrerDomain } from "./referrer";
 import { metrics } from "./metrics";
 
 /**
@@ -20,12 +21,14 @@ export async function recordClick(
     // Resolve the country from the real IP, then store only an anonymized IP.
     const rawIp = resolveClientIp(headers);
     const country = resolveCountry(headers, rawIp);
+    const referrer = headers.get("referer") || null;
 
     await Click.create({
       urlId,
       ip: anonymizeIp(rawIp),
       userAgent: userAgent || null,
-      referrer: headers.get("referer") || null,
+      referrer,
+      referrerDomain: referrerDomain(referrer),
       country,
       // ua-parser-js leaves device.type empty for desktops.
       deviceType: parsed.device.type || "desktop",
