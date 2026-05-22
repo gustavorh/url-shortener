@@ -13,12 +13,21 @@ import { DeleteLinkButton } from "./DeleteLinkButton";
 
 export const dynamic = "force-dynamic";
 
+const PERIODS = [
+  { key: "7d", label: "7 días", days: 7 },
+  { key: "30d", label: "30 días", days: 30 },
+  { key: "all", label: "Todo", days: 0 },
+] as const;
+
 export default async function StatsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ period?: string }>;
 }) {
   const { id } = await params;
+  const { period: periodParam } = await searchParams;
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -32,7 +41,14 @@ export default async function StatsPage({
     notFound();
   }
 
-  const stats = await getLinkStats(id);
+  const period =
+    PERIODS.find((p) => p.key === periodParam) ?? PERIODS[2];
+  const since =
+    period.days > 0
+      ? new Date(Date.now() - period.days * 24 * 60 * 60 * 1000)
+      : undefined;
+
+  const stats = await getLinkStats(id, since);
   const recentClicks = await getRecentClicks(id);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const isExpired = url.expirationDate
@@ -134,6 +150,25 @@ export default async function StatsPage({
             />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
+          </div>
+
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-sm text-gray-500 dark:text-gray-400 mr-1">
+              Periodo:
+            </span>
+            {PERIODS.map((p) => (
+              <Link
+                key={p.key}
+                href={`/stats/${id}?period=${p.key}`}
+                className={
+                  p.key === period.key
+                    ? "px-3 py-1 rounded-full text-sm font-medium bg-indigo-600 text-white"
+                    : "px-3 py-1 rounded-full text-sm font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }
+              >
+                {p.label}
+              </Link>
+            ))}
           </div>
 
           <StatsCharts stats={stats} />
