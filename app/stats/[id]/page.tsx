@@ -80,6 +80,11 @@ export default async function StatsPage({
                 >
                   → {url.originalUrl}
                 </p>
+                {url.description && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {url.description}
+                  </p>
+                )}
                 <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
                   Creado el{" "}
                   {format(new Date(url.creationDate), "yyyy-MM-dd HH:mm")}

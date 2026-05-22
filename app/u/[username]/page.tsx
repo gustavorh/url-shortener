@@ -78,9 +78,16 @@ export default async function PublicProfilePage({
                 href={`${baseUrl}/${link.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="card block p-4 text-center font-medium text-gray-900 dark:text-white hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition"
+                className="card block p-4 text-center text-gray-900 dark:text-white hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition"
               >
-                {link.title || link.originalUrl}
+                <span className="font-medium">
+                  {link.title || link.originalUrl}
+                </span>
+                {link.description && (
+                  <span className="mt-0.5 block text-sm text-gray-500 dark:text-gray-400">
+                    {link.description}
+                  </span>
+                )}
               </a>
             ))}
           </div>
