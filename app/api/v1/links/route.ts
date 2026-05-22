@@ -2,6 +2,7 @@
 // Authenticated with an API key: `Authorization: Bearer crtl_...`
 
 import { NextRequest, NextResponse } from "next/server";
+import { Op, type WhereOptions } from "sequelize";
 import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { createShortLink, LinkCreationError } from "@/lib/link-service";
@@ -98,8 +99,25 @@ export async function GET(request: NextRequest) {
   );
   const offset = Math.max(Number(searchParams.get("offset")) || 0, 0);
 
+  const where: WhereOptions = { userId, deletedAt: null };
+  const search = (searchParams.get("search") ?? "").trim();
+  if (search) {
+    const term = `%${search}%`;
+    Object.assign(where, {
+      [Op.or]: [
+        { id: { [Op.like]: term } },
+        { originalUrl: { [Op.like]: term } },
+        { title: { [Op.like]: term } },
+      ],
+    });
+  }
+  const tag = (searchParams.get("tag") ?? "").trim().toLowerCase();
+  if (tag) {
+    Object.assign(where, { tags: { [Op.like]: `%${tag}%` } });
+  }
+
   const { rows, count } = await Url.findAndCountAll({
-    where: { userId, deletedAt: null },
+    where,
     order: [["creationDate", "DESC"]],
     limit,
     offset,
