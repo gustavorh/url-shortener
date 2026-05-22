@@ -12,6 +12,7 @@ interface LinkEditorProps {
   initialMaxClicks: number | null;
   initialDisabled: boolean;
   initialActiveFrom: string | null;
+  initialDescription: string | null;
 }
 
 // Edits a link's title, destination, schedule, tags and state.
@@ -24,10 +25,12 @@ export function LinkEditor({
   initialMaxClicks,
   initialDisabled,
   initialActiveFrom,
+  initialDescription,
 }: LinkEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle ?? "");
   const [url, setUrl] = useState(initialUrl);
+  const [description, setDescription] = useState(initialDescription ?? "");
   const [expiration, setExpiration] = useState(initialExpiration ?? "");
   const [activeFrom, setActiveFrom] = useState(initialActiveFrom ?? "");
   const [tags, setTags] = useState(initialTags ?? "");
@@ -41,6 +44,7 @@ export function LinkEditor({
   const dirty =
     title !== (initialTitle ?? "") ||
     url !== initialUrl ||
+    description !== (initialDescription ?? "") ||
     expiration !== (initialExpiration ?? "") ||
     activeFrom !== (initialActiveFrom ?? "") ||
     tags !== (initialTags ?? "") ||
@@ -57,6 +61,7 @@ export function LinkEditor({
         body: JSON.stringify({
           title,
           originalUrl: url,
+          description,
           expirationDate: expiration || null,
           activeFrom: activeFrom || null,
           tags,
@@ -94,6 +99,24 @@ export function LinkEditor({
             placeholder="Opcional"
             onChange={(e) => {
               setTitle(e.target.value);
+              setStatus("idle");
+            }}
+            className="input"
+          />
+        </div>
+        <div>
+          <label className="label" htmlFor="edit-description">
+            Descripción{" "}
+            <span className="font-normal text-gray-400">(opcional)</span>
+          </label>
+          <textarea
+            id="edit-description"
+            rows={2}
+            maxLength={280}
+            value={description}
+            placeholder="Breve descripción visible en tu link-in-bio"
+            onChange={(e) => {
+              setDescription(e.target.value);
               setStatus("idle");
             }}
             className="input"

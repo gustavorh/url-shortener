@@ -125,6 +125,7 @@ export default async function StatsPage({
                   ? format(new Date(url.activeFrom), "yyyy-MM-dd'T'HH:mm")
                   : null
               }
+              initialDescription={url.description ?? null}
             />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
