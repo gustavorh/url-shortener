@@ -92,6 +92,22 @@ export function StatsCharts({ stats }: { stats: LinkStats }) {
         )}
       </ChartCard>
 
+      <ChartCard title="Clics por hora del día">
+        {stats.total === 0 ? (
+          <EmptyState />
+        ) : (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={stats.byHour} margin={{ left: 0, right: 12 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" fontSize={12} interval={1} />
+              <YAxis allowDecimals={false} fontSize={12} />
+              <Tooltip />
+              <Bar dataKey="count" name="Clics" fill="#2563eb" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </ChartCard>
+
       <div className="grid md:grid-cols-2 gap-6">
         <ChartCard title="Dispositivos">
           <BreakdownChart data={stats.byDevice} />
