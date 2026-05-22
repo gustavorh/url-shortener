@@ -5,6 +5,7 @@ import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { buildShortUrl } from "@/lib/short-url";
 import { getTotalClicks } from "@/lib/stats-queries";
+import { splitTags } from "@/lib/tags";
 
 export const runtime = "nodejs";
 
@@ -35,7 +36,10 @@ export async function GET(
     id: link.id,
     shortUrl: buildShortUrl(request, link.id),
     originalUrl: link.originalUrl,
+    title: link.title ?? null,
+    tags: splitTags(link.tags),
     clicks: await getTotalClicks(link.id),
+    disabled: !!link.disabled,
     expirationDate: link.expirationDate ?? null,
     creationDate: link.creationDate,
   });

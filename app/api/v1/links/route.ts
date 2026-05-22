@@ -9,6 +9,7 @@ import { createShortLink, LinkCreationError } from "@/lib/link-service";
 import { consumeShortenLimit } from "@/lib/rate-limit";
 import { buildShortUrl } from "@/lib/short-url";
 import { getClickCounts } from "@/lib/stats-queries";
+import { splitTags } from "@/lib/tags";
 
 export const runtime = "nodejs";
 
@@ -133,7 +134,10 @@ export async function GET(request: NextRequest) {
       id: row.id,
       shortUrl: buildShortUrl(request, row.id),
       originalUrl: row.originalUrl,
+      title: row.title ?? null,
+      tags: splitTags(row.tags),
       clicks: clickCounts.get(row.id) ?? 0,
+      disabled: !!row.disabled,
       expirationDate: row.expirationDate ?? null,
       creationDate: row.creationDate,
     })),
