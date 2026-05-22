@@ -52,6 +52,7 @@ export async function getClicksByHour(
 
 type GroupableColumn =
   | "referrer"
+  | "referrerDomain"
   | "deviceType"
   | "browser"
   | "country"
@@ -121,7 +122,7 @@ export async function getLinkStats(urlId: string): Promise<LinkStats> {
     getTotalClicks(urlId),
     getClicksByDay(urlId),
     getClicksByHour(urlId),
-    getGroupedCounts(urlId, "referrer", 8),
+    getGroupedCounts(urlId, "referrerDomain", 8),
     getGroupedCounts(urlId, "deviceType", 8),
     getGroupedCounts(urlId, "browser", 8),
     getGroupedCounts(urlId, "country", 8),
