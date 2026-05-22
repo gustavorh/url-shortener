@@ -348,12 +348,22 @@ export default async function DashboardPage({
                               : "—"}
                           </td>
                           <td className="p-4">
-                            <Link
-                              href={`/stats/${url.id}`}
-                              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                            >
-                              Estadísticas
-                            </Link>
+                            <div className="flex items-center gap-3">
+                              <Link
+                                href={`/stats/${url.id}`}
+                                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                              >
+                                Estadísticas
+                              </Link>
+                              <a
+                                href={`/api/qr/${url.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-500 dark:text-gray-400 hover:underline"
+                              >
+                                QR
+                              </a>
+                            </div>
                           </td>
                         </tr>
                       );
