@@ -234,7 +234,11 @@ export default async function DashboardPage({
                   ? "Sin resultados para este filtro."
                   : "Aún no tienes enlaces. Crea el primero desde el inicio."}
               </p>
-              {!query && !tag && (
+              {query || tag ? (
+                <Link href="/dashboard" className="btn-secondary">
+                  Limpiar filtros
+                </Link>
+              ) : (
                 <Link href="/" className="btn-primary">
                   Acortar una URL
                 </Link>
