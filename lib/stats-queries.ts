@@ -32,6 +32,7 @@ export interface LinkStats {
   byDevice: LabeledCount[];
   byBrowser: LabeledCount[];
   byCountry: LabeledCount[];
+  byOs: LabeledCount[];
   byTarget: LabeledCount[];
 }
 
@@ -64,6 +65,7 @@ type GroupableColumn =
   | "referrerDomain"
   | "deviceType"
   | "browser"
+  | "os"
   | "country"
   | "targetUrl";
 
@@ -136,6 +138,7 @@ export async function getLinkStats(
     byDevice,
     byBrowser,
     byCountry,
+    byOs,
     byTarget,
   ] = await Promise.all([
     getTotalClicks(urlId, since),
@@ -145,6 +148,7 @@ export async function getLinkStats(
     getGroupedCounts(urlId, "deviceType", 8, since),
     getGroupedCounts(urlId, "browser", 8, since),
     getGroupedCounts(urlId, "country", 8, since),
+    getGroupedCounts(urlId, "os", 8, since),
     getGroupedCounts(urlId, "targetUrl", 8, since),
   ]);
   return {
@@ -155,6 +159,7 @@ export async function getLinkStats(
     byDevice,
     byBrowser,
     byCountry,
+    byOs,
     byTarget,
   };
 }
