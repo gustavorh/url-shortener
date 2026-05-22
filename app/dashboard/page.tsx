@@ -7,6 +7,7 @@ import { Url } from "@/models";
 import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
 import { faviconUrl } from "@/lib/favicon";
+import { relativeTime } from "@/lib/format-date";
 import { AppSidebar } from "../components/AppSidebar";
 import { CopyButton } from "../components/CopyButton";
 import { DashboardControls } from "./DashboardControls";
@@ -254,11 +255,14 @@ export default async function DashboardPage({
                           <td className="p-4 text-right font-semibold text-gray-900 dark:text-white">
                             {clickCounts.get(url.id) ?? 0}
                           </td>
-                          <td className="p-4 text-gray-500 dark:text-gray-400">
-                            {format(
+                          <td
+                            className="p-4 text-gray-500 dark:text-gray-400"
+                            title={format(
                               new Date(url.creationDate),
                               "yyyy-MM-dd HH:mm"
                             )}
+                          >
+                            {relativeTime(url.creationDate)}
                           </td>
                           <td className="p-4 text-gray-500 dark:text-gray-400">
                             {url.expirationDate
