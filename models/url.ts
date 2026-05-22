@@ -13,6 +13,7 @@ interface UrlAttributes {
   maxClicks?: number | null;
   disabled?: boolean;
   activeFrom?: Date | null;
+  description?: string | null;
   deletedAt?: Date | null;
 }
 
@@ -28,6 +29,7 @@ interface UrlCreationAttributes
     | 'maxClicks'
     | 'disabled'
     | 'activeFrom'
+    | 'description'
     | 'deletedAt'
   > {
   expirationDate?: Date | null;
@@ -39,6 +41,7 @@ interface UrlCreationAttributes
   maxClicks?: number | null;
   disabled?: boolean;
   activeFrom?: Date | null;
+  description?: string | null;
   deletedAt?: Date | null;
 }
 
@@ -54,6 +57,7 @@ class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttr
   public maxClicks?: number | null;
   public disabled?: boolean;
   public activeFrom?: Date | null;
+  public description?: string | null;
   public deletedAt?: Date | null;
 }
 
@@ -104,6 +108,10 @@ Url.init(
     },
     activeFrom: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    description: {
+      type: DataTypes.STRING(280),
       allowNull: true,
     },
     deletedAt: {
