@@ -6,6 +6,7 @@ import { Url } from "@/models";
 import { getLinkStats, getRecentClicks } from "@/lib/stats-queries";
 import { countryFlag } from "@/lib/country";
 import { AppSidebar } from "../../components/AppSidebar";
+import { CopyButton } from "../../components/CopyButton";
 import { StatsCharts } from "./StatsCharts";
 import { LinkTargetsManager } from "./LinkTargetsManager";
 import { QrCustomizer } from "./QrCustomizer";
@@ -132,6 +133,17 @@ export default async function StatsPage({
               </div>
             </div>
 
+            {stats.total === 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-gray-600 dark:text-gray-300">
+                  Aún sin clics — comparte tu enlace:
+                </span>
+                <code className="text-indigo-600 dark:text-indigo-400">
+                  {baseUrl}/{url.id}
+                </code>
+                <CopyButton value={`${baseUrl}/${url.id}`} />
+              </div>
+            )}
           </div>
 
           <div className="space-y-6 mb-6">
