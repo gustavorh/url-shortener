@@ -57,12 +57,22 @@ export default function Home() {
   const [expirationDate, setExpirationDate] = useState("");
   const [showUtm, setShowUtm] = useState(false);
   const [utm, setUtm] = useState<UtmParams>(EMPTY_UTM);
+  const [stats, setStats] = useState<{ links: number; clicks: number } | null>(
+    null
+  );
 
   useEffect(() => {
     if (hasExpiration) {
       setExpirationDate(getDefaultExpirationDate());
     }
   }, [hasExpiration]);
+
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -171,6 +181,18 @@ export default function Home() {
               Crea links cortos, personalízalos con tu propio alias y mide cada
               clic.
             </p>
+            {stats && stats.links > 0 && (
+              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                <strong className="text-gray-700 dark:text-gray-300">
+                  {stats.links.toLocaleString()}
+                </strong>{" "}
+                enlaces acortados ·{" "}
+                <strong className="text-gray-700 dark:text-gray-300">
+                  {stats.clicks.toLocaleString()}
+                </strong>{" "}
+                clics servidos
+              </p>
+            )}
           </div>
 
           {/* Shortener form */}
