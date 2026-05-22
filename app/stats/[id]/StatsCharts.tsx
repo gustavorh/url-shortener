@@ -115,6 +115,9 @@ export function StatsCharts({ stats }: { stats: LinkStats }) {
         <ChartCard title="Navegadores">
           <BreakdownChart data={stats.byBrowser} />
         </ChartCard>
+        <ChartCard title="Sistemas operativos">
+          <BreakdownChart data={stats.byOs} />
+        </ChartCard>
       </div>
 
       <ChartCard title="Países">
