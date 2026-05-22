@@ -11,14 +11,43 @@ export interface LabeledCount {
   count: number;
 }
 
+export interface HourlyCount {
+  hour: number;
+  count: number;
+}
+
 export interface LinkStats {
   total: number;
   byDay: DailyCount[];
+  byHour: HourlyCount[];
   topReferrers: LabeledCount[];
   byDevice: LabeledCount[];
   byBrowser: LabeledCount[];
   byCountry: LabeledCount[];
   byTarget: LabeledCount[];
+}
+
+/** Clicks bucketed by hour of day (0-23), all 24 buckets present. */
+export async function getClicksByHour(
+  urlId: string
+): Promise<HourlyCount[]> {
+  const rows = (await Click.findAll({
+    attributes: [
+      [fn("HOUR", col("timestamp")), "hour"],
+      [fn("COUNT", col("id")), "count"],
+    ],
+    where: { urlId },
+    group: [fn("HOUR", col("timestamp"))],
+    raw: true,
+  })) as unknown as { hour: number; count: number }[];
+
+  const counts = new Map(
+    rows.map((row) => [Number(row.hour), Number(row.count)])
+  );
+  return Array.from({ length: 24 }, (_, hour) => ({
+    hour,
+    count: counts.get(hour) ?? 0,
+  }));
 }
 
 type GroupableColumn =
@@ -79,19 +108,29 @@ async function getGroupedCounts(
 
 /** Full analytics bundle for a single link. */
 export async function getLinkStats(urlId: string): Promise<LinkStats> {
-  const [total, byDay, topReferrers, byDevice, byBrowser, byCountry, byTarget] =
-    await Promise.all([
-      getTotalClicks(urlId),
-      getClicksByDay(urlId),
-      getGroupedCounts(urlId, "referrer", 8),
-      getGroupedCounts(urlId, "deviceType", 8),
-      getGroupedCounts(urlId, "browser", 8),
-      getGroupedCounts(urlId, "country", 8),
-      getGroupedCounts(urlId, "targetUrl", 8),
-    ]);
+  const [
+    total,
+    byDay,
+    byHour,
+    topReferrers,
+    byDevice,
+    byBrowser,
+    byCountry,
+    byTarget,
+  ] = await Promise.all([
+    getTotalClicks(urlId),
+    getClicksByDay(urlId),
+    getClicksByHour(urlId),
+    getGroupedCounts(urlId, "referrer", 8),
+    getGroupedCounts(urlId, "deviceType", 8),
+    getGroupedCounts(urlId, "browser", 8),
+    getGroupedCounts(urlId, "country", 8),
+    getGroupedCounts(urlId, "targetUrl", 8),
+  ]);
   return {
     total,
     byDay,
+    byHour,
     topReferrers,
     byDevice,
     byBrowser,
