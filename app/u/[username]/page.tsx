@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Op } from "sequelize";
 import { User, Url } from "@/models";
+import { faviconUrl } from "@/lib/favicon";
 
 export const dynamic = "force-dynamic";
 
@@ -80,7 +81,17 @@ export default async function PublicProfilePage({
                 rel="noopener noreferrer"
                 className="card block p-4 text-center text-gray-900 dark:text-white hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition"
               >
-                <span className="font-medium">
+                <span className="flex items-center justify-center gap-2 font-medium">
+                  {faviconUrl(link.originalUrl) && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={faviconUrl(link.originalUrl)!}
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="rounded-sm"
+                    />
+                  )}
                   {link.title || link.originalUrl}
                 </span>
                 {link.description && (
