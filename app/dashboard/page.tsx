@@ -133,6 +133,14 @@ export default async function DashboardPage({
     return s ? `/dashboard?${s}` : "/dashboard";
   };
 
+  // Export honors the active search/tag filter.
+  const exportQs = new URLSearchParams();
+  if (query) exportQs.set("q", query);
+  if (tag) exportQs.set("tag", tag);
+  const exportHref = exportQs.toString()
+    ? `/api/links/export-all?${exportQs}`
+    : "/api/links/export-all";
+
   return (
     <div className="flex min-h-screen">
       <AppSidebar active="dashboard" />
@@ -159,7 +167,7 @@ export default async function DashboardPage({
                 Importar URLs
               </Link>
               <a
-                href="/api/links/export-all"
+                href={exportHref}
                 download
                 className="btn-secondary"
               >

@@ -1,6 +1,8 @@
-// GET /api/links/export-all — downloads all of the user's links as CSV.
+// GET /api/links/export-all — downloads the user's links as CSV. Honors the
+// same ?q= and ?tag= filters as the dashboard.
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { Op, type WhereOptions } from "sequelize";
 import { Url } from "@/models";
 import { getCurrentUserId } from "@/lib/auth-helpers";
 import { getClickCounts } from "@/lib/stats-queries";
@@ -19,14 +21,33 @@ const HEADER = [
   "disabled",
 ];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const userId = await getCurrentUserId();
   if (!userId) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  const { searchParams } = request.nextUrl;
+  const where: WhereOptions = { userId, deletedAt: null };
+
+  const query = (searchParams.get("q") ?? "").trim();
+  if (query) {
+    const term = `%${query}%`;
+    Object.assign(where, {
+      [Op.or]: [
+        { id: { [Op.like]: term } },
+        { originalUrl: { [Op.like]: term } },
+        { title: { [Op.like]: term } },
+      ],
+    });
+  }
+  const tag = (searchParams.get("tag") ?? "").trim().toLowerCase();
+  if (tag) {
+    Object.assign(where, { tags: { [Op.like]: `%${tag}%` } });
+  }
+
   const links = await Url.findAll({
-    where: { userId, deletedAt: null },
+    where,
     order: [["creationDate", "DESC"]],
     raw: true,
   });
