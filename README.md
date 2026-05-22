@@ -122,8 +122,9 @@ Genera una clave en **Mi panel → Claves de API** y autentícate con
 
 | Método | Endpoint | Descripción |
 | --- | --- | --- |
+| `GET` | `/api/v1/me` | Tu cuenta y totales |
 | `POST` | `/api/v1/links` | Crea un enlace |
-| `GET` | `/api/v1/links` | Lista tus enlaces (`?limit=&offset=`) |
+| `GET` | `/api/v1/links` | Lista tus enlaces (`?limit=&offset=&search=&tag=`) |
 | `GET` | `/api/v1/links/:id` | Detalle de un enlace |
 | `GET` | `/api/v1/links/:id/stats` | Analítica de un enlace |
 
