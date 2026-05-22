@@ -142,6 +142,8 @@ export default function ApiKeysPage() {
                   <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                     <th className="p-4 font-medium">Nombre</th>
                     <th className="p-4 font-medium">Prefijo</th>
+                    <th className="p-4 font-medium">Creada</th>
+                    <th className="p-4 font-medium">Último uso</th>
                     <th className="p-4 font-medium">Estado</th>
                     <th className="p-4 font-medium"></th>
                   </tr>
@@ -159,6 +161,14 @@ export default function ApiKeysPage() {
                         <code className="text-gray-600 dark:text-gray-400">
                           {key.prefix}…
                         </code>
+                      </td>
+                      <td className="p-4 text-gray-500 dark:text-gray-400">
+                        {new Date(key.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-4 text-gray-500 dark:text-gray-400">
+                        {key.lastUsedAt
+                          ? new Date(key.lastUsedAt).toLocaleString()
+                          : "Nunca"}
                       </td>
                       <td className="p-4">
                         {key.revokedAt ? (
