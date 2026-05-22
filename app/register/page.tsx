@@ -4,6 +4,14 @@ import { useState, FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { scorePassword } from "@/lib/password-strength";
+
+const STRENGTH_COLOR: Record<number, string> = {
+  1: "bg-red-500",
+  2: "bg-amber-500",
+  3: "bg-lime-500",
+  4: "bg-emerald-500",
+};
 
 function AuthBrand() {
   return (
@@ -122,7 +130,30 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="input"
             />
-            <p className="field-hint">Mínimo 8 caracteres</p>
+            {password ? (
+              <div className="mt-2">
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3].map((i) => {
+                    const { score } = scorePassword(password);
+                    return (
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full ${
+                          i < score
+                            ? STRENGTH_COLOR[score]
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Seguridad: {scorePassword(password).label}
+                </p>
+              </div>
+            ) : (
+              <p className="field-hint">Mínimo 8 caracteres</p>
+            )}
           </div>
 
           {error && (
