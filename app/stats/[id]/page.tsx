@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { auth } from "@/auth";
 import { Url } from "@/models";
 import { getLinkStats, getRecentClicks } from "@/lib/stats-queries";
+import { countryFlag } from "@/lib/country";
 import { AppSidebar } from "../../components/AppSidebar";
 import { StatsCharts } from "./StatsCharts";
 import { LinkTargetsManager } from "./LinkTargetsManager";
@@ -49,6 +50,11 @@ export default async function StatsPage({
       : undefined;
 
   const stats = await getLinkStats(id, since);
+  // Prefix country labels with their flag emoji for the chart.
+  stats.byCountry = stats.byCountry.map((entry) => ({
+    label: `${countryFlag(entry.label)} ${entry.label}`.trim(),
+    count: entry.count,
+  }));
   const recentClicks = await getRecentClicks(id);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const isExpired = url.expirationDate
@@ -206,7 +212,9 @@ export default async function StatsPage({
                           )}
                         </td>
                         <td className="px-5 py-2 text-gray-600 dark:text-gray-300">
-                          {click.country ?? "—"}
+                          {click.country
+                            ? `${countryFlag(click.country)} ${click.country}`
+                            : "—"}
                         </td>
                         <td className="px-5 py-2 text-gray-600 dark:text-gray-300">
                           {click.deviceType ?? "—"}
