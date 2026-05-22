@@ -8,9 +8,32 @@ import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
 import { faviconUrl } from "@/lib/favicon";
 import { relativeTime } from "@/lib/format-date";
+import { linkStatus, type LinkStatus } from "@/lib/link-status";
 import { AppSidebar } from "../components/AppSidebar";
 import { CopyButton } from "../components/CopyButton";
 import { DashboardControls } from "./DashboardControls";
+
+const STATUS_BADGE: Record<LinkStatus, { label: string; className: string }> = {
+  active: { label: "", className: "" },
+  disabled: {
+    label: "Pausado",
+    className:
+      "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  },
+  scheduled: {
+    label: "Programado",
+    className:
+      "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  },
+  expired: {
+    label: "Expirado",
+    className: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400",
+  },
+  limit: {
+    label: "Límite",
+    className: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+  },
+};
 
 // Always reflect the latest links/clicks.
 export const dynamic = "force-dynamic";
@@ -198,6 +221,11 @@ export default async function DashboardPage({
                   <tbody>
                     {urls.map((url) => {
                       const tags = splitTags(url.tags);
+                      const status = linkStatus(
+                        url,
+                        clickCounts.get(url.id) ?? 0
+                      );
+                      const badge = STATUS_BADGE[status];
                       return (
                         <tr
                           key={url.id}
@@ -214,6 +242,13 @@ export default async function DashboardPage({
                                 /{url.id}
                               </a>
                               <CopyButton value={`${baseUrl}/${url.id}`} />
+                              {badge.label && (
+                                <span
+                                  className={`px-1.5 py-0.5 rounded text-xs font-medium ${badge.className}`}
+                                >
+                                  {badge.label}
+                                </span>
+                              )}
                             </div>
                           </td>
                           <td className="p-4 max-w-xs text-gray-600 dark:text-gray-300">
