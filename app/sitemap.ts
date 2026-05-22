@@ -1,0 +1,23 @@
+import type { MetadataRoute } from "next";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cortala.com";
+
+// Lists the public, indexable pages for search engines.
+export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
+  return [
+    { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    {
+      url: `${baseUrl}/login`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/register`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+  ];
+}

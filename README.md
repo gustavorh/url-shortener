@@ -19,19 +19,29 @@ Un proyecto que demuestra arquitectura de sistemas y dominio del stack moderno d
 
 **Acortado de enlaces**
 - Códigos generados (hash MD5 → Base62) o **alias personalizados**
-- Fecha de **expiración** opcional · **acortado masivo** por CSV
-- **Constructor de UTM** para campañas
+- Fecha de **expiración** y **límite de clics** opcionales
+- **Protección con contraseña** (página de desbloqueo dedicada)
+- **Acortado masivo** por CSV y **constructor de UTM** para campañas
 
 **Cuentas y analítica**
 - Autenticación con Auth.js (sesiones JWT, contraseñas con bcrypt)
-- **Panel personal** con todos tus enlaces y sus clics
+- **Panel personal** con búsqueda, orden, paginación y tarjetas de resumen
+- **Edición de enlaces** (destino, expiración, etiquetas, estado)
+- **Etiquetas** para organizar y filtrar enlaces
 - **Analítica por enlace**: serie temporal, dispositivos, navegadores,
-  países (geo-IP) y orígenes/referrers
-- **Códigos QR** personalizables (color) y descargables
+  países (geo-IP), orígenes y feed de clics recientes
+- **Exportación CSV** de los clics y de todos los enlaces
+- **Códigos QR** personalizables (color, PNG o SVG) y descargables
 
 **Destinos inteligentes**
 - **Redirección por dispositivo** (iOS / Android / escritorio)
 - **Rotación A/B** de varios destinos con seguimiento de variante
+- **Pausar y reactivar** enlaces sin eliminarlos
+
+**Cuenta y experiencia**
+- **Gestión de cuenta**: cambio de contraseña y de correo
+- Tema **claro / oscuro / sistema** con preferencia recordada
+- Estados de carga, página 404 propia y detección de URLs duplicadas
 
 **Plataforma**
 - **API REST pública** v1 autenticada con API keys
@@ -112,8 +122,9 @@ Genera una clave en **Mi panel → Claves de API** y autentícate con
 
 | Método | Endpoint | Descripción |
 | --- | --- | --- |
+| `GET` | `/api/v1/me` | Tu cuenta y totales |
 | `POST` | `/api/v1/links` | Crea un enlace |
-| `GET` | `/api/v1/links` | Lista tus enlaces (`?limit=&offset=`) |
+| `GET` | `/api/v1/links` | Lista tus enlaces (`?limit=&offset=&search=&tag=`) |
 | `GET` | `/api/v1/links/:id` | Detalle de un enlace |
 | `GET` | `/api/v1/links/:id/stats` | Analítica de un enlace |
 

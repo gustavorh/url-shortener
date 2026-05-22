@@ -8,6 +8,7 @@ interface ClickAttributes {
   ip?: string | null;
   userAgent?: string | null;
   referrer?: string | null;
+  referrerDomain?: string | null;
   country?: string | null;
   deviceType?: string | null;
   browser?: string | null;
@@ -30,6 +31,7 @@ class Click
   public ip?: string | null;
   public userAgent?: string | null;
   public referrer?: string | null;
+  public referrerDomain?: string | null;
   public country?: string | null;
   public deviceType?: string | null;
   public browser?: string | null;
@@ -57,6 +59,7 @@ Click.init(
     ip: { type: DataTypes.STRING(45), allowNull: true },
     userAgent: { type: DataTypes.TEXT, allowNull: true },
     referrer: { type: DataTypes.STRING(2048), allowNull: true },
+    referrerDomain: { type: DataTypes.STRING(255), allowNull: true },
     country: { type: DataTypes.STRING(2), allowNull: true },
     deviceType: { type: DataTypes.STRING(20), allowNull: true },
     browser: { type: DataTypes.STRING(50), allowNull: true },

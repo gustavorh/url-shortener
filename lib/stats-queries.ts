@@ -1,5 +1,13 @@
-import { fn, col } from "sequelize";
-import { Click } from "@/models";
+import { fn, col, Op, type WhereOptions } from "sequelize";
+import { Click, Url } from "@/models";
+
+// Builds a click WHERE clause for one link, optionally limited to clicks
+// at or after `since`.
+function clickWhere(urlId: string, since?: Date): WhereOptions {
+  return since
+    ? { urlId, timestamp: { [Op.gte]: since } }
+    : { urlId };
+}
 
 export interface DailyCount {
   date: string;
@@ -11,36 +19,75 @@ export interface LabeledCount {
   count: number;
 }
 
+export interface HourlyCount {
+  hour: number;
+  count: number;
+}
+
 export interface LinkStats {
   total: number;
   byDay: DailyCount[];
+  byHour: HourlyCount[];
   topReferrers: LabeledCount[];
   byDevice: LabeledCount[];
   byBrowser: LabeledCount[];
   byCountry: LabeledCount[];
+  byOs: LabeledCount[];
   byTarget: LabeledCount[];
+}
+
+/** Clicks bucketed by hour of day (0-23), all 24 buckets present. */
+export async function getClicksByHour(
+  urlId: string,
+  since?: Date
+): Promise<HourlyCount[]> {
+  const rows = (await Click.findAll({
+    attributes: [
+      [fn("HOUR", col("timestamp")), "hour"],
+      [fn("COUNT", col("id")), "count"],
+    ],
+    where: clickWhere(urlId, since),
+    group: [fn("HOUR", col("timestamp"))],
+    raw: true,
+  })) as unknown as { hour: number; count: number }[];
+
+  const counts = new Map(
+    rows.map((row) => [Number(row.hour), Number(row.count)])
+  );
+  return Array.from({ length: 24 }, (_, hour) => ({
+    hour,
+    count: counts.get(hour) ?? 0,
+  }));
 }
 
 type GroupableColumn =
   | "referrer"
+  | "referrerDomain"
   | "deviceType"
   | "browser"
+  | "os"
   | "country"
   | "targetUrl";
 
 /** Total clicks for a single link. */
-export async function getTotalClicks(urlId: string): Promise<number> {
-  return Click.count({ where: { urlId } });
+export async function getTotalClicks(
+  urlId: string,
+  since?: Date
+): Promise<number> {
+  return Click.count({ where: clickWhere(urlId, since) });
 }
 
 /** Clicks per calendar day for a link, oldest first. */
-export async function getClicksByDay(urlId: string): Promise<DailyCount[]> {
+export async function getClicksByDay(
+  urlId: string,
+  since?: Date
+): Promise<DailyCount[]> {
   const rows = (await Click.findAll({
     attributes: [
       [fn("DATE", col("timestamp")), "date"],
       [fn("COUNT", col("id")), "count"],
     ],
-    where: { urlId },
+    where: clickWhere(urlId, since),
     group: [fn("DATE", col("timestamp"))],
     order: [[fn("DATE", col("timestamp")), "ASC"]],
     raw: true,
@@ -56,11 +103,12 @@ export async function getClicksByDay(urlId: string): Promise<DailyCount[]> {
 async function getGroupedCounts(
   urlId: string,
   column: GroupableColumn,
-  limit: number
+  limit: number,
+  since?: Date
 ): Promise<LabeledCount[]> {
   const rows = (await Click.findAll({
     attributes: [column, [fn("COUNT", col("id")), "count"]],
-    where: { urlId },
+    where: clickWhere(urlId, since),
     group: [column],
     order: [[fn("COUNT", col("id")), "DESC"]],
     limit,
@@ -77,27 +125,101 @@ async function getGroupedCounts(
   });
 }
 
-/** Full analytics bundle for a single link. */
-export async function getLinkStats(urlId: string): Promise<LinkStats> {
-  const [total, byDay, topReferrers, byDevice, byBrowser, byCountry, byTarget] =
-    await Promise.all([
-      getTotalClicks(urlId),
-      getClicksByDay(urlId),
-      getGroupedCounts(urlId, "referrer", 8),
-      getGroupedCounts(urlId, "deviceType", 8),
-      getGroupedCounts(urlId, "browser", 8),
-      getGroupedCounts(urlId, "country", 8),
-      getGroupedCounts(urlId, "targetUrl", 8),
-    ]);
-  return {
+/** Full analytics bundle for a single link, optionally since a date. */
+export async function getLinkStats(
+  urlId: string,
+  since?: Date
+): Promise<LinkStats> {
+  const [
     total,
     byDay,
+    byHour,
     topReferrers,
     byDevice,
     byBrowser,
     byCountry,
+    byOs,
+    byTarget,
+  ] = await Promise.all([
+    getTotalClicks(urlId, since),
+    getClicksByDay(urlId, since),
+    getClicksByHour(urlId, since),
+    getGroupedCounts(urlId, "referrerDomain", 8, since),
+    getGroupedCounts(urlId, "deviceType", 8, since),
+    getGroupedCounts(urlId, "browser", 8, since),
+    getGroupedCounts(urlId, "country", 8, since),
+    getGroupedCounts(urlId, "os", 8, since),
+    getGroupedCounts(urlId, "targetUrl", 8, since),
+  ]);
+  return {
+    total,
+    byDay,
+    byHour,
+    topReferrers,
+    byDevice,
+    byBrowser,
+    byCountry,
+    byOs,
     byTarget,
   };
+}
+
+export interface RecentClick {
+  timestamp: string;
+  country: string | null;
+  deviceType: string | null;
+  browser: string | null;
+  referrer: string | null;
+}
+
+/** The most recent clicks for a link, newest first. */
+export async function getRecentClicks(
+  urlId: string,
+  limit = 15
+): Promise<RecentClick[]> {
+  const rows = (await Click.findAll({
+    where: { urlId },
+    order: [["timestamp", "DESC"]],
+    limit,
+    attributes: ["timestamp", "country", "deviceType", "browser", "referrer"],
+    raw: true,
+  })) as unknown as Array<{
+    timestamp: string | Date;
+    country: string | null;
+    deviceType: string | null;
+    browser: string | null;
+    referrer: string | null;
+  }>;
+
+  return rows.map((row) => ({
+    timestamp: new Date(row.timestamp).toISOString(),
+    country: row.country ?? null,
+    deviceType: row.deviceType ?? null,
+    browser: row.browser ?? null,
+    referrer: row.referrer ?? null,
+  }));
+}
+
+export interface UserTotals {
+  links: number;
+  clicks: number;
+}
+
+/** Total active links and total clicks across all of a user's links. */
+export async function getUserTotals(userId: string): Promise<UserTotals> {
+  const links = await Url.count({ where: { userId, deletedAt: null } });
+  const clicks = await Click.count({
+    include: [
+      {
+        model: Url,
+        as: "url",
+        attributes: [],
+        where: { userId, deletedAt: null },
+        required: true,
+      },
+    ],
+  });
+  return { links, clicks };
 }
 
 /** Click counts keyed by urlId, for a set of links (dashboard listing). */

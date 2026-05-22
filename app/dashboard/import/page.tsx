@@ -113,7 +113,7 @@ export default function ImportPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="ml-auto py-2.5 px-5 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-primary ml-auto"
               >
                 {isLoading ? "Procesando..." : "Acortar todo"}
               </button>

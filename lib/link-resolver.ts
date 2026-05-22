@@ -6,6 +6,14 @@ export interface ResolvedLink {
   originalUrl: string;
   expirationDate: string | null;
   targets: TargetRule[];
+  /** True when the link requires a password before redirecting. */
+  passwordProtected: boolean;
+  /** Click limit; null means unlimited. */
+  maxClicks: number | null;
+  /** True when the owner has paused the link. */
+  disabled: boolean;
+  /** Scheduled activation; the link does not resolve before this. */
+  activeFrom: string | null;
 }
 
 const CACHE_TTL_SECONDS = 3600;
@@ -41,6 +49,12 @@ export async function resolveLink(id: string): Promise<ResolvedLink | null> {
       kind: target.kind,
       device: target.device ?? null,
     })),
+    passwordProtected: !!record.passwordHash,
+    maxClicks: record.maxClicks ?? null,
+    disabled: !!record.disabled,
+    activeFrom: record.activeFrom
+      ? new Date(record.activeFrom).toISOString()
+      : null,
   };
   await cacheSet(cacheKey(id), JSON.stringify(resolved), CACHE_TTL_SECONDS);
   return resolved;

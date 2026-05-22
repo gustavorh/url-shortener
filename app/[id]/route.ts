@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Click } from "@/models";
 import { recordClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
 import { resolveLink } from "@/lib/link-resolver";
@@ -30,6 +31,18 @@ export async function GET(
       return NextResponse.json({ error: "URL not found" }, { status: 404 });
     }
 
+    // Reject paused links.
+    if (urlRecord.disabled) {
+      metrics.redirects.inc({ result: "expired" });
+      return NextResponse.json({ error: "URL is disabled" }, { status: 410 });
+    }
+
+    // A scheduled link does not resolve before its activation time.
+    if (urlRecord.activeFrom && new Date() < new Date(urlRecord.activeFrom)) {
+      metrics.redirects.inc({ result: "not_found" });
+      return NextResponse.json({ error: "URL not found" }, { status: 404 });
+    }
+
     // Reject expired links.
     const { expirationDate, originalUrl } = urlRecord;
     if (expirationDate && new Date() > new Date(expirationDate)) {
@@ -41,6 +54,27 @@ export async function GET(
       return NextResponse.json(
         { error: "Original URL is missing" },
         { status: 500 }
+      );
+    }
+
+    // Stop resolving once the click limit is reached.
+    if (urlRecord.maxClicks !== null) {
+      const clicks = await Click.count({ where: { urlId: id } });
+      if (clicks >= urlRecord.maxClicks) {
+        metrics.redirects.inc({ result: "expired" });
+        return NextResponse.json(
+          { error: "Link click limit reached" },
+          { status: 410 }
+        );
+      }
+    }
+
+    // Password-protected links route through the unlock gate; the click is
+    // recorded there once the password is verified.
+    if (urlRecord.passwordProtected) {
+      return NextResponse.redirect(
+        new URL(`/unlock/${id}`, request.url),
+        { status: 302 }
       );
     }
 

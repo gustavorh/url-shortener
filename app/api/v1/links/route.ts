@@ -2,12 +2,14 @@
 // Authenticated with an API key: `Authorization: Bearer crtl_...`
 
 import { NextRequest, NextResponse } from "next/server";
+import { Op, type WhereOptions } from "sequelize";
 import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { createShortLink, LinkCreationError } from "@/lib/link-service";
 import { consumeShortenLimit } from "@/lib/rate-limit";
 import { buildShortUrl } from "@/lib/short-url";
 import { getClickCounts } from "@/lib/stats-queries";
+import { splitTags } from "@/lib/tags";
 
 export const runtime = "nodejs";
 
@@ -40,10 +42,8 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
-  const { url, customAlias, expirationDate } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { url, customAlias, expirationDate, password, maxClicks, activeFrom } =
+    (body ?? {}) as Record<string, unknown>;
   if (typeof url !== "string" || !url) {
     return NextResponse.json(
       { error: "El campo 'url' es obligatorio" },
@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
       customAlias: typeof customAlias === "string" ? customAlias : null,
       expirationDate:
         typeof expirationDate === "string" ? new Date(expirationDate) : null,
+      password: typeof password === "string" ? password : null,
+      maxClicks: typeof maxClicks === "number" ? maxClicks : null,
+      activeFrom:
+        typeof activeFrom === "string" ? new Date(activeFrom) : null,
       userId,
     });
     return NextResponse.json(
@@ -96,8 +100,25 @@ export async function GET(request: NextRequest) {
   );
   const offset = Math.max(Number(searchParams.get("offset")) || 0, 0);
 
+  const where: WhereOptions = { userId, deletedAt: null };
+  const search = (searchParams.get("search") ?? "").trim();
+  if (search) {
+    const term = `%${search}%`;
+    Object.assign(where, {
+      [Op.or]: [
+        { id: { [Op.like]: term } },
+        { originalUrl: { [Op.like]: term } },
+        { title: { [Op.like]: term } },
+      ],
+    });
+  }
+  const tag = (searchParams.get("tag") ?? "").trim().toLowerCase();
+  if (tag) {
+    Object.assign(where, { tags: { [Op.like]: `%${tag}%` } });
+  }
+
   const { rows, count } = await Url.findAndCountAll({
-    where: { userId, deletedAt: null },
+    where,
     order: [["creationDate", "DESC"]],
     limit,
     offset,
@@ -113,7 +134,10 @@ export async function GET(request: NextRequest) {
       id: row.id,
       shortUrl: buildShortUrl(request, row.id),
       originalUrl: row.originalUrl,
+      title: row.title ?? null,
+      tags: splitTags(row.tags),
       clicks: clickCounts.get(row.id) ?? 0,
+      disabled: !!row.disabled,
       expirationDate: row.expirationDate ?? null,
       creationDate: row.creationDate,
     })),

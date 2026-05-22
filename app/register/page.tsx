@@ -4,6 +4,27 @@ import { useState, FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { scorePassword } from "@/lib/password-strength";
+
+const STRENGTH_COLOR: Record<number, string> = {
+  1: "bg-red-500",
+  2: "bg-amber-500",
+  3: "bg-lime-500",
+  4: "bg-emerald-500",
+};
+
+function AuthBrand() {
+  return (
+    <Link href="/" className="flex items-center justify-center gap-2.5 mb-6">
+      <span className="grid h-10 w-10 place-items-center rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-lg font-bold">
+        C
+      </span>
+      <span className="text-xl font-bold text-gray-900 dark:text-white">
+        Cortala
+      </span>
+    </Link>
+  );
+}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -56,39 +77,34 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 p-6">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+    <div className="flex min-h-screen items-center justify-center p-6">
+      <div className="w-full max-w-md card p-8">
+        <AuthBrand />
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Crea tu cuenta
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Gestiona tus enlaces y mira sus estadísticas
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1"
-            >
-              Nombre <span className="text-gray-400">(opcional)</span>
+            <label htmlFor="name" className="label">
+              Nombre <span className="font-normal text-gray-400">(opcional)</span>
             </label>
             <input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="input"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1"
-            >
+            <label htmlFor="email" className="label">
               Correo electrónico
             </label>
             <input
@@ -97,15 +113,12 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="input"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1"
-            >
+            <label htmlFor="password" className="label">
               Contraseña
             </label>
             <input
@@ -115,15 +128,36 @@ export default function RegisterPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="input"
             />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Mínimo 8 caracteres
-            </p>
+            {password ? (
+              <div className="mt-2">
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3].map((i) => {
+                    const { score } = scorePassword(password);
+                    return (
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full ${
+                          i < score
+                            ? STRENGTH_COLOR[score]
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Seguridad: {scorePassword(password).label}
+                </p>
+              </div>
+            ) : (
+              <p className="field-hint">Mínimo 8 caracteres</p>
+            )}
           </div>
 
           {error && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
@@ -131,27 +165,19 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700 transition disabled:opacity-70 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3"
           >
             {isLoading ? "Procesando..." : "Crear cuenta"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-300">
+        <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
           ¿Ya tienes cuenta?{" "}
           <Link
             href="/login"
-            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
           >
             Inicia sesión
-          </Link>
-        </p>
-        <p className="mt-2 text-center text-sm">
-          <Link
-            href="/"
-            className="text-gray-500 dark:text-gray-400 hover:underline"
-          >
-            ← Volver al inicio
           </Link>
         </p>
       </div>

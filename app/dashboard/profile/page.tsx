@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { AppSidebar } from "../../components/AppSidebar";
+import { AccountSecurity } from "./AccountSecurity";
 
 export default function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -168,7 +169,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={status === "saving"}
-              className="py-2.5 px-5 rounded-lg text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-70"
+              className="btn-primary"
             >
               {status === "saving"
                 ? "Guardando..."
@@ -178,7 +179,9 @@ export default function ProfilePage() {
             </button>
           </form>
 
-          <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
+          <AccountSecurity />
+
+          <div className="mt-8 card p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
               Tus datos
             </h2>

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { Url } from "@/models";
 import {
   validateAndNormalizeUrl,
@@ -23,6 +24,12 @@ export interface CreateLinkInput {
   customAlias?: string | null;
   expirationDate?: Date | null;
   userId?: string | null;
+  /** Optional plaintext password — hashed before storage. */
+  password?: string | null;
+  /** Optional click limit; the link stops resolving once reached. */
+  maxClicks?: number | null;
+  /** Optional scheduled activation; the link is inactive until then. */
+  activeFrom?: Date | null;
 }
 
 export interface CreatedLink {
@@ -30,6 +37,8 @@ export interface CreatedLink {
   originalUrl: string;
   expirationDate: Date | null;
   creationDate: Date;
+  /** True when an existing identical link was returned instead of a new one. */
+  reused: boolean;
 }
 
 /**
@@ -60,8 +69,26 @@ export async function createShortLink(
     );
   }
 
-  let id: string;
+  // Reuse an existing identical link for the same user instead of creating a
+  // duplicate — unless they explicitly asked for a custom alias.
   const customAlias = input.customAlias?.trim();
+  if (input.userId && !customAlias) {
+    const existing = await Url.findOne({
+      where: { userId: input.userId, originalUrl, deletedAt: null },
+      order: [["creationDate", "DESC"]],
+    });
+    if (existing) {
+      return {
+        id: existing.id,
+        originalUrl: existing.originalUrl,
+        expirationDate: existing.expirationDate ?? null,
+        creationDate: existing.creationDate,
+        reused: true,
+      };
+    }
+  }
+
+  let id: string;
   if (customAlias) {
     const aliasCheck = validateCustomAlias(customAlias);
     if (!aliasCheck.valid) {
@@ -81,11 +108,17 @@ export async function createShortLink(
     );
   }
 
+  const password = input.password?.trim();
+  const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+
   const created = await Url.create({
     id,
     originalUrl,
     expirationDate: input.expirationDate ?? null,
     userId: input.userId ?? null,
+    passwordHash,
+    maxClicks: input.maxClicks ?? null,
+    activeFrom: input.activeFrom ?? null,
   });
   metrics.linksCreated.inc();
 
@@ -94,5 +127,6 @@ export async function createShortLink(
     originalUrl,
     expirationDate: created.expirationDate ?? null,
     creationDate: created.creationDate,
+    reused: false,
   };
 }

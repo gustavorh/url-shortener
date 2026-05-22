@@ -8,18 +8,40 @@ interface UrlAttributes {
   creationDate: Date;
   userId?: string | null;
   title?: string | null;
+  tags?: string | null;
+  passwordHash?: string | null;
+  maxClicks?: number | null;
+  disabled?: boolean;
+  activeFrom?: Date | null;
+  description?: string | null;
   deletedAt?: Date | null;
 }
 
 interface UrlCreationAttributes
   extends Omit<
     UrlAttributes,
-    'creationDate' | 'expirationDate' | 'userId' | 'title' | 'deletedAt'
+    | 'creationDate'
+    | 'expirationDate'
+    | 'userId'
+    | 'title'
+    | 'tags'
+    | 'passwordHash'
+    | 'maxClicks'
+    | 'disabled'
+    | 'activeFrom'
+    | 'description'
+    | 'deletedAt'
   > {
   expirationDate?: Date | null;
   creationDate?: Date;
   userId?: string | null;
   title?: string | null;
+  tags?: string | null;
+  passwordHash?: string | null;
+  maxClicks?: number | null;
+  disabled?: boolean;
+  activeFrom?: Date | null;
+  description?: string | null;
   deletedAt?: Date | null;
 }
 
@@ -30,6 +52,12 @@ class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttr
   public creationDate!: Date;
   public userId?: string | null;
   public title?: string | null;
+  public tags?: string | null;
+  public passwordHash?: string | null;
+  public maxClicks?: number | null;
+  public disabled?: boolean;
+  public activeFrom?: Date | null;
+  public description?: string | null;
   public deletedAt?: Date | null;
 }
 
@@ -59,6 +87,31 @@ Url.init(
     },
     title: {
       type: DataTypes.STRING(120),
+      allowNull: true,
+    },
+    tags: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    passwordHash: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    maxClicks: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    activeFrom: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    description: {
+      type: DataTypes.STRING(280),
       allowNull: true,
     },
     deletedAt: {
