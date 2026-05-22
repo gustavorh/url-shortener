@@ -21,6 +21,7 @@ const patchSchema = z.object({
   tags: z.string().optional(),
   maxClicks: z.number().int().positive().nullable().optional(),
   disabled: z.boolean().optional(),
+  activeFrom: z.string().nullable().optional(),
 });
 
 // PATCH /api/links/[id] — updates the title, destination or expiration.
@@ -54,6 +55,7 @@ export async function PATCH(
     tags?: string | null;
     maxClicks?: number | null;
     disabled?: boolean;
+    activeFrom?: Date | null;
   } = {};
 
   if (parsed.data.title !== undefined) {
@@ -70,6 +72,12 @@ export async function PATCH(
 
   if (parsed.data.disabled !== undefined) {
     updates.disabled = parsed.data.disabled;
+  }
+
+  if (parsed.data.activeFrom !== undefined) {
+    updates.activeFrom = parsed.data.activeFrom
+      ? new Date(parsed.data.activeFrom)
+      : null;
   }
 
   if (parsed.data.expirationDate !== undefined) {

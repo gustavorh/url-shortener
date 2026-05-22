@@ -11,9 +11,10 @@ interface LinkEditorProps {
   initialTags: string | null;
   initialMaxClicks: number | null;
   initialDisabled: boolean;
+  initialActiveFrom: string | null;
 }
 
-// Edits a link's title, destination, expiration, tags and state.
+// Edits a link's title, destination, schedule, tags and state.
 export function LinkEditor({
   linkId,
   initialTitle,
@@ -22,11 +23,13 @@ export function LinkEditor({
   initialTags,
   initialMaxClicks,
   initialDisabled,
+  initialActiveFrom,
 }: LinkEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle ?? "");
   const [url, setUrl] = useState(initialUrl);
   const [expiration, setExpiration] = useState(initialExpiration ?? "");
+  const [activeFrom, setActiveFrom] = useState(initialActiveFrom ?? "");
   const [tags, setTags] = useState(initialTags ?? "");
   const [maxClicks, setMaxClicks] = useState(
     initialMaxClicks != null ? String(initialMaxClicks) : ""
@@ -39,6 +42,7 @@ export function LinkEditor({
     title !== (initialTitle ?? "") ||
     url !== initialUrl ||
     expiration !== (initialExpiration ?? "") ||
+    activeFrom !== (initialActiveFrom ?? "") ||
     tags !== (initialTags ?? "") ||
     maxClicks !== (initialMaxClicks != null ? String(initialMaxClicks) : "") ||
     disabled !== initialDisabled;
@@ -54,6 +58,7 @@ export function LinkEditor({
           title,
           originalUrl: url,
           expirationDate: expiration || null,
+          activeFrom: activeFrom || null,
           tags,
           maxClicks: maxClicks ? Number(maxClicks) : null,
           disabled,
@@ -122,6 +127,25 @@ export function LinkEditor({
             value={expiration}
             onChange={(e) => {
               setExpiration(e.target.value);
+              setStatus("idle");
+            }}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label className="label" htmlFor="edit-active-from">
+            Activación programada{" "}
+            <span className="font-normal text-gray-400">
+              (vacío = activo ya)
+            </span>
+          </label>
+          <input
+            id="edit-active-from"
+            type="datetime-local"
+            value={activeFrom}
+            onChange={(e) => {
+              setActiveFrom(e.target.value);
               setStatus("idle");
             }}
             className="input"

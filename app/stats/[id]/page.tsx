@@ -120,6 +120,11 @@ export default async function StatsPage({
               initialTags={url.tags ?? null}
               initialMaxClicks={url.maxClicks ?? null}
               initialDisabled={!!url.disabled}
+              initialActiveFrom={
+                url.activeFrom
+                  ? format(new Date(url.activeFrom), "yyyy-MM-dd'T'HH:mm")
+                  : null
+              }
             />
             <LinkTargetsManager linkId={id} />
             <QrCustomizer linkId={id} />
