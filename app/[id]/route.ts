@@ -37,6 +37,12 @@ export async function GET(
       return NextResponse.json({ error: "URL is disabled" }, { status: 410 });
     }
 
+    // A scheduled link does not resolve before its activation time.
+    if (urlRecord.activeFrom && new Date() < new Date(urlRecord.activeFrom)) {
+      metrics.redirects.inc({ result: "not_found" });
+      return NextResponse.json({ error: "URL not found" }, { status: 404 });
+    }
+
     // Reject expired links.
     const { expirationDate, originalUrl } = urlRecord;
     if (expirationDate && new Date() > new Date(expirationDate)) {
