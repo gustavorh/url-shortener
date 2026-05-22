@@ -28,6 +28,12 @@ export const metadata: Metadata = {
     locale: "es_LA",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cortala - Acortador de URLs gratis y fácil de usar",
+    description:
+      "La forma más rápida y sencilla de crear links cortos para compartir",
+  },
 };
 
 // Applies the saved (or system) theme before paint to avoid a flash.
