@@ -233,7 +233,12 @@ export function LinkEditor({
         </label>
 
         {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p
+            role="alert"
+            className="text-sm text-red-600 dark:text-red-400"
+          >
+            {error}
+          </p>
         )}
 
         <button
@@ -247,6 +252,13 @@ export function LinkEditor({
               ? "Guardado ✓"
               : "Guardar cambios"}
         </button>
+        <p role="status" aria-live="polite" className="sr-only">
+          {status === "saving"
+            ? "Guardando cambios"
+            : status === "saved"
+              ? "Cambios guardados"
+              : ""}
+        </p>
       </div>
     </div>
   );
