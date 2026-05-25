@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 
 // Password gate for a protected link. On success the API returns the
 // destination and the browser navigates there.
 export function UnlockForm({ id }: { id: string }) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // The unlock page exists solely for this input — focus it on mount so
+  // visitors can type immediately. Using a ref + effect avoids the
+  // autoFocus prop, which assistive tech can announce unpredictably.
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,17 +40,23 @@ export function UnlockForm({ id }: { id: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <label htmlFor="unlock-password" className="sr-only">
+        Contraseña del enlace
+      </label>
       <input
+        ref={inputRef}
+        id="unlock-password"
         type="password"
         required
-        autoFocus
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Contraseña"
         className="input text-center"
       />
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {error}
+        </p>
       )}
       <button
         type="submit"
