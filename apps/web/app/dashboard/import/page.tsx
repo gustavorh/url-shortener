@@ -96,7 +96,11 @@ export default function ImportPage() {
             onSubmit={handleSubmit}
             className="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6 space-y-4"
           >
+            <label htmlFor="import-urls" className="sr-only">
+              Lista de URLs a importar
+            </label>
             <textarea
+              id="import-urls"
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={8}
@@ -124,7 +128,10 @@ export default function ImportPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+              <div
+                role="alert"
+                className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm"
+              >
                 {error}
               </div>
             )}
@@ -132,10 +139,27 @@ export default function ImportPage() {
 
           {results && (
             <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
+              <div
+                role="status"
+                aria-live="polite"
+                className="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300"
+              >
                 {createdCount} de {results.length} URLs acortadas
               </div>
-              <table className="w-full text-sm">
+              <table
+                className="w-full text-sm"
+                aria-label="Resultado de la importación"
+              >
+                <caption className="sr-only">
+                  Por cada URL enviada se indica si pudo acortarse y la URL
+                  corta resultante o el motivo del error.
+                </caption>
+                <thead className="sr-only">
+                  <tr>
+                    <th scope="col">URL original</th>
+                    <th scope="col">Resultado</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {results.map((item, index) => (
                     <tr

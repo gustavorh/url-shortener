@@ -221,7 +221,7 @@ export default function Home() {
               <div>
                 <label htmlFor="custom-alias" className="label">
                   Alias personalizado{" "}
-                  <span className="font-normal text-gray-400">(opcional)</span>
+                  <span className="font-normal text-gray-500 dark:text-gray-400">(opcional)</span>
                 </label>
                 <input
                   id="custom-alias"
@@ -241,7 +241,7 @@ export default function Home() {
               <div>
                 <label htmlFor="password" className="label">
                   Contraseña{" "}
-                  <span className="font-normal text-gray-400">(opcional)</span>
+                  <span className="font-normal text-gray-500 dark:text-gray-400">(opcional)</span>
                 </label>
                 <input
                   id="password"
@@ -336,13 +336,20 @@ export default function Home() {
             </form>
 
             {error && (
-              <div className="mt-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
+              <div
+                role="alert"
+                className="mt-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300"
+              >
                 {error}
               </div>
             )}
 
             {result && (
-              <div className="mt-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+              <div
+                role="status"
+                aria-live="polite"
+                className="mt-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800"
+              >
                 <h3 className="flex items-center gap-2 text-sm font-semibold text-emerald-800 dark:text-emerald-300 mb-3">
                   <span className="grid h-5 w-5 place-items-center rounded-full bg-emerald-500 text-white text-xs">
                     ✓

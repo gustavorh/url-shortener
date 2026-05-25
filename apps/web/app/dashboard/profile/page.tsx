@@ -169,7 +169,10 @@ export default function ProfilePage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+              <div
+                role="alert"
+                className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm"
+              >
                 {error}
               </div>
             )}

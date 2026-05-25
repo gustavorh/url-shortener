@@ -90,24 +90,36 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <nav className="hidden md:flex flex-col w-64 shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5">
+      <nav
+        aria-label="Navegación principal"
+        className="hidden md:flex flex-col w-64 shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5"
+      >
         <div className="px-1.5 mb-8">
           <Brand />
         </div>
 
-        <div className="space-y-1">
-          <Link href="/" className={navItemClass(active === "home")}>
-            <HomeIcon />
-            <span>Inicio</span>
-          </Link>
-          <Link
-            href="/dashboard"
-            className={navItemClass(active === "dashboard")}
-          >
-            <ChartIcon />
-            <span>Mi panel</span>
-          </Link>
-        </div>
+        <ul className="space-y-1">
+          <li>
+            <Link
+              href="/"
+              aria-current={active === "home" ? "page" : undefined}
+              className={navItemClass(active === "home")}
+            >
+              <HomeIcon />
+              <span>Inicio</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard"
+              aria-current={active === "dashboard" ? "page" : undefined}
+              className={navItemClass(active === "dashboard")}
+            >
+              <ChartIcon />
+              <span>Mi panel</span>
+            </Link>
+          </li>
+        </ul>
 
         {user && (
           <button
@@ -158,41 +170,47 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
           <div className="mt-4">
             <ThemeToggle />
           </div>
-          <p className="mt-3 px-1.5 text-xs text-gray-400 dark:text-gray-500">
+          <p className="mt-3 px-1.5 text-xs text-gray-500 dark:text-gray-400">
             © {new Date().getFullYear()} Cortala
           </p>
         </div>
       </nav>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+      <header className="md:hidden fixed top-0 inset-x-0 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur border-b border-gray-200 dark:border-gray-700 px-4 py-3">
         <div className="flex items-center justify-between">
           <Brand />
-          <div className="flex items-center gap-4 text-sm">
-            <Link
-              href="/dashboard"
-              className="text-gray-600 dark:text-gray-300 font-medium"
-            >
-              Panel
-            </Link>
-            {user ? (
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                Salir
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="font-medium text-indigo-600 dark:text-indigo-400"
-              >
-                Entrar
-              </Link>
-            )}
-          </div>
+          <nav aria-label="Navegación móvil">
+            <ul className="flex items-center gap-4 text-sm">
+              <li>
+                <Link
+                  href="/dashboard"
+                  className="text-gray-600 dark:text-gray-300 font-medium"
+                >
+                  Panel
+                </Link>
+              </li>
+              <li>
+                {user ? (
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="text-gray-500 dark:text-gray-400"
+                  >
+                    Salir
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="font-medium text-indigo-600 dark:text-indigo-400"
+                  >
+                    Entrar
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </nav>
         </div>
-      </div>
+      </header>
     </>
   );
 }
