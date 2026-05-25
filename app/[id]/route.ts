@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Click } from "@/models";
-import { recordClick } from "@/lib/analytics";
+import { trackClick } from "@/lib/analytics";
 import { validateAndNormalizeUrl } from "@/lib/url-validation";
 import { resolveLink } from "@/lib/link-resolver";
 import { chooseDestination } from "@/lib/redirect-resolver";
@@ -96,9 +96,10 @@ export async function GET(
       );
     }
 
-    // Record the click (with the served destination) before redirecting.
-    // recordClick swallows its own errors, so logging can never break it.
-    await recordClick(request.headers, id, redirectUrl);
+    // Track the click (with the served destination) before redirecting.
+    // trackClick enqueues to BullMQ when Redis is up, else writes
+    // synchronously; failures are swallowed so the redirect never breaks.
+    await trackClick(request.headers, id, redirectUrl);
     metrics.redirects.inc({ result: "ok" });
 
     return NextResponse.redirect(redirectUrl, { status: 302 });
