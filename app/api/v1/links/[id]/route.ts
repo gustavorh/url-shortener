@@ -6,6 +6,8 @@ import { authenticateApiKey } from "@/lib/api-auth";
 import { buildShortUrl } from "@/lib/short-url";
 import { getTotalClicks } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
+import { LinkIdParamSchema } from "@/lib/schemas/v1";
+import { parsePathParam } from "@/lib/api-validation";
 
 export const runtime = "nodejs";
 
@@ -22,7 +24,11 @@ export async function GET(
     );
   }
 
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const parsed = parsePathParam(rawId, LinkIdParamSchema);
+  if (!parsed.ok) return parsed.response;
+  const id = parsed.data;
+
   const link = await Url.findByPk(id, { raw: true });
   // Hide links owned by other users, and soft-deleted ones.
   if (!link || link.userId !== userId || link.deletedAt) {

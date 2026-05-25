@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { getLinkStats } from "@/lib/stats-queries";
+import { LinkIdParamSchema } from "@/lib/schemas/v1";
+import { parsePathParam } from "@/lib/api-validation";
 
 export const runtime = "nodejs";
 
@@ -20,7 +22,11 @@ export async function GET(
     );
   }
 
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const parsed = parsePathParam(rawId, LinkIdParamSchema);
+  if (!parsed.ok) return parsed.response;
+  const id = parsed.data;
+
   const link = await Url.findByPk(id, { raw: true });
   if (!link || link.userId !== userId || link.deletedAt) {
     return NextResponse.json(

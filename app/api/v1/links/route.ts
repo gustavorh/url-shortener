@@ -10,6 +10,11 @@ import { consumeShortenLimit } from "@/lib/rate-limit";
 import { buildShortUrl } from "@/lib/short-url";
 import { getClickCounts } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
+import {
+  CreateLinkBodySchema,
+  ListLinksQuerySchema,
+} from "@/lib/schemas/v1";
+import { parseJsonBody, parseSearchParams } from "@/lib/api-validation";
 
 export const runtime = "nodejs";
 
@@ -36,31 +41,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
-  }
-  const { url, customAlias, expirationDate, password, maxClicks, activeFrom } =
-    (body ?? {}) as Record<string, unknown>;
-  if (typeof url !== "string" || !url) {
-    return NextResponse.json(
-      { error: "El campo 'url' es obligatorio" },
-      { status: 400 }
-    );
-  }
+  const parsed = await parseJsonBody(request, CreateLinkBodySchema);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.data;
 
   try {
     const created = await createShortLink({
-      originalUrl: url,
-      customAlias: typeof customAlias === "string" ? customAlias : null,
-      expirationDate:
-        typeof expirationDate === "string" ? new Date(expirationDate) : null,
-      password: typeof password === "string" ? password : null,
-      maxClicks: typeof maxClicks === "number" ? maxClicks : null,
-      activeFrom:
-        typeof activeFrom === "string" ? new Date(activeFrom) : null,
+      originalUrl: body.url,
+      customAlias: body.customAlias,
+      expirationDate: body.expirationDate,
+      password: body.password,
+      maxClicks: body.maxClicks,
+      activeFrom: body.activeFrom,
       userId,
     });
     return NextResponse.json(
@@ -93,15 +85,14 @@ export async function GET(request: NextRequest) {
   const userId = await authenticateApiKey(request);
   if (!userId) return unauthorized();
 
-  const { searchParams } = request.nextUrl;
-  const limit = Math.min(
-    Math.max(Number(searchParams.get("limit")) || 50, 1),
-    100
+  const parsed = parseSearchParams(
+    request.nextUrl.searchParams,
+    ListLinksQuerySchema
   );
-  const offset = Math.max(Number(searchParams.get("offset")) || 0, 0);
+  if (!parsed.ok) return parsed.response;
+  const { limit, offset, search, tag } = parsed.data;
 
   const where: WhereOptions = { userId, deletedAt: null };
-  const search = (searchParams.get("search") ?? "").trim();
   if (search) {
     const term = `%${search}%`;
     Object.assign(where, {
@@ -112,7 +103,6 @@ export async function GET(request: NextRequest) {
       ],
     });
   }
-  const tag = (searchParams.get("tag") ?? "").trim().toLowerCase();
   if (tag) {
     Object.assign(where, { tags: { [Op.like]: `%${tag}%` } });
   }
