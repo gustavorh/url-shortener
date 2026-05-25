@@ -164,7 +164,11 @@ export default function Home() {
     <div className="flex min-h-screen">
       <AppSidebar active="home" />
 
-      <main className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0 outline-none"
+      >
         <div className="max-w-3xl mx-auto">
           {/* Hero */}
           <div className="text-center mb-10">

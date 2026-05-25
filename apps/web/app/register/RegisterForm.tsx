@@ -79,7 +79,11 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen items-center justify-center p-6 outline-none"
+    >
       <div className="w-full max-w-md card p-8">
         <AuthBrand />
         <div className="mb-6 text-center">
@@ -185,6 +189,6 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }

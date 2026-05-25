@@ -50,6 +50,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-gray-900 focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          Saltar al contenido principal
+        </a>
         <Providers>{children}</Providers>
       </body>
     </html>

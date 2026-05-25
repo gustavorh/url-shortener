@@ -119,7 +119,11 @@ export default async function DashboardPage({
     <div className="flex min-h-screen">
       <AppSidebar active="dashboard" />
 
-      <main className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0 outline-none"
+      >
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
             <div>
