@@ -69,7 +69,7 @@ export default async function PublicProfilePage({
           {user.bio && (
             <p className="mt-2 text-gray-600 dark:text-gray-300">{user.bio}</p>
           )}
-          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
             {links.length} enlace{links.length === 1 ? "" : "s"}
             {user.createdAt
               ? ` · desde ${new Date(user.createdAt).getFullYear()}`
@@ -114,9 +114,9 @@ export default async function PublicProfilePage({
           </div>
         )}
 
-        <p className="mt-10 text-center text-xs text-gray-400 dark:text-gray-500">
+        <footer className="mt-10 text-center text-xs text-gray-600 dark:text-gray-400">
           Creado con Cortala
-        </p>
+        </footer>
       </div>
     </main>
   );

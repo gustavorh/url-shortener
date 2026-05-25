@@ -100,7 +100,7 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="label">
-              Nombre <span className="font-normal text-gray-400">(opcional)</span>
+              Nombre <span className="font-normal text-gray-500 dark:text-gray-400">(opcional)</span>
             </label>
             <input
               id="name"
