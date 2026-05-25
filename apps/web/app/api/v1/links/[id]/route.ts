@@ -1,15 +1,17 @@
-// Public REST API v1 — analytics for a single link.
+// Public REST API v1 — single link.
 
 import { NextRequest, NextResponse } from "next/server";
 import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
-import { getLinkStats } from "@/lib/stats-queries";
-import { LinkIdParamSchema } from "@/lib/schemas/v1";
+import { buildShortUrl } from "@/lib/short-url";
+import { getTotalClicks } from "@/lib/stats-queries";
+import { splitTags } from "@/lib/tags";
+import { LinkIdParamSchema } from "@cortala/schemas/v1";
 import { parsePathParam } from "@/lib/api-validation";
 
 export const runtime = "nodejs";
 
-// GET /api/v1/links/[id]/stats — full analytics bundle for one link.
+// GET /api/v1/links/[id] — details of one of the caller's links.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -28,6 +30,7 @@ export async function GET(
   const id = parsed.data;
 
   const link = await Url.findByPk(id, { raw: true });
+  // Hide links owned by other users, and soft-deleted ones.
   if (!link || link.userId !== userId || link.deletedAt) {
     return NextResponse.json(
       { error: "Enlace no encontrado" },
@@ -35,6 +38,15 @@ export async function GET(
     );
   }
 
-  const stats = await getLinkStats(id);
-  return NextResponse.json({ id, ...stats });
+  return NextResponse.json({
+    id: link.id,
+    shortUrl: buildShortUrl(request, link.id),
+    originalUrl: link.originalUrl,
+    title: link.title ?? null,
+    tags: splitTags(link.tags),
+    clicks: await getTotalClicks(link.id),
+    disabled: !!link.disabled,
+    expirationDate: link.expirationDate ?? null,
+    creationDate: link.creationDate,
+  });
 }

@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
   // runtime; bundling it breaks those paths. Keep it external so it resolves
   // from node_modules instead.
   serverExternalPackages: ["geoip-lite"],
+  // Workspace packages ship raw TypeScript via their "exports" field. Next
+  // needs them in transpilePackages so it runs them through SWC.
+  transpilePackages: ["@cortala/schemas"],
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

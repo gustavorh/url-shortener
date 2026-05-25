@@ -19,9 +19,17 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@cortala/schemas": ["../../packages/schemas/src/index.ts"],
+      "@cortala/schemas/v1": ["../../packages/schemas/src/v1.ts"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../packages/schemas/src/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }

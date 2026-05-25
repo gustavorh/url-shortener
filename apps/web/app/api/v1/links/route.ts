@@ -13,7 +13,7 @@ import { splitTags } from "@/lib/tags";
 import {
   CreateLinkBodySchema,
   ListLinksQuerySchema,
-} from "@/lib/schemas/v1";
+} from "@cortala/schemas/v1";
 import { parseJsonBody, parseSearchParams } from "@/lib/api-validation";
 
 export const runtime = "nodejs";

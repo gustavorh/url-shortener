@@ -19,10 +19,10 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test:unit
-      - run: pnpm build
+      - run: pnpm -r lint
+      - run: pnpm -r typecheck
+      - run: pnpm -r test:unit
+      - run: pnpm --filter @cortala/web build
         env:
           AUTH_SECRET: ci-build-placeholder-secret
 
@@ -61,5 +61,5 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Smoke-test that every migration applies cleanly.
       - name: Apply migrations
-        run: pnpm exec sequelize-cli db:migrate --env test
-      - run: pnpm test:integration
+        run: pnpm --filter @cortala/web exec sequelize-cli db:migrate --env test
+      - run: pnpm --filter @cortala/web test:integration

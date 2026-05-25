@@ -12,6 +12,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      "@cortala/schemas/v1": path.resolve(
+        __dirname,
+        "../../packages/schemas/src/v1.ts"
+      ),
+      "@cortala/schemas": path.resolve(
+        __dirname,
+        "../../packages/schemas/src/index.ts"
+      ),
     },
   },
 });

@@ -90,11 +90,11 @@ despliegue. Detalle completo en **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 ## 🚀 Puesta en marcha
 
 ```bash
-# 1. Dependencias (pnpm)
+# 1. Dependencias (pnpm workspaces — instala todo el monorepo)
 pnpm install
 
-# 2. Variables de entorno
-cp .env.example .env
+# 2. Variables de entorno (la web app las lee desde apps/web/.env)
+cp apps/web/.env.example apps/web/.env
 openssl rand -base64 32      # pega el valor en AUTH_SECRET
 
 # 3. Base de datos (crea la BD en MySQL y aplica las migraciones)
@@ -164,17 +164,20 @@ unitarios y los de integración con un servicio MySQL.
 
 ## 📁 Estructura del proyecto
 
+Monorepo pnpm con un par de apps y paquetes compartidos:
+
 ```
-app/            Páginas y route handlers (App Router)
-  [id]/         Redirección + tracking de clics
-  api/          Endpoints REST (auth, v1, keys, health, metrics…)
-  dashboard/    Panel: enlaces, claves API, importación, perfil
-  stats/[id]/   Analítica por enlace
-  u/[username]/ Páginas link-in-bio públicas
-lib/            Lógica de negocio (slug, analítica, caché, validación…)
-models/         Modelos Sequelize
-migrations/     Migraciones de esquema
-tests/          Suites unitarias y de integración
+apps/
+  web/             Aplicación Next.js (UI, API, worker BullMQ)
+    app/           Páginas y route handlers (App Router)
+    lib/           Lógica de negocio (slug, analítica, caché…)
+    models/        Modelos Sequelize
+    migrations/    Migraciones de esquema
+    tests/         Suites unitarias y de integración
+packages/
+  schemas/         Schemas Zod compartidos del API público (importados por
+                   la web app, la CLI y la extensión de navegador)
+extensions/        (reservado: extensión Chrome/Firefox MV3)
 ```
 
 ## 🗺️ Roadmap
