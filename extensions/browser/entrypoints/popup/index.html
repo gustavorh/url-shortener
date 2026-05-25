@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cortala</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Cortala</h1>
+      <button type="button" id="options-btn" class="link-button" title="Abrir opciones" aria-label="Abrir opciones">⚙</button>
+    </header>
+
+    <main id="root">
+      <form id="form" hidden>
+        <label for="url">URL a acortar</label>
+        <input id="url" name="url" type="url" required autocomplete="off" />
+
+        <label for="alias">Alias <span class="hint">(opcional)</span></label>
+        <input id="alias" name="alias" type="text" autocomplete="off" placeholder="mi-promo" />
+
+        <button type="submit" id="submit-btn">Acortar</button>
+      </form>
+
+      <section id="result" hidden aria-live="polite">
+        <p class="result-label">URL corta</p>
+        <p id="short-url" class="short-url"></p>
+        <div class="actions">
+          <button type="button" id="copy-btn">Copiar</button>
+          <button type="button" id="open-btn">Abrir</button>
+          <button type="button" id="reset-btn" class="link-button">Acortar otra</button>
+        </div>
+      </section>
+
+      <p id="error" class="error" hidden role="alert"></p>
+      <p id="empty" class="empty" hidden>
+        Aún no has configurado tu API key. <a href="#" id="empty-link">Abrir opciones →</a>
+      </p>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

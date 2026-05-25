@@ -191,6 +191,20 @@ cortala stats promo                            # analítica
 
 Detalle completo en [`packages/cli/README.md`](./packages/cli/README.md).
 
+## 🌐 Extensión de navegador
+
+Extensión MV3 para Chrome y Firefox en `extensions/browser/`. Acorta el
+tab activo con un click, copia la URL corta al portapapeles
+automáticamente y configura tu API key en una options page dedicada.
+
+```bash
+pnpm --filter @cortala/extension dev          # Chrome con hot reload
+pnpm --filter @cortala/extension build        # produce .output/chrome-mv3
+pnpm --filter @cortala/extension build:firefox # produce .output/firefox-mv2
+```
+
+Detalle completo en [`extensions/browser/README.md`](./extensions/browser/README.md).
+
 ## 📊 Observabilidad
 
 - `GET /api/health` — estado del servicio (BD y caché); `503` si la BD cae.

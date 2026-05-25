@@ -21,6 +21,7 @@ node_modules
 packages/*/dist
 extensions/*/dist
 extensions/*/.output
+extensions/*/.wxt
 
 # production
 /build

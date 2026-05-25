@@ -1,0 +1,35 @@
+{
+  "name": "@cortala/extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Extensión MV3 para Chrome y Firefox que acorta enlaces con Cortala desde la barra del navegador.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt --browser firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build --browser firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip --browser firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "lint": "echo '(no lint configured for extension)'",
+    "test": "vitest run",
+    "test:unit": "vitest run"
+  },
+  "dependencies": {
+    "@cortala/schemas": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5",
+    "vitest": "^4.1.7",
+    "wxt": "^0.20.10"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
