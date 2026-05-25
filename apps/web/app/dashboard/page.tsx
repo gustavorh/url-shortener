@@ -198,8 +198,12 @@ export default async function DashboardPage({
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
                 #{tag}
-                <Link href="/dashboard" className="hover:text-indigo-900 dark:hover:text-indigo-100">
-                  ✕
+                <Link
+                  href="/dashboard"
+                  aria-label="Quitar filtro de etiqueta"
+                  className="hover:text-indigo-900 dark:hover:text-indigo-100"
+                >
+                  <span aria-hidden="true">✕</span>
                 </Link>
               </span>
             </div>

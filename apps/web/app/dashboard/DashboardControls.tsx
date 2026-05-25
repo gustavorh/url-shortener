@@ -34,8 +34,16 @@ export function DashboardControls({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <form onSubmit={onSearch} className="flex-1 min-w-[220px] flex gap-2">
+      <form
+        onSubmit={onSearch}
+        role="search"
+        className="flex-1 min-w-[220px] flex gap-2"
+      >
+        <label htmlFor="dashboard-search" className="sr-only">
+          Buscar enlaces
+        </label>
         <input
+          id="dashboard-search"
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
