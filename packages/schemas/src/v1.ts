@@ -146,8 +146,10 @@ export const ApiErrorSchema = z.object({
 
 // ---------- Inferred types ----------
 
-export type CreateLinkBody = z.infer<typeof CreateLinkBodySchema>;
-export type ListLinksQuery = z.infer<typeof ListLinksQuerySchema>;
+// Request bodies use z.input — that's the wire shape consumers send
+// (string dates, no defaults applied yet). Response types use z.infer.
+export type CreateLinkBody = z.input<typeof CreateLinkBodySchema>;
+export type ListLinksQuery = z.input<typeof ListLinksQuerySchema>;
 export type LinkSummary = z.infer<typeof LinkSummarySchema>;
 export type ListLinksResponse = z.infer<typeof ListLinksResponseSchema>;
 export type LinkDetail = z.infer<typeof LinkDetailSchema>;

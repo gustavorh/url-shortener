@@ -1,0 +1,53 @@
+{
+  "name": "@gustavorh/cortala-cli",
+  "version": "0.1.0",
+  "description": "Acorta y administra enlaces de Cortala desde la terminal.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "cortala": "./dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo '(no lint configured for cli)'",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {
+    "@cortala/schemas": "workspace:*",
+    "commander": "^14.0.1",
+    "picocolors": "^1.1.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.22.3",
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cortala",
+    "url-shortener",
+    "cli",
+    "shorten",
+    "analytics"
+  ]
+}

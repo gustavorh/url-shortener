@@ -176,6 +176,21 @@ El worker que entrega los webhooks se arranca con `pnpm webhook-worker`
 y requiere `REDIS_URL` configurado. En producción corre como un proceso
 aparte (PM2, systemd, contenedor independiente).
 
+## 🖥️ CLI
+
+`@gustavorh/cortala-cli` (en `packages/cli/`) acorta y administra enlaces
+desde la terminal usando la misma API REST documentada en `/docs`.
+
+```bash
+npm install -g @gustavorh/cortala-cli
+cortala login                                  # guarda tu API key en ~/.config/cortala/
+cortala shorten https://ejemplo.com -a promo   # crea con alias
+cortala list --tag marketing --json | jq       # lista en JSON
+cortala stats promo                            # analítica
+```
+
+Detalle completo en [`packages/cli/README.md`](./packages/cli/README.md).
+
 ## 📊 Observabilidad
 
 - `GET /api/health` — estado del servicio (BD y caché); `503` si la BD cae.
