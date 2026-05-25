@@ -139,6 +139,38 @@ curl -X POST https://tu-dominio/api/v1/links \
   -d '{"url":"https://ejemplo.com"}'
 ```
 
+## 🔔 Webhooks
+
+Crea un webhook en **Mi panel → Webhooks**. Recibirás un POST firmado en
+tu URL cada vez que ocurra alguno de los eventos suscritos (`link.created`,
+`link.clicked`, `link.expired`, `link.limit_reached`).
+
+**Verificar la firma** (Node.js / ejemplo):
+
+```ts
+import crypto from "node:crypto";
+
+function verify(rawBody: string, header: string, secret: string): boolean {
+  const parts = Object.fromEntries(
+    header.split(",").map((p) => p.trim().split("="))
+  ) as { t?: string; v1?: string };
+  if (!parts.t || !parts.v1) return false;
+  if (Math.abs(Date.now() / 1000 - Number(parts.t)) > 300) return false;
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(`${parts.t}.${rawBody}`)
+    .digest("hex");
+  return crypto.timingSafeEqual(
+    Buffer.from(expected, "hex"),
+    Buffer.from(parts.v1, "hex")
+  );
+}
+```
+
+El worker que entrega los webhooks se arranca con `pnpm webhook-worker`
+y requiere `REDIS_URL` configurado. En producción corre como un proceso
+aparte (PM2, systemd, contenedor independiente).
+
 ## 📊 Observabilidad
 
 - `GET /api/health` — estado del servicio (BD y caché); `503` si la BD cae.

@@ -8,6 +8,7 @@ import {
 import { generateUniqueSlug, validateCustomAlias } from "./slug";
 import { isUrlUnsafe } from "./safe-browsing";
 import { metrics } from "./metrics";
+import { emitWebhookEvent } from "./webhook-emitter";
 
 /** Error carrying the HTTP status a route handler should return. */
 export class LinkCreationError extends Error {
@@ -121,6 +122,21 @@ export async function createShortLink(
     activeFrom: input.activeFrom ?? null,
   });
   metrics.linksCreated.inc();
+
+  // Fire-and-forget webhook event — emitter swallows its own errors so a
+  // misbehaving subscriber can never break link creation.
+  if (input.userId) {
+    void emitWebhookEvent({
+      userId: input.userId,
+      event: "link.created",
+      payload: {
+        id: created.id,
+        originalUrl: created.originalUrl,
+        expirationDate: created.expirationDate ?? null,
+        creationDate: created.creationDate,
+      },
+    });
+  }
 
   return {
     id,

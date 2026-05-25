@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
   // Workspace packages ship raw TypeScript via their "exports" field. Next
   // needs them in transpilePackages so it runs them through SWC.
   transpilePackages: ["@cortala/schemas"],
+  // The web app reads webhook schemas as well; they live in the same
+  // workspace package, so the transpile entry above already covers them.
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

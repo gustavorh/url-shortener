@@ -9,6 +9,8 @@ interface MetricsBundle {
   linksCreated: Counter;
   redirects: Counter<"result">;
   clicksRecorded: Counter;
+  webhookDeliveriesEnqueued: Counter;
+  webhookDeliveriesCompleted: Counter<"status">;
 }
 
 // Stored on globalThis so Next.js dev hot-reload does not re-register
@@ -37,8 +39,26 @@ function createMetrics(): MetricsBundle {
     help: "Total click events persisted",
     registers: [registry],
   });
+  const webhookDeliveriesEnqueued = new Counter({
+    name: "cortala_webhook_deliveries_enqueued_total",
+    help: "Total webhook deliveries enqueued to BullMQ",
+    registers: [registry],
+  });
+  const webhookDeliveriesCompleted = new Counter({
+    name: "cortala_webhook_deliveries_completed_total",
+    help: "Total webhook deliveries finalized, labelled by status",
+    labelNames: ["status"] as const,
+    registers: [registry],
+  });
 
-  return { registry, linksCreated, redirects, clicksRecorded };
+  return {
+    registry,
+    linksCreated,
+    redirects,
+    clicksRecorded,
+    webhookDeliveriesEnqueued,
+    webhookDeliveriesCompleted,
+  };
 }
 
 export const metrics: MetricsBundle =

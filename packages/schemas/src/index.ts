@@ -3,3 +3,4 @@
 // or pick a single version via the subpath export (`@cortala/schemas/v1`).
 
 export * from "./v1";
+export * from "./webhooks";

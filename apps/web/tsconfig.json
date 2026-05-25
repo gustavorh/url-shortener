@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./*"],
       "@cortala/schemas": ["../../packages/schemas/src/index.ts"],
-      "@cortala/schemas/v1": ["../../packages/schemas/src/v1.ts"]
+      "@cortala/schemas/v1": ["../../packages/schemas/src/v1.ts"],
+      "@cortala/schemas/webhooks": ["../../packages/schemas/src/webhooks.ts"]
     }
   },
   "include": [

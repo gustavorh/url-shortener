@@ -18,13 +18,31 @@ export type ClickJobData = {
   timestamp: number;
 };
 
+// One BullMQ job per webhook subscriber × event. The job carries everything
+// the worker needs to dispatch the HTTP POST — payload, target URL, secret
+// and the delivery row to update on success/failure. Keeping the secret on
+// the job (rather than re-reading from MySQL on each attempt) keeps the
+// worker stateless and tolerant of brief MySQL outages.
+export type WebhookJobData = {
+  deliveryId: string;
+  webhookId: string;
+  userId: string;
+  url: string;
+  secret: string;
+  event: string;
+  payload: unknown;
+  enqueuedAt: number;
+};
+
 export const QUEUE_NAMES = {
   CLICKS: "cortala-clicks",
+  WEBHOOKS: "cortala-webhooks",
 } as const;
 
 const globalForQueue = globalThis as unknown as {
   __cortalaQueueRedis?: Redis | null;
   __cortalaClickQueue?: Queue<ClickJobData> | null;
+  __cortalaWebhookQueue?: Queue<WebhookJobData> | null;
 };
 
 // BullMQ requires `maxRetriesPerRequest: null` because workers issue blocking
@@ -108,6 +126,64 @@ export async function enqueueClick(
     return true;
   } catch (err) {
     console.error("Failed to enqueue click:", err);
+    return false;
+  }
+}
+
+// Webhook queue. Three attempts with exponential backoff (~5s, ~30s, ~2m)
+// so transient subscriber outages recover automatically. The worker writes
+// final status back into the WebhookDelivery row.
+export function getWebhookQueue(): Queue<WebhookJobData> | null {
+  if (process.env.WEBHOOKS_QUEUE_DISABLED === "1") return null;
+
+  if (globalForQueue.__cortalaWebhookQueue !== undefined) {
+    return globalForQueue.__cortalaWebhookQueue;
+  }
+
+  const connection = getQueueRedis();
+  if (!connection) {
+    globalForQueue.__cortalaWebhookQueue = null;
+    return null;
+  }
+
+  try {
+    const queue = new Queue<WebhookJobData>(QUEUE_NAMES.WEBHOOKS, {
+      connection,
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 5000 },
+        removeOnComplete: { count: 500 },
+        removeOnFail: { count: 2000 },
+      },
+    });
+    globalForQueue.__cortalaWebhookQueue = queue;
+    return queue;
+  } catch (err) {
+    console.error("Failed to create webhook queue:", err);
+    globalForQueue.__cortalaWebhookQueue = null;
+    return null;
+  }
+}
+
+export function isWebhookQueueEnabled(): boolean {
+  return getWebhookQueue() !== null;
+}
+
+// Returns true on a successful enqueue. False when the queue is unavailable;
+// the caller decides whether to record a failed delivery or just drop the
+// event (we drop, because webhook subscribers expect at-most-once retries
+// from the queue itself, not from the producer).
+export async function enqueueWebhookDelivery(
+  data: WebhookJobData,
+  options?: JobsOptions
+): Promise<boolean> {
+  const queue = getWebhookQueue();
+  if (!queue) return false;
+  try {
+    await queue.add(data.event, data, options);
+    return true;
+  } catch (err) {
+    console.error("Failed to enqueue webhook delivery:", err);
     return false;
   }
 }

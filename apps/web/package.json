@@ -16,6 +16,8 @@
     "test:integration": "vitest run tests/integration --no-file-parallelism",
     "worker": "tsx scripts/start-worker.ts",
     "worker:dev": "tsx watch scripts/start-worker.ts",
+    "webhook-worker": "tsx scripts/start-webhook-worker.ts",
+    "webhook-worker:dev": "tsx watch scripts/start-webhook-worker.ts",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all"
