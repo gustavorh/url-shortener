@@ -34,6 +34,18 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  // OAuth-only accounts have no local password — they can't change one
+  // through this endpoint. (A future flow could let them set an initial
+  // password; for now we point them at their provider.)
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      {
+        error: `Esta cuenta inicia sesión con ${user.provider ?? "un proveedor externo"} y no tiene contraseña local.`,
+      },
+      { status: 400 }
+    );
+  }
+
   const matches = await bcrypt.compare(
     parsed.data.currentPassword,
     user.passwordHash

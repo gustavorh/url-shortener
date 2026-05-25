@@ -205,6 +205,25 @@ pnpm --filter @cortala/extension build:firefox # produce .output/firefox-mv2
 
 Detalle completo en [`extensions/browser/README.md`](./extensions/browser/README.md).
 
+## 🔐 OAuth (opcional)
+
+Auth.js v5 con **GitHub** y **Google** además del email + password local.
+Los providers se activan dinámicamente cuando sus pares de variables
+están configuradas (ver `apps/web/.env.example`):
+
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+
+**Callback URLs** que esperan los providers:
+`<NEXT_PUBLIC_BASE_URL>/api/auth/callback/{github|google}`.
+
+**Vinculación de cuentas**: si el correo del OAuth ya existe como cuenta
+local, la primera vez vincula ambos métodos en una sola cuenta. Si el
+correo ya estaba en otro proveedor, el login se rechaza para evitar que
+un segundo proveedor capture la cuenta. Los usuarios solo-OAuth no
+tienen contraseña local; las APIs de cambio de contraseña/correo
+responden 400 indicándolo.
+
 ## 📊 Observabilidad
 
 - `GET /api/health` — estado del servicio (BD y caché); `503` si la BD cae.
@@ -219,6 +238,8 @@ Detalle completo en [`extensions/browser/README.md`](./extensions/browser/README
 | `NEXT_PUBLIC_BASE_URL` | ✅ | URL pública de la app |
 | `DB_NAME_TEST` | tests | BD aislada para integración |
 | `REDIS_URL` | — | Activa caché y rate limiting distribuido |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | — | Activa login con GitHub |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | — | Activa login con Google |
 | `SAFE_BROWSING_API_KEY` | — | Escaneo de URLs maliciosas |
 
 ## 🧪 Tests

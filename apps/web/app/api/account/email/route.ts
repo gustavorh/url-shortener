@@ -33,6 +33,18 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  // OAuth-only accounts can't pass the password gate that protects
+  // email changes. They need to manage the email through their
+  // provider's account settings, so we refuse here.
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      {
+        error: `Esta cuenta inicia sesión con ${user.provider ?? "un proveedor externo"}. Cambia el correo desde tu proveedor.`,
+      },
+      { status: 400 }
+    );
+  }
+
   // The password gate prevents email takeover from a hijacked session.
   const matches = await bcrypt.compare(
     parsed.data.currentPassword,
