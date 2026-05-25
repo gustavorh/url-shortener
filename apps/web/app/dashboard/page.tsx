@@ -1,39 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { format } from "date-fns";
 import { Op, type WhereOptions } from "sequelize";
 import { auth } from "@/auth";
 import { Url } from "@/models";
 import { getClickCounts, getUserTotals } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
-import { faviconUrl } from "@/lib/favicon";
-import { relativeTime } from "@/lib/format-date";
-import { linkStatus, type LinkStatus } from "@/lib/link-status";
 import { AppSidebar } from "../components/AppSidebar";
-import { CopyButton } from "../components/CopyButton";
 import { DashboardControls } from "./DashboardControls";
-
-const STATUS_BADGE: Record<LinkStatus, { label: string; className: string }> = {
-  active: { label: "", className: "" },
-  disabled: {
-    label: "Pausado",
-    className:
-      "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
-  },
-  scheduled: {
-    label: "Programado",
-    className:
-      "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
-  },
-  expired: {
-    label: "Expirado",
-    className: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400",
-  },
-  limit: {
-    label: "Límite",
-    className: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300",
-  },
-};
+import { LinkTable, type LinkRow } from "./LinkTable";
 
 // Always reflect the latest links/clicks.
 export const dynamic = "force-dynamic";
@@ -246,131 +220,28 @@ export default async function DashboardPage({
             </div>
           ) : (
             <>
-              <div className="card overflow-x-auto mt-4">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                      <th className="p-4 font-medium">Enlace corto</th>
-                      <th className="p-4 font-medium">Destino</th>
-                      <th className="p-4 font-medium text-right">Clics</th>
-                      <th className="p-4 font-medium">Creado</th>
-                      <th className="p-4 font-medium">Expira</th>
-                      <th className="p-4 font-medium"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {urls.map((url) => {
-                      const tags = splitTags(url.tags);
-                      const status = linkStatus(
-                        url,
-                        clickCounts.get(url.id) ?? 0
-                      );
-                      const badge = STATUS_BADGE[status];
-                      return (
-                        <tr
-                          key={url.id}
-                          className="border-b border-gray-100 dark:border-gray-700/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
-                        >
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <a
-                                href={`${baseUrl}/${url.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                              >
-                                /{url.id}
-                              </a>
-                              <CopyButton value={`${baseUrl}/${url.id}`} />
-                              {badge.label && (
-                                <span
-                                  className={`px-1.5 py-0.5 rounded text-xs font-medium ${badge.className}`}
-                                >
-                                  {badge.label}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-4 max-w-xs text-gray-600 dark:text-gray-300">
-                            <a
-                              href={url.originalUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 truncate hover:underline"
-                              title={url.originalUrl}
-                            >
-                              {faviconUrl(url.originalUrl) && (
-                                /* eslint-disable-next-line @next/next/no-img-element */
-                                <img
-                                  src={faviconUrl(url.originalUrl)!}
-                                  alt=""
-                                  width={16}
-                                  height={16}
-                                  className="shrink-0 rounded-sm"
-                                />
-                              )}
-                              <span className="truncate">
-                                {url.title || url.originalUrl}
-                              </span>
-                            </a>
-                            {tags.length > 0 && (
-                              <div className="mt-1 flex flex-wrap gap-1">
-                                {tags.map((t) => (
-                                  <Link
-                                    key={t}
-                                    href={`/dashboard?tag=${encodeURIComponent(t)}`}
-                                    className="px-1.5 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-500/15 dark:hover:text-indigo-300"
-                                  >
-                                    #{t}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </td>
-                          <td className="p-4 text-right font-semibold text-gray-900 dark:text-white">
-                            {clickCounts.get(url.id) ?? 0}
-                          </td>
-                          <td
-                            className="p-4 text-gray-500 dark:text-gray-400"
-                            title={format(
-                              new Date(url.creationDate),
-                              "yyyy-MM-dd HH:mm"
-                            )}
-                          >
-                            {relativeTime(url.creationDate)}
-                          </td>
-                          <td className="p-4 text-gray-500 dark:text-gray-400">
-                            {url.expirationDate
-                              ? format(
-                                  new Date(url.expirationDate),
-                                  "yyyy-MM-dd HH:mm"
-                                )
-                              : "—"}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              <Link
-                                href={`/stats/${url.id}`}
-                                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-                              >
-                                Estadísticas
-                              </Link>
-                              <a
-                                href={`/api/qr/${url.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-500 dark:text-gray-400 hover:underline"
-                              >
-                                QR
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              {(() => {
+                // Serialize the Sequelize rows into a plain shape that
+                // can cross the server → client component boundary.
+                // Dates become ISO strings; click counts get folded in.
+                const rows: LinkRow[] = urls.map((url) => ({
+                  id: url.id,
+                  originalUrl: url.originalUrl,
+                  title: url.title ?? null,
+                  tags: url.tags ?? null,
+                  clicks: clickCounts.get(url.id) ?? 0,
+                  disabled: !!url.disabled,
+                  creationDate: new Date(url.creationDate).toISOString(),
+                  expirationDate: url.expirationDate
+                    ? new Date(url.expirationDate).toISOString()
+                    : null,
+                  activeFrom: url.activeFrom
+                    ? new Date(url.activeFrom).toISOString()
+                    : null,
+                  maxClicks: url.maxClicks ?? null,
+                }));
+                return <LinkTable links={rows} baseUrl={baseUrl} />;
+              })()}
 
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between text-sm">
