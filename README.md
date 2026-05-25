@@ -132,6 +132,11 @@ Genera una clave en **Mi panel → Claves de API** y autentícate con
 | `GET` | `/api/v1/links/:id` | Detalle de un enlace |
 | `GET` | `/api/v1/links/:id/stats` | Analítica de un enlace |
 
+Documentación interactiva en **`/docs`** (OpenAPI 3.1 + Swagger UI). El
+spec se genera desde los schemas Zod compartidos con
+`pnpm openapi:generate` y CI bloquea cualquier drift entre el spec
+comiteado y los schemas actuales.
+
 ```bash
 curl -X POST https://tu-dominio/api/v1/links \
   -H "Authorization: Bearer crtl_..." \
