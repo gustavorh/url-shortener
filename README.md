@@ -82,7 +82,7 @@ despliegue. Detalle completo en **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 | Estilos | Tailwind CSS 4 |
 | Datos | MySQL · Sequelize 6 · migraciones con `sequelize-cli` |
 | Auth | Auth.js (next-auth v5) · `bcryptjs` |
-| Caché / colas | Redis (`ioredis`) — opcional |
+| Caché / colas | Redis (`ioredis`) · BullMQ (cola de clics) — opcional |
 | Observabilidad | `prom-client` (métricas Prometheus) |
 | Gráficos | Recharts |
 | Tests | Vitest (unitarios + integración) · GitHub Actions |
@@ -90,30 +90,34 @@ despliegue. Detalle completo en **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 ## 🚀 Puesta en marcha
 
 ```bash
-# 1. Dependencias
-npm install
+# 1. Dependencias (pnpm)
+pnpm install
 
 # 2. Variables de entorno
 cp .env.example .env
 openssl rand -base64 32      # pega el valor en AUTH_SECRET
 
 # 3. Base de datos (crea la BD en MySQL y aplica las migraciones)
-npm run db:migrate
+pnpm db:migrate
 
 # 4. Desarrollo
-npm run dev                  # http://localhost:3000
+pnpm dev                     # http://localhost:3000
+
+# 5. (opcional) Worker BullMQ para ingestión asíncrona de clics
+pnpm worker                  # requiere REDIS_URL configurado
 ```
 
 ## 📜 Scripts
 
 | Script | Descripción |
 | --- | --- |
-| `npm run dev` | Servidor de desarrollo (Turbopack) |
-| `npm run build` / `start` | Build y arranque en producción |
-| `npm run lint` / `typecheck` | Linting y chequeo de tipos |
-| `npm run test` | Tests en modo watch |
-| `npm run test:unit` / `test:integration` | Unitarios / integración |
-| `npm run db:migrate` / `db:migrate:undo` | Aplicar / revertir migraciones |
+| `pnpm dev` | Servidor de desarrollo (Turbopack) |
+| `pnpm build` / `start` | Build y arranque en producción |
+| `pnpm lint` / `typecheck` | Linting y chequeo de tipos |
+| `pnpm test` | Tests en modo watch |
+| `pnpm test:unit` / `test:integration` | Unitarios / integración |
+| `pnpm worker` / `worker:dev` | Worker BullMQ que procesa la cola de clics |
+| `pnpm db:migrate` / `db:migrate:undo` | Aplicar / revertir migraciones |
 
 ## 🔌 API pública REST
 
