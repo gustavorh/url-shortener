@@ -13,6 +13,8 @@
     "test": "pnpm -r test",
     "test:unit": "pnpm -r test:unit",
     "test:integration": "pnpm --filter @cortala/web test:integration",
+    "test:e2e": "pnpm --filter @cortala/web test:e2e",
+    "test:e2e:install": "pnpm --filter @cortala/web test:e2e:install",
     "worker": "pnpm --filter @cortala/web worker",
     "worker:dev": "pnpm --filter @cortala/web worker:dev",
     "webhook-worker": "pnpm --filter @cortala/web webhook-worker",

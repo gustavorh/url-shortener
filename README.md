@@ -119,6 +119,7 @@ pnpm --filter @cortala/web notifications:worker
 | `pnpm lint` / `typecheck` | Linting y chequeo de tipos |
 | `pnpm test` | Tests en modo watch |
 | `pnpm test:unit` / `test:integration` | Unitarios / integración |
+| `pnpm test:e2e` / `test:e2e:install` | End-to-end con Playwright (Chromium) |
 | `pnpm worker` / `worker:dev` | Worker BullMQ que procesa la cola de clics |
 | `pnpm --filter @cortala/web notifications:worker` | Worker BullMQ periódico (notificaciones in-app) |
 | `pnpm db:migrate` / `db:migrate:undo` | Aplicar / revertir migraciones |
@@ -273,8 +274,18 @@ responden 400 indicándolo.
 
 Vitest en dos niveles. Los unitarios no necesitan infraestructura; los de
 integración requieren MySQL y se activan con `INTEGRATION_DB=1` (la BD la
-define `DB_NAME_TEST`). GitHub Actions ejecuta lint, typecheck, build, los
-unitarios y los de integración con un servicio MySQL.
+define `DB_NAME_TEST`).
+
+Los E2E (Playwright, Chromium) viven en `apps/web/tests/e2e/` y cubren los
+golden paths: shorten anónimo + redirect, register → dashboard → stats, y
+generación de API key + uso desde la API pública. Levantan su propio
+servidor de Next contra `DB_NAME_TEST` en el puerto `3001`. Primera vez:
+`pnpm --filter @cortala/web test:e2e:install` (descarga el binario de
+Chromium); después `pnpm --filter @cortala/web test:e2e` (o el atajo
+`pnpm test:e2e` desde la raíz del monorepo).
+
+GitHub Actions ejecuta lint, typecheck, build, unitarios, integración y
+E2E con un servicio MySQL.
 
 ## 📁 Estructura del proyecto
 
@@ -287,7 +298,7 @@ apps/
     lib/           Lógica de negocio (slug, analítica, caché…)
     models/        Modelos Sequelize
     migrations/    Migraciones de esquema
-    tests/         Suites unitarias y de integración
+    tests/         Suites unitarias, de integración y E2E (Playwright)
 packages/
   schemas/         Schemas Zod compartidos del API público (importados por
                    la web app, la CLI y la extensión de navegador)

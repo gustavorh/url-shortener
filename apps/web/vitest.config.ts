@@ -12,9 +12,14 @@ export default defineConfig({
     // Integration tests open real DB connections; keep them serial and patient.
     testTimeout: 20000,
     hookTimeout: 30000,
-    // .claude/worktrees holds checkouts created by background agents; their
-    // tests reference files that don't exist on this branch.
-    exclude: ["**/node_modules/**", "**/.claude/**", "**/dist/**"],
+    // E2E suite runs under Playwright; .claude/ holds checkouts created by
+    // background agents whose tests reference files that don't exist here.
+    exclude: [
+      "**/node_modules/**",
+      "**/.claude/**",
+      "**/dist/**",
+      "**/tests/e2e/**",
+    ],
   },
   resolve: {
     alias: {
