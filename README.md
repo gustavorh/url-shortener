@@ -105,6 +105,9 @@ pnpm dev                     # http://localhost:3000
 
 # 5. (opcional) Worker BullMQ para ingestión asíncrona de clics
 pnpm worker                  # requiere REDIS_URL configurado
+
+# 6. (opcional) Worker BullMQ periódico para notificaciones in-app
+pnpm --filter @cortala/web notifications:worker
 ```
 
 ## 📜 Scripts
@@ -117,6 +120,7 @@ pnpm worker                  # requiere REDIS_URL configurado
 | `pnpm test` | Tests en modo watch |
 | `pnpm test:unit` / `test:integration` | Unitarios / integración |
 | `pnpm worker` / `worker:dev` | Worker BullMQ que procesa la cola de clics |
+| `pnpm --filter @cortala/web notifications:worker` | Worker BullMQ periódico (notificaciones in-app) |
 | `pnpm db:migrate` / `db:migrate:undo` | Aplicar / revertir migraciones |
 
 ## 🔌 API pública REST
@@ -176,6 +180,28 @@ El worker que entrega los webhooks se arranca con `pnpm webhook-worker`
 y requiere `REDIS_URL` configurado. En producción corre como un proceso
 aparte (PM2, systemd, contenedor independiente).
 
+## 🔔 Notificaciones in-app
+
+Cortala materializa avisos para los usuarios sobre eventos asíncronos:
+expiraciones próximas/efectivas y enlaces que alcanzan su límite de clics.
+El generador es un **worker BullMQ periódico**
+(`apps/web/scripts/start-notifications-worker.ts`) que escanea la BD cada
+5 minutos; las notificaciones se exponen por el bell del sidebar y la
+página `/dashboard/notifications`.
+
+En producción, arrancarlo con `pnpm --filter @cortala/web notifications:worker`
+y ejecutar como un proceso de larga vida igual que el click/webhook worker
+(PM2, systemd, contenedor). Es seguro correr múltiples instancias: BullMQ
+deduplica los jobs repetibles y el servicio evita notificaciones duplicadas
+por enlace.
+
+| Tipo | Descripción |
+| --- | --- |
+| `link.expiring_soon` | El enlace expira en menos de 24 h |
+| `link.expired` | El enlace ya pasó su fecha de expiración |
+| `link.limit_reached` | El enlace alcanzó su límite de clics |
+| `weekly.digest` | Resumen semanal (lunes 09:00 UTC, por implementar) |
+
 ## 🖥️ CLI
 
 `@gustavorh/cortala-cli` (en `packages/cli/`) acorta y administra enlaces
@@ -227,7 +253,8 @@ responden 400 indicándolo.
 ## 📊 Observabilidad
 
 - `GET /api/health` — estado del servicio (BD y caché); `503` si la BD cae.
-- `GET /api/metrics` — métricas Prometheus (enlaces, redirecciones, clics).
+- `GET /api/metrics` — métricas Prometheus (enlaces, redirecciones, clics,
+  notificaciones enviadas).
 
 ## ⚙️ Variables de entorno
 
