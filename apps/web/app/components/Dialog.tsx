@@ -151,6 +151,10 @@ export function Dialog({
   if (!open) return null;
 
   return (
+    // Backdrop wrapper: handles focus-trap key handling and click-to-dismiss
+    // for the modal child. The interactive element is the inner role="dialog"
+    // container; this outer div is a pure event delegator.
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onMouseDown={handleBackdropMouseDown}
