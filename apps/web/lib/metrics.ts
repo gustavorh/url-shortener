@@ -11,6 +11,7 @@ interface MetricsBundle {
   clicksRecorded: Counter;
   webhookDeliveriesEnqueued: Counter;
   webhookDeliveriesCompleted: Counter<"status">;
+  notificationsSent: Counter<"type">;
 }
 
 // Stored on globalThis so Next.js dev hot-reload does not re-register
@@ -50,6 +51,12 @@ function createMetrics(): MetricsBundle {
     labelNames: ["status"] as const,
     registers: [registry],
   });
+  const notificationsSent = new Counter({
+    name: "cortala_notifications_sent_total",
+    help: "Total in-app notifications created, labelled by type",
+    labelNames: ["type"] as const,
+    registers: [registry],
+  });
 
   return {
     registry,
@@ -58,6 +65,7 @@ function createMetrics(): MetricsBundle {
     clicksRecorded,
     webhookDeliveriesEnqueued,
     webhookDeliveriesCompleted,
+    notificationsSent,
   };
 }
 

@@ -8,6 +8,7 @@ import ApiKey from "./apikey";
 import LinkTarget from "./linktarget";
 import Webhook from "./webhook";
 import WebhookDelivery from "./webhookdelivery";
+import Notification from "./notification";
 
 // Associations. onDelete CASCADE mirrors the foreign keys defined in the
 // migrations so behaviour is consistent whether the schema comes from
@@ -41,6 +42,12 @@ Webhook.hasMany(WebhookDelivery, {
   onDelete: "CASCADE",
 });
 WebhookDelivery.belongsTo(Webhook, { foreignKey: "webhookId", as: "webhook" });
+User.hasMany(Notification, {
+  foreignKey: "userId",
+  as: "notifications",
+  onDelete: "CASCADE",
+});
+Notification.belongsTo(User, { foreignKey: "userId", as: "user" });
 
 const models = {
   Url,
@@ -50,7 +57,17 @@ const models = {
   LinkTarget,
   Webhook,
   WebhookDelivery,
+  Notification,
 };
 
-export { Url, User, Click, ApiKey, LinkTarget, Webhook, WebhookDelivery };
+export {
+  Url,
+  User,
+  Click,
+  ApiKey,
+  LinkTarget,
+  Webhook,
+  WebhookDelivery,
+  Notification,
+};
 export default models;

@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { openCommandPalette } from "./CommandPaletteProvider";
+import { NotificationBell } from "./NotificationBell";
 
 type ActiveItem = "home" | "dashboard";
 
@@ -92,8 +93,9 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
     <>
       {/* Desktop sidebar */}
       <nav className="hidden md:flex flex-col w-64 shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5">
-        <div className="px-1.5 mb-8">
+        <div className="px-1.5 mb-8 flex items-center justify-between gap-2">
           <Brand />
+          {user ? <NotificationBell /> : null}
         </div>
 
         <div className="space-y-1">
@@ -170,7 +172,8 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
       <div className="md:hidden fixed top-0 inset-x-0 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur border-b border-gray-200 dark:border-gray-700 px-4 py-3">
         <div className="flex items-center justify-between">
           <Brand />
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-3 text-sm">
+            {user ? <NotificationBell /> : null}
             <Link
               href="/dashboard"
               className="text-gray-600 dark:text-gray-300 font-medium"

@@ -18,6 +18,8 @@
     "worker:dev": "tsx watch scripts/start-worker.ts",
     "webhook-worker": "tsx scripts/start-webhook-worker.ts",
     "webhook-worker:dev": "tsx watch scripts/start-webhook-worker.ts",
+    "notifications:worker": "tsx scripts/start-notifications-worker.ts",
+    "notifications:worker:dev": "tsx watch scripts/start-notifications-worker.ts",
     "openapi:generate": "tsx scripts/generate-openapi.ts",
     "openapi:check": "tsx scripts/generate-openapi.ts && git diff --exit-code public/openapi.json",
     "db:migrate": "sequelize-cli db:migrate",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
     "@eslint/eslintrc": "^3",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
