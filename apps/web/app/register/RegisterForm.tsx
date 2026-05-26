@@ -173,6 +173,24 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
           >
             {isLoading ? "Procesando..." : "Crear cuenta"}
           </button>
+
+          <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+            Al crear la cuenta aceptas los{" "}
+            <Link
+              href="/legal/terms"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              términos
+            </Link>{" "}
+            y la{" "}
+            <Link
+              href="/legal/privacy"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              política de privacidad
+            </Link>
+            .
+          </p>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">

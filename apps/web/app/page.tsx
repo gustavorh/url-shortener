@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, FormEvent, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { AppSidebar } from "./components/AppSidebar";
+import { Footer } from "./components/Footer";
 import { appendUtmParams, hasAnyUtm, UtmParams } from "@/lib/utm";
 
 interface ShortenResult {
@@ -35,11 +36,42 @@ const FEATURES = [
   },
   {
     title: "Analítica real",
-    description: "Mide clics, dispositivos y países de cada enlace.",
+    description:
+      "Clics, países, navegadores, sistemas y dispositivos — sin trackers de terceros.",
   },
   {
-    title: "Códigos QR",
-    description: "Genera y descarga un QR para cada enlace al instante.",
+    title: "Códigos QR personalizables",
+    description: "Genera, ajusta colores y descarga el QR en PNG o SVG.",
+  },
+  {
+    title: "Smart redirects",
+    description:
+      "Reglas por país o dispositivo: distinto destino según quien hace clic.",
+  },
+  {
+    title: "Protección y caducidad",
+    description:
+      "Cierra un enlace con contraseña, fíjale fecha de expiración o un máximo de clics.",
+  },
+  {
+    title: "Link-in-bio público",
+    description:
+      "Una página pública /u/tu-usuario que agrupa tus enlaces destacados.",
+  },
+  {
+    title: "API + CLI + extensión",
+    description:
+      "API REST documentada, CLI npm y extensión de navegador para acortar desde cualquier sitio.",
+  },
+  {
+    title: "Webhooks firmados",
+    description:
+      "Recibe eventos (link.created, link.clicked, …) en tus propios servicios con firma HMAC.",
+  },
+  {
+    title: "Gratis, en serio",
+    description:
+      "Sin planes, sin tarjeta, sin trucos. Código abierto y autohospedable.",
   },
 ];
 
@@ -178,8 +210,9 @@ export default function Home() {
               </span>
             </h1>
             <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-              Crea links cortos, personalízalos con tu propio alias y mide cada
-              clic.
+              Acorta, mide, protege con contraseña, sirve por país o
+              dispositivo y reparte tus enlaces desde la web, la API, el CLI
+              o la extensión.
             </p>
             {stats && stats.links > 0 && (
               <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
@@ -407,19 +440,25 @@ export default function Home() {
           </div>
 
           {/* Feature highlights */}
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {FEATURES.map((feature) => (
-              <div key={feature.title} className="card p-5">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {feature.title}
-                </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+          <div className="mt-12">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-4">
+              Lo que viene con la cuenta gratuita
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {FEATURES.map((feature) => (
+                <div key={feature.title} className="card p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+        <Footer />
       </main>
     </div>
   );
