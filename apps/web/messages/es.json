@@ -1,0 +1,69 @@
+{
+  "Common": {
+    "appName": "Cortala",
+    "tagline": "Acortador de URLs",
+    "loading": "Procesando…",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "close": "Cerrar",
+    "optional": "(opcional)"
+  },
+  "Sidebar": {
+    "home": "Inicio",
+    "dashboard": "Mi panel",
+    "login": "Iniciar sesión",
+    "signup": "Crear cuenta",
+    "logout": "Cerrar sesión",
+    "language": "Idioma",
+    "quickActions": "Acciones rápidas"
+  },
+  "Landing": {
+    "badge": "Rápido · gratuito · sin fricción",
+    "title": "Acorta tus enlaces",
+    "titleHighlight": "en segundos",
+    "subtitle": "Acorta, mide, protege con contraseña, sirve por país o dispositivo y reparte tus enlaces desde la web, la API, el CLI o la extensión.",
+    "statsLine": "{links} enlaces acortados · {clicks} clics servidos"
+  },
+  "Shortener": {
+    "urlLabel": "Enlace que quieres acortar",
+    "urlPlaceholder": "https://...",
+    "aliasLabel": "Alias personalizado",
+    "aliasHint": "3-32 caracteres: letras, números, guion o guion bajo.",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Protege el enlace con una contraseña",
+    "expirationToggle": "Establecer fecha de expiración",
+    "expirationLabel": "Fecha y hora de expiración",
+    "submit": "Acortar URL",
+    "errorGeneric": "Error al acortar la URL",
+    "successNew": "¡URL acortada con éxito!",
+    "successReused": "Ya tenías este enlace — reutilizado",
+    "copy": "Copiar",
+    "copied": "Copiado ✓",
+    "downloadQr": "Descargar código QR",
+    "viewStats": "Ver estadísticas del enlace →",
+    "loginToTrack": "Inicia sesión para guardar este enlace y ver sus estadísticas."
+  },
+  "Auth": {
+    "loginTitle": "Inicia sesión",
+    "loginSubtitle": "Accede a tu panel para gestionar tus enlaces",
+    "registerTitle": "Crea tu cuenta",
+    "registerSubtitle": "Gestiona tus enlaces y mira sus estadísticas",
+    "nameLabel": "Nombre",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "passwordHint": "Mínimo 8 caracteres",
+    "submitLogin": "Iniciar sesión",
+    "submitRegister": "Crear cuenta",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "noAccount": "¿Aún no tienes cuenta?",
+    "loginLink": "Inicia sesión",
+    "registerLink": "Regístrate",
+    "errorInvalid": "Correo o contraseña incorrectos",
+    "strength": "Seguridad: {label}"
+  },
+  "Locale": {
+    "es": "Español",
+    "en": "English"
+  }
+}
