@@ -28,6 +28,7 @@ export function QrCustomizer({ linkId }: { linkId: string }) {
             <span className="w-20">Color</span>
             <input
               type="color"
+              aria-label="Color de los módulos del QR"
               value={dark}
               onChange={(e) => setDark(e.target.value)}
               className="h-8 w-12 rounded border border-gray-300 dark:border-gray-600"
@@ -37,6 +38,7 @@ export function QrCustomizer({ linkId }: { linkId: string }) {
             <span className="w-20">Fondo</span>
             <input
               type="color"
+              aria-label="Color de fondo del QR"
               value={light}
               onChange={(e) => setLight(e.target.value)}
               className="h-8 w-12 rounded border border-gray-300 dark:border-gray-600"

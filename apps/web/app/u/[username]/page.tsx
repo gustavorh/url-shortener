@@ -53,7 +53,11 @@ export default async function PublicProfilePage({
   const displayName = user.name || user.username || "Cortala";
 
   return (
-    <div className="min-h-screen py-16 px-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-screen py-16 px-6 outline-none"
+    >
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white text-3xl font-bold flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
@@ -65,7 +69,7 @@ export default async function PublicProfilePage({
           {user.bio && (
             <p className="mt-2 text-gray-600 dark:text-gray-300">{user.bio}</p>
           )}
-          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
             {links.length} enlace{links.length === 1 ? "" : "s"}
             {user.createdAt
               ? ` · desde ${new Date(user.createdAt).getFullYear()}`
@@ -110,10 +114,10 @@ export default async function PublicProfilePage({
           </div>
         )}
 
-        <p className="mt-10 text-center text-xs text-gray-400 dark:text-gray-500">
+        <footer className="mt-10 text-center text-xs text-gray-600 dark:text-gray-400">
           Creado con Cortala
-        </p>
+        </footer>
       </div>
-    </div>
+    </main>
   );
 }

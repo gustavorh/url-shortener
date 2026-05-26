@@ -70,7 +70,11 @@ function FormBody({ enabled }: { enabled: EnabledOAuthProviders }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen items-center justify-center p-6 outline-none"
+    >
       <div className="w-full max-w-md card p-8">
         <AuthBrand />
         <div className="mb-6 text-center">
@@ -114,7 +118,10 @@ function FormBody({ enabled }: { enabled: EnabledOAuthProviders }) {
           </div>
 
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
+            <div
+              role="alert"
+              className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300"
+            >
               {error}
             </div>
           )}
@@ -138,7 +145,7 @@ function FormBody({ enabled }: { enabled: EnabledOAuthProviders }) {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 

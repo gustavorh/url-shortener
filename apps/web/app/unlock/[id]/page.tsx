@@ -22,7 +22,11 @@ export default async function UnlockPage({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen items-center justify-center p-6 outline-none"
+    >
       <div className="w-full max-w-sm card p-8 text-center">
         <div className="w-12 h-12 mx-auto mb-4 grid place-items-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
           <svg
@@ -46,6 +50,6 @@ export default async function UnlockPage({
         </p>
         <UnlockForm id={id} />
       </div>
-    </div>
+    </main>
   );
 }

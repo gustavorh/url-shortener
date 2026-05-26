@@ -69,11 +69,22 @@ export function AccountSecurity() {
         Seguridad
       </h2>
 
-      <form onSubmit={changePassword} className="space-y-3">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <form
+        onSubmit={changePassword}
+        aria-labelledby="security-pw-heading"
+        className="space-y-3"
+      >
+        <p
+          id="security-pw-heading"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           Cambiar contraseña
         </p>
+        <label htmlFor="security-current-pw" className="sr-only">
+          Contraseña actual
+        </label>
         <input
+          id="security-current-pw"
           type="password"
           required
           value={currentPassword}
@@ -81,7 +92,11 @@ export function AccountSecurity() {
           placeholder="Contraseña actual"
           className="input"
         />
+        <label htmlFor="security-new-pw" className="sr-only">
+          Nueva contraseña
+        </label>
         <input
+          id="security-new-pw"
           type="password"
           required
           minLength={8}
@@ -91,7 +106,9 @@ export function AccountSecurity() {
           className="input"
         />
         {pwError && (
-          <p className="text-sm text-red-600 dark:text-red-400">{pwError}</p>
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {pwError}
+          </p>
         )}
         <button
           type="submit"
@@ -108,11 +125,22 @@ export function AccountSecurity() {
 
       <hr className="my-6 border-gray-100 dark:border-gray-700" />
 
-      <form onSubmit={changeEmail} className="space-y-3">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <form
+        onSubmit={changeEmail}
+        aria-labelledby="security-email-heading"
+        className="space-y-3"
+      >
+        <p
+          id="security-email-heading"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           Cambiar correo
         </p>
+        <label htmlFor="security-new-email" className="sr-only">
+          Nuevo correo electrónico
+        </label>
         <input
+          id="security-new-email"
           type="email"
           required
           value={newEmail}
@@ -120,7 +148,11 @@ export function AccountSecurity() {
           placeholder="Nuevo correo electrónico"
           className="input"
         />
+        <label htmlFor="security-email-pw" className="sr-only">
+          Contraseña actual para confirmar el cambio
+        </label>
         <input
+          id="security-email-pw"
           type="password"
           required
           value={emailPassword}
@@ -129,7 +161,7 @@ export function AccountSecurity() {
           className="input"
         />
         {emailError && (
-          <p className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
             {emailError}
           </p>
         )}

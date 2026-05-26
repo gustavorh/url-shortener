@@ -189,6 +189,10 @@ export function CommandPalette({ open, onClose }: Props) {
       initialFocusId="command-palette-input"
       className="w-full max-w-xl rounded-xl bg-white dark:bg-gray-800 shadow-2xl overflow-hidden outline-none"
     >
+      {/* Combobox key-delegation wrapper. The actual focus target is the input
+          below; this div forwards ↑/↓/Enter to the listbox via
+          aria-activedescendant. */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div onKeyDown={handleKeyDown}>
         <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-2">
           <span className="text-gray-400" aria-hidden="true">
@@ -312,6 +316,10 @@ function PaletteRow({
   onClick: () => void;
 }) {
   return (
+    // Listbox option: keyboard activation flows through the parent's
+    // aria-activedescendant + Enter handler, so a per-row keydown would be
+    // redundant. Click is a convenience for mouse users.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <li
       id={id}
       role="option"

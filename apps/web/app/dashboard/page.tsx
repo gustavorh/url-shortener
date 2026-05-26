@@ -119,7 +119,11 @@ export default async function DashboardPage({
     <div className="flex min-h-screen">
       <AppSidebar active="dashboard" />
 
-      <main className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 px-6 py-10 md:px-12 md:py-12 mt-14 md:mt-0 outline-none"
+      >
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -194,8 +198,12 @@ export default async function DashboardPage({
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
                 #{tag}
-                <Link href="/dashboard" className="hover:text-indigo-900 dark:hover:text-indigo-100">
-                  ✕
+                <Link
+                  href="/dashboard"
+                  aria-label="Quitar filtro de etiqueta"
+                  className="hover:text-indigo-900 dark:hover:text-indigo-100"
+                >
+                  <span aria-hidden="true">✕</span>
                 </Link>
               </span>
             </div>

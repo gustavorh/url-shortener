@@ -161,10 +161,13 @@ export function LinkTable({ links, baseUrl }: Props) {
   return (
     <>
       <div className="card overflow-x-auto mt-4">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Tus enlaces acortados">
+          <caption className="sr-only">
+            Tus enlaces acortados, con sus clics, fechas y acciones
+          </caption>
           <thead>
             <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-              <th className="p-4 w-10">
+              <th scope="col" className="p-4 w-10">
                 <input
                   type="checkbox"
                   checked={allChecked}
@@ -176,12 +179,24 @@ export function LinkTable({ links, baseUrl }: Props) {
                   className="h-4 w-4 cursor-pointer"
                 />
               </th>
-              <th className="p-4 font-medium">Enlace corto</th>
-              <th className="p-4 font-medium">Destino</th>
-              <th className="p-4 font-medium text-right">Clics</th>
-              <th className="p-4 font-medium">Creado</th>
-              <th className="p-4 font-medium">Expira</th>
-              <th className="p-4 font-medium"></th>
+              <th scope="col" className="p-4 font-medium">
+                Enlace corto
+              </th>
+              <th scope="col" className="p-4 font-medium">
+                Destino
+              </th>
+              <th scope="col" className="p-4 font-medium text-right">
+                Clics
+              </th>
+              <th scope="col" className="p-4 font-medium">
+                Creado
+              </th>
+              <th scope="col" className="p-4 font-medium">
+                Expira
+              </th>
+              <th scope="col" className="p-4 font-medium">
+                <span className="sr-only">Acciones</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -294,6 +309,7 @@ export function LinkTable({ links, baseUrl }: Props) {
                         href={`/api/qr/${url.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Ver código QR del enlace ${url.id}`}
                         className="text-gray-500 dark:text-gray-400 hover:underline"
                       >
                         QR

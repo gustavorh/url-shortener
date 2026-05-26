@@ -79,7 +79,11 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen items-center justify-center p-6 outline-none"
+    >
       <div className="w-full max-w-md card p-8">
         <AuthBrand />
         <div className="mb-6 text-center">
@@ -96,7 +100,7 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="label">
-              Nombre <span className="font-normal text-gray-400">(opcional)</span>
+              Nombre <span className="font-normal text-gray-500 dark:text-gray-400">(opcional)</span>
             </label>
             <input
               id="name"
@@ -135,8 +139,15 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
               className="input"
             />
             {password ? (
-              <div className="mt-2">
-                <div className="flex gap-1">
+              <div className="mt-2" aria-live="polite">
+                <div
+                  role="progressbar"
+                  aria-label="Fortaleza de la contraseña"
+                  aria-valuemin={0}
+                  aria-valuemax={4}
+                  aria-valuenow={scorePassword(password).score}
+                  className="flex gap-1"
+                >
                   {[0, 1, 2, 3].map((i) => {
                     const { score } = scorePassword(password);
                     return (
@@ -161,7 +172,10 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
           </div>
 
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
+            <div
+              role="alert"
+              className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300"
+            >
               {error}
             </div>
           )}
@@ -203,6 +217,6 @@ export function RegisterForm({ enabled }: { enabled: EnabledOAuthProviders }) {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }

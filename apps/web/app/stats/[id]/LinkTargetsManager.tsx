@@ -125,9 +125,14 @@ export function LinkTargetsManager({ linkId }: { linkId: string }) {
 
       <form
         onSubmit={handleAdd}
+        aria-label="Añadir un destino al enlace"
         className="flex flex-wrap items-end gap-2 border-t border-gray-100 dark:border-gray-700 pt-4"
       >
+        <label htmlFor="target-kind" className="sr-only">
+          Tipo de destino
+        </label>
         <select
+          id="target-kind"
           value={kind}
           onChange={(e) => setKind(e.target.value as "device" | "rotation")}
           className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
@@ -136,17 +141,27 @@ export function LinkTargetsManager({ linkId }: { linkId: string }) {
           <option value="rotation">Rotación A/B</option>
         </select>
         {kind === "device" && (
-          <select
-            value={device}
-            onChange={(e) => setDevice(e.target.value)}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-          >
-            <option value="ios">iOS</option>
-            <option value="android">Android</option>
-            <option value="desktop">Escritorio</option>
-          </select>
+          <>
+            <label htmlFor="target-device" className="sr-only">
+              Dispositivo
+            </label>
+            <select
+              id="target-device"
+              value={device}
+              onChange={(e) => setDevice(e.target.value)}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+            >
+              <option value="ios">iOS</option>
+              <option value="android">Android</option>
+              <option value="desktop">Escritorio</option>
+            </select>
+          </>
         )}
+        <label htmlFor="target-url" className="sr-only">
+          URL de destino
+        </label>
         <input
+          id="target-url"
           type="url"
           required
           value={url}
@@ -163,7 +178,12 @@ export function LinkTargetsManager({ linkId }: { linkId: string }) {
         </button>
       </form>
       {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p
+          role="alert"
+          className="mt-2 text-sm text-red-600 dark:text-red-400"
+        >
+          {error}
+        </p>
       )}
     </div>
   );

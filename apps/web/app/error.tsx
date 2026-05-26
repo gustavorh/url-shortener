@@ -16,7 +16,11 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen items-center justify-center p-6 outline-none"
+    >
       <div className="w-full max-w-md card p-10 text-center">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">
           Algo salió mal
@@ -33,6 +37,6 @@ export default function Error({
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

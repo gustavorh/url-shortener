@@ -107,7 +107,7 @@ export function LinkEditor({
         <div>
           <label className="label" htmlFor="edit-description">
             Descripción{" "}
-            <span className="font-normal text-gray-400">(opcional)</span>
+            <span className="font-normal text-gray-500 dark:text-gray-400">(opcional)</span>
           </label>
           <textarea
             id="edit-description"
@@ -140,7 +140,7 @@ export function LinkEditor({
         <div>
           <label className="label" htmlFor="edit-expiration">
             Expiración{" "}
-            <span className="font-normal text-gray-400">
+            <span className="font-normal text-gray-500 dark:text-gray-400">
               (vacío = sin expiración)
             </span>
           </label>
@@ -159,7 +159,7 @@ export function LinkEditor({
         <div>
           <label className="label" htmlFor="edit-active-from">
             Activación programada{" "}
-            <span className="font-normal text-gray-400">
+            <span className="font-normal text-gray-500 dark:text-gray-400">
               (vacío = activo ya)
             </span>
           </label>
@@ -178,7 +178,7 @@ export function LinkEditor({
         <div>
           <label className="label" htmlFor="edit-tags">
             Etiquetas{" "}
-            <span className="font-normal text-gray-400">
+            <span className="font-normal text-gray-500 dark:text-gray-400">
               (separadas por comas)
             </span>
           </label>
@@ -198,7 +198,7 @@ export function LinkEditor({
         <div>
           <label className="label" htmlFor="edit-max-clicks">
             Límite de clics{" "}
-            <span className="font-normal text-gray-400">
+            <span className="font-normal text-gray-500 dark:text-gray-400">
               (vacío = sin límite)
             </span>
           </label>
@@ -233,7 +233,12 @@ export function LinkEditor({
         </label>
 
         {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p
+            role="alert"
+            className="text-sm text-red-600 dark:text-red-400"
+          >
+            {error}
+          </p>
         )}
 
         <button
@@ -247,6 +252,13 @@ export function LinkEditor({
               ? "Guardado ✓"
               : "Guardar cambios"}
         </button>
+        <p role="status" aria-live="polite" className="sr-only">
+          {status === "saving"
+            ? "Guardando cambios"
+            : status === "saved"
+              ? "Cambios guardados"
+              : ""}
+        </p>
       </div>
     </div>
   );

@@ -66,7 +66,11 @@ export default function ApiKeysPage() {
     <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
       <AppSidebar active="dashboard" />
 
-      <main className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0 outline-none"
+      >
         <div className="max-w-3xl mx-auto">
           <Link
             href="/dashboard"
@@ -115,13 +119,20 @@ export default function ApiKeysPage() {
           </form>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+            <div
+              role="alert"
+              className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm"
+            >
               {error}
             </div>
           )}
 
           {createdKey && (
-            <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg">
+            <div
+              role="status"
+              aria-live="polite"
+              className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg"
+            >
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200 mb-2">
                 Copia tu clave ahora — no volverá a mostrarse:
               </p>
@@ -137,15 +148,33 @@ export default function ApiKeysPage() {
                 Aún no tienes claves de API.
               </p>
             ) : (
-              <table className="w-full text-sm">
+              <table
+                className="w-full text-sm"
+                aria-label="Claves de API"
+              >
+                <caption className="sr-only">
+                  Lista de tus claves de API con su estado y acciones.
+                </caption>
                 <thead>
                   <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                    <th className="p-4 font-medium">Nombre</th>
-                    <th className="p-4 font-medium">Prefijo</th>
-                    <th className="p-4 font-medium">Creada</th>
-                    <th className="p-4 font-medium">Último uso</th>
-                    <th className="p-4 font-medium">Estado</th>
-                    <th className="p-4 font-medium"></th>
+                    <th scope="col" className="p-4 font-medium">
+                      Nombre
+                    </th>
+                    <th scope="col" className="p-4 font-medium">
+                      Prefijo
+                    </th>
+                    <th scope="col" className="p-4 font-medium">
+                      Creada
+                    </th>
+                    <th scope="col" className="p-4 font-medium">
+                      Último uso
+                    </th>
+                    <th scope="col" className="p-4 font-medium">
+                      Estado
+                    </th>
+                    <th scope="col" className="p-4 font-medium">
+                      <span className="sr-only">Acciones</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

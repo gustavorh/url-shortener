@@ -66,7 +66,11 @@ export default async function StatsPage({
     <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
       <AppSidebar active="dashboard" />
 
-      <main className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 p-6 md:p-12 md:pt-8 mt-14 md:mt-0 outline-none"
+      >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between gap-4">
             <Link
@@ -201,14 +205,30 @@ export default async function StatsPage({
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table
+                  className="w-full text-sm"
+                  aria-label="Clics recientes del enlace"
+                >
+                  <caption className="sr-only">
+                    Últimos clics registrados en este enlace.
+                  </caption>
                   <thead>
                     <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                      <th className="px-5 py-2 font-medium">Fecha</th>
-                      <th className="px-5 py-2 font-medium">País</th>
-                      <th className="px-5 py-2 font-medium">Dispositivo</th>
-                      <th className="px-5 py-2 font-medium">Navegador</th>
-                      <th className="px-5 py-2 font-medium">Origen</th>
+                      <th scope="col" className="px-5 py-2 font-medium">
+                        Fecha
+                      </th>
+                      <th scope="col" className="px-5 py-2 font-medium">
+                        País
+                      </th>
+                      <th scope="col" className="px-5 py-2 font-medium">
+                        Dispositivo
+                      </th>
+                      <th scope="col" className="px-5 py-2 font-medium">
+                        Navegador
+                      </th>
+                      <th scope="col" className="px-5 py-2 font-medium">
+                        Origen
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
