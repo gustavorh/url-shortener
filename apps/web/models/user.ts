@@ -2,6 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import sequelize from "../lib/db";
 
 export type AuthProvider = "github" | "google";
+export type UserLocale = "es" | "en";
 
 interface UserAttributes {
   id: string;
@@ -16,6 +17,7 @@ interface UserAttributes {
   providerId?: string | null;
   // Avatar URL from the OAuth provider, if any.
   image?: string | null;
+  locale: UserLocale;
   createdAt: Date;
 }
 
@@ -30,6 +32,7 @@ interface UserCreationAttributes
     | "provider"
     | "providerId"
     | "image"
+    | "locale"
   > {
   passwordHash?: string | null;
   name?: string | null;
@@ -38,6 +41,7 @@ interface UserCreationAttributes
   provider?: AuthProvider | null;
   providerId?: string | null;
   image?: string | null;
+  locale?: UserLocale;
   createdAt?: Date;
 }
 
@@ -54,6 +58,7 @@ class User
   public provider?: AuthProvider | null;
   public providerId?: string | null;
   public image?: string | null;
+  public locale!: UserLocale;
   public createdAt!: Date;
 }
 
@@ -97,6 +102,11 @@ User.init(
     image: {
       type: DataTypes.STRING(2048),
       allowNull: true,
+    },
+    locale: {
+      type: DataTypes.STRING(2),
+      allowNull: false,
+      defaultValue: "es",
     },
     createdAt: {
       type: DataTypes.DATE,

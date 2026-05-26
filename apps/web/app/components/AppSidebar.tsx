@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import { openCommandPalette } from "./CommandPaletteProvider";
 
 type ActiveItem = "home" | "dashboard";
@@ -155,8 +156,9 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
               </Link>
             </div>
           )}
-          <div className="mt-4">
+          <div className="mt-4 space-y-3">
             <ThemeToggle />
+            <LocaleSwitcher />
           </div>
           <p className="mt-3 px-1.5 text-xs text-gray-400 dark:text-gray-500">
             © {new Date().getFullYear()} Cortala

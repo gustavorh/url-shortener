@@ -1,0 +1,69 @@
+{
+  "Common": {
+    "appName": "Cortala",
+    "tagline": "URL shortener",
+    "loading": "Working…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
+    "optional": "(optional)"
+  },
+  "Sidebar": {
+    "home": "Home",
+    "dashboard": "My dashboard",
+    "login": "Sign in",
+    "signup": "Sign up",
+    "logout": "Sign out",
+    "language": "Language",
+    "quickActions": "Quick actions"
+  },
+  "Landing": {
+    "badge": "Fast · free · frictionless",
+    "title": "Shorten your links",
+    "titleHighlight": "in seconds",
+    "subtitle": "Shorten, measure, password-protect, route by country or device, and share your links from the web, the API, the CLI or the extension.",
+    "statsLine": "{links} links shortened · {clicks} clicks served"
+  },
+  "Shortener": {
+    "urlLabel": "Link to shorten",
+    "urlPlaceholder": "https://...",
+    "aliasLabel": "Custom alias",
+    "aliasHint": "3-32 chars: letters, numbers, hyphen or underscore.",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Lock the link with a password",
+    "expirationToggle": "Set an expiration date",
+    "expirationLabel": "Expiration date and time",
+    "submit": "Shorten URL",
+    "errorGeneric": "Could not shorten the URL",
+    "successNew": "Link shortened successfully!",
+    "successReused": "You already had this link — reused",
+    "copy": "Copy",
+    "copied": "Copied ✓",
+    "downloadQr": "Download QR code",
+    "viewStats": "View link stats →",
+    "loginToTrack": "Sign in to save this link and see its stats."
+  },
+  "Auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Sign in to manage your links",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Manage your links and see their stats",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "passwordHint": "At least 8 characters",
+    "submitLogin": "Sign in",
+    "submitRegister": "Sign up",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account yet?",
+    "loginLink": "Sign in",
+    "registerLink": "Sign up",
+    "errorInvalid": "Wrong email or password",
+    "strength": "Strength: {label}"
+  },
+  "Locale": {
+    "es": "Español",
+    "en": "English"
+  }
+}
