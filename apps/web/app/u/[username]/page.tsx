@@ -17,9 +17,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { username } = await params;
   const user = await findUser(username);
-  if (!user) return { title: "Perfil no encontrado · Cortala" };
+  if (!user) return { title: "Perfil no encontrado · Linkly" };
   return {
-    title: `${user.name || user.username} · Cortala`,
+    title: `${user.name || user.username} · Linkly`,
     description: user.bio || `Enlaces de ${user.name || user.username}`,
   };
 }
@@ -50,7 +50,7 @@ export default async function PublicProfilePage({
     raw: true,
   });
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const displayName = user.name || user.username || "Cortala";
+  const displayName = user.name || user.username || "Linkly";
 
   return (
     <main
@@ -115,7 +115,7 @@ export default async function PublicProfilePage({
         )}
 
         <footer className="mt-10 text-center text-xs text-gray-600 dark:text-gray-400">
-          Creado con Cortala
+          Creado con Linkly
         </footer>
       </div>
     </main>

@@ -31,7 +31,7 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       NODE_ENV: "development",
-      DB_NAME: process.env.DB_NAME_TEST ?? "cortala_test",
+      DB_NAME: process.env.DB_NAME_TEST ?? "linkly_test",
       DB_HOST: process.env.DB_HOST ?? "127.0.0.1",
       DB_USER: process.env.DB_USER ?? "root",
       DB_PASSWORD: process.env.DB_PASSWORD ?? "root",

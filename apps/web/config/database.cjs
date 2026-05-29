@@ -18,7 +18,7 @@ module.exports = {
   // truncate tables without touching development data.
   test: {
     ...base,
-    database: process.env.DB_NAME_TEST || "cortala_test",
+    database: process.env.DB_NAME_TEST || "linkly_test",
     logging: false,
   },
   production: {

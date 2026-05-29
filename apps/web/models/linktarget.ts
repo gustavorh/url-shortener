@@ -22,12 +22,14 @@ class LinkTarget
   extends Model<LinkTargetAttributes, LinkTargetCreationAttributes>
   implements LinkTargetAttributes
 {
-  public id!: number;
-  public urlId!: string;
-  public url!: string;
-  public kind!: LinkTargetKind;
-  public device?: string | null;
-  public createdAt!: Date;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: number;
+  declare urlId: string;
+  declare url: string;
+  declare kind: LinkTargetKind;
+  declare device?: string | null;
+  declare createdAt: Date;
 }
 
 LinkTarget.init(

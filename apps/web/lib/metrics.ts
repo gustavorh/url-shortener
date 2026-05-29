@@ -17,42 +17,42 @@ interface MetricsBundle {
 // Stored on globalThis so Next.js dev hot-reload does not re-register
 // metrics (prom-client throws on duplicate names).
 const globalForMetrics = globalThis as unknown as {
-  __cortalaMetrics?: MetricsBundle;
+  __linklyMetrics?: MetricsBundle;
 };
 
 function createMetrics(): MetricsBundle {
   const registry = new Registry();
-  collectDefaultMetrics({ register: registry, prefix: "cortala_" });
+  collectDefaultMetrics({ register: registry, prefix: "linkly_" });
 
   const linksCreated = new Counter({
-    name: "cortala_links_created_total",
+    name: "linkly_links_created_total",
     help: "Total short links created",
     registers: [registry],
   });
   const redirects = new Counter({
-    name: "cortala_redirects_total",
+    name: "linkly_redirects_total",
     help: "Total redirect requests, labelled by result",
     labelNames: ["result"] as const,
     registers: [registry],
   });
   const clicksRecorded = new Counter({
-    name: "cortala_clicks_recorded_total",
+    name: "linkly_clicks_recorded_total",
     help: "Total click events persisted",
     registers: [registry],
   });
   const webhookDeliveriesEnqueued = new Counter({
-    name: "cortala_webhook_deliveries_enqueued_total",
+    name: "linkly_webhook_deliveries_enqueued_total",
     help: "Total webhook deliveries enqueued to BullMQ",
     registers: [registry],
   });
   const webhookDeliveriesCompleted = new Counter({
-    name: "cortala_webhook_deliveries_completed_total",
+    name: "linkly_webhook_deliveries_completed_total",
     help: "Total webhook deliveries finalized, labelled by status",
     labelNames: ["status"] as const,
     registers: [registry],
   });
   const notificationsSent = new Counter({
-    name: "cortala_notifications_sent_total",
+    name: "linkly_notifications_sent_total",
     help: "Total in-app notifications created, labelled by type",
     labelNames: ["type"] as const,
     registers: [registry],
@@ -70,5 +70,5 @@ function createMetrics(): MetricsBundle {
 }
 
 export const metrics: MetricsBundle =
-  globalForMetrics.__cortalaMetrics ??
-  (globalForMetrics.__cortalaMetrics = createMetrics());
+  globalForMetrics.__linklyMetrics ??
+  (globalForMetrics.__linklyMetrics = createMetrics());

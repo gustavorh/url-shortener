@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Cortala CLI entrypoint. Each command lives in its own file under
+// Linkly CLI entrypoint. Each command lives in its own file under
 // ./commands; this module just wires them up with `commander` and applies
 // a single uniform error handler.
 
@@ -16,16 +16,16 @@ import { runStats } from "./commands/stats.js";
 const program = new Command();
 
 program
-  .name("cortala")
-  .description("Acorta y administra enlaces de Cortala desde la terminal.")
+  .name("linkly")
+  .description("Acorta y administra enlaces de Linkly desde la terminal.")
   .version("0.1.0")
   .showHelpAfterError();
 
 program
   .command("login")
   .description("Guarda una API key y verifica el acceso.")
-  .option("--api-key <key>", "API key (también se acepta vía $CORTALA_API_KEY)")
-  .option("--base-url <url>", "URL del servidor de Cortala")
+  .option("--api-key <key>", "API key (también se acepta vía $LINKLY_API_KEY)")
+  .option("--base-url <url>", "URL del servidor de Linkly")
   .action((opts) => runWithErrors(() => runLogin(opts)));
 
 program

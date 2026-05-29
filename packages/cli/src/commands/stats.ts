@@ -6,7 +6,7 @@ export interface StatsOptions {
   json?: boolean;
 }
 
-// `cortala stats <id> [--json]` — prints the analytics summary for a
+// `linkly stats <id> [--json]` — prints the analytics summary for a
 // single link. The default output is human-readable; --json dumps the raw
 // payload for scripting.
 export async function runStats(id: string, opts: StatsOptions): Promise<void> {

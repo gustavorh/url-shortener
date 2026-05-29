@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { User } from "@/models";
 import type { AuthProvider } from "@/models/user";
 
-// Resolves an OAuth profile to a Cortala user. Used by auth.ts on every
+// Resolves an OAuth profile to a Linkly user. Used by auth.ts on every
 // successful GitHub / Google sign-in.
 //
 // Linking strategy — three cases:
@@ -17,7 +17,7 @@ import type { AuthProvider } from "@/models/user";
 // users connect a new email. If you ever wire up a provider with weaker
 // guarantees (e.g. allowing unverified emails), do NOT route through
 // `linkExistingByEmail` — that would let an attacker hijack a known
-// Cortala account by registering its email externally.
+// Linkly account by registering its email externally.
 
 export interface OAuthProfile {
   provider: AuthProvider;

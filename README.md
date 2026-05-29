@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔗 Cortala
+# 🔗 Linkly
 
 **Acortador de URLs full-stack con analítica, API pública y panel de control.**
 
@@ -107,7 +107,7 @@ pnpm dev                     # http://localhost:3000
 pnpm worker                  # requiere REDIS_URL configurado
 
 # 6. (opcional) Worker BullMQ periódico para notificaciones in-app
-pnpm --filter @cortala/web notifications:worker
+pnpm --filter @linkly/web notifications:worker
 ```
 
 ## 📜 Scripts
@@ -121,7 +121,7 @@ pnpm --filter @cortala/web notifications:worker
 | `pnpm test:unit` / `test:integration` | Unitarios / integración |
 | `pnpm test:e2e` / `test:e2e:install` | End-to-end con Playwright (Chromium) |
 | `pnpm worker` / `worker:dev` | Worker BullMQ que procesa la cola de clics |
-| `pnpm --filter @cortala/web notifications:worker` | Worker BullMQ periódico (notificaciones in-app) |
+| `pnpm --filter @linkly/web notifications:worker` | Worker BullMQ periódico (notificaciones in-app) |
 | `pnpm db:migrate` / `db:migrate:undo` | Aplicar / revertir migraciones |
 
 ## 🔌 API pública REST
@@ -183,14 +183,14 @@ aparte (PM2, systemd, contenedor independiente).
 
 ## 🔔 Notificaciones in-app
 
-Cortala materializa avisos para los usuarios sobre eventos asíncronos:
+Linkly materializa avisos para los usuarios sobre eventos asíncronos:
 expiraciones próximas/efectivas y enlaces que alcanzan su límite de clics.
 El generador es un **worker BullMQ periódico**
 (`apps/web/scripts/start-notifications-worker.ts`) que escanea la BD cada
 5 minutos; las notificaciones se exponen por el bell del sidebar y la
 página `/dashboard/notifications`.
 
-En producción, arrancarlo con `pnpm --filter @cortala/web notifications:worker`
+En producción, arrancarlo con `pnpm --filter @linkly/web notifications:worker`
 y ejecutar como un proceso de larga vida igual que el click/webhook worker
 (PM2, systemd, contenedor). Es seguro correr múltiples instancias: BullMQ
 deduplica los jobs repetibles y el servicio evita notificaciones duplicadas
@@ -205,15 +205,15 @@ por enlace.
 
 ## 🖥️ CLI
 
-`@gustavorh/cortala-cli` (en `packages/cli/`) acorta y administra enlaces
+`@gustavorh/linkly-cli` (en `packages/cli/`) acorta y administra enlaces
 desde la terminal usando la misma API REST documentada en `/docs`.
 
 ```bash
-npm install -g @gustavorh/cortala-cli
-cortala login                                  # guarda tu API key en ~/.config/cortala/
-cortala shorten https://ejemplo.com -a promo   # crea con alias
-cortala list --tag marketing --json | jq       # lista en JSON
-cortala stats promo                            # analítica
+npm install -g @gustavorh/linkly-cli
+linkly login                                  # guarda tu API key en ~/.config/linkly/
+linkly shorten https://ejemplo.com -a promo   # crea con alias
+linkly list --tag marketing --json | jq       # lista en JSON
+linkly stats promo                            # analítica
 ```
 
 Detalle completo en [`packages/cli/README.md`](./packages/cli/README.md).
@@ -225,9 +225,9 @@ tab activo con un click, copia la URL corta al portapapeles
 automáticamente y configura tu API key en una options page dedicada.
 
 ```bash
-pnpm --filter @cortala/extension dev          # Chrome con hot reload
-pnpm --filter @cortala/extension build        # produce .output/chrome-mv3
-pnpm --filter @cortala/extension build:firefox # produce .output/firefox-mv2
+pnpm --filter @linkly/extension dev          # Chrome con hot reload
+pnpm --filter @linkly/extension build        # produce .output/chrome-mv3
+pnpm --filter @linkly/extension build:firefox # produce .output/firefox-mv2
 ```
 
 Detalle completo en [`extensions/browser/README.md`](./extensions/browser/README.md).
@@ -280,8 +280,8 @@ Los E2E (Playwright, Chromium) viven en `apps/web/tests/e2e/` y cubren los
 golden paths: shorten anónimo + redirect, register → dashboard → stats, y
 generación de API key + uso desde la API pública. Levantan su propio
 servidor de Next contra `DB_NAME_TEST` en el puerto `3001`. Primera vez:
-`pnpm --filter @cortala/web test:e2e:install` (descarga el binario de
-Chromium); después `pnpm --filter @cortala/web test:e2e` (o el atajo
+`pnpm --filter @linkly/web test:e2e:install` (descarga el binario de
+Chromium); después `pnpm --filter @linkly/web test:e2e` (o el atajo
 `pnpm test:e2e` desde la raíz del monorepo).
 
 GitHub Actions ejecuta lint, typecheck, build, unitarios, integración y

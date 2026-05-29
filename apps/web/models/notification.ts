@@ -32,13 +32,15 @@ class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>
   implements NotificationAttributes
 {
-  public id!: string;
-  public userId!: string;
-  public type!: NotificationType;
-  public payload!: NotificationPayload;
-  public readAt?: Date | null;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: string;
+  declare userId: string;
+  declare type: NotificationType;
+  declare payload: NotificationPayload;
+  declare readAt?: Date | null;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Notification.init(

@@ -16,23 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cortala - Acortador de URLs gratis y fácil de usar",
+  title: "Linkly - Acortador de URLs gratis y fácil de usar",
   description:
-    "Cortala es un servicio gratuito para acortar URLs y compartirlas fácilmente en redes sociales, mensajes o correos electrónicos. Rápido, seguro y sin registros.",
+    "Linkly es un servicio gratuito para acortar URLs y compartirlas fácilmente en redes sociales, mensajes o correos electrónicos. Rápido, seguro y sin registros.",
   keywords:
     "acortador de URL, links cortos, URL shortener, recortar enlaces, acortar links, servicio gratis, herramienta web",
   openGraph: {
-    title: "Cortala - Acortador de URLs gratis y fácil de usar",
+    title: "Linkly - Acortador de URLs gratis y fácil de usar",
     description:
       "La forma más rápida y sencilla de crear links cortos para compartir",
-    url: "https://cortala.com/",
-    siteName: "Cortala",
+    url: "https://linkly.com/",
+    siteName: "Linkly",
     locale: "es_LA",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cortala - Acortador de URLs gratis y fácil de usar",
+    title: "Linkly - Acortador de URLs gratis y fácil de usar",
     description:
       "La forma más rápida y sencilla de crear links cortos para compartir",
   },

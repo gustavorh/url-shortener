@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cortala.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://linkly.com";
 
 // Allows crawling of public pages while keeping the app, API and
 // per-link/management routes out of search indexes.

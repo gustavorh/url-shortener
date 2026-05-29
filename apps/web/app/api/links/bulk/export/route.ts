@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
   return new NextResponse(toCsv(HEADER, rows), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="cortala-links-${links.length}.csv"`,
+      "Content-Disposition": `attachment; filename="linkly-links-${links.length}.csv"`,
     },
   });
 }

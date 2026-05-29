@@ -6,7 +6,7 @@ import {
   MeResponseSchema,
   LinkStatsResponseSchema,
   ListLinksResponseSchema,
-} from "@cortala/schemas/v1";
+} from "@linkly/schemas/v1";
 
 describe("CreateLinkBodySchema", () => {
   it("acepta el mínimo: solo url", () => {

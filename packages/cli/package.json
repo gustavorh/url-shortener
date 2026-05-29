@@ -1,11 +1,11 @@
 {
-  "name": "@gustavorh/cortala-cli",
+  "name": "@gustavorh/linkly-cli",
   "version": "0.1.0",
-  "description": "Acorta y administra enlaces de Cortala desde la terminal.",
+  "description": "Acorta y administra enlaces de Linkly desde la terminal.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "cortala": "./dist/index.js"
+    "linkly": "./dist/index.js"
   },
   "exports": {
     ".": "./dist/index.js"
@@ -26,7 +26,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@cortala/schemas": "workspace:*",
+    "@linkly/schemas": "workspace:*",
     "commander": "^14.0.1",
     "picocolors": "^1.1.1",
     "zod": "^4.4.3"
@@ -44,7 +44,7 @@
     "access": "public"
   },
   "keywords": [
-    "cortala",
+    "linkly",
     "url-shortener",
     "cli",
     "shorten",

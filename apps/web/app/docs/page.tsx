@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SwaggerUI } from "./SwaggerUI";
 
 export const metadata: Metadata = {
-  title: "API · Cortala",
+  title: "API · Linkly",
   description:
-    "Documentación interactiva de la API REST pública de Cortala (OpenAPI 3.1).",
+    "Documentación interactiva de la API REST pública de Linkly (OpenAPI 3.1).",
   robots: { index: true, follow: false },
 };
 
@@ -16,7 +16,7 @@ export default function DocsPage() {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <header className="border-b border-gray-200 dark:border-gray-800 px-6 py-4">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Cortala API
+          Linkly API
         </h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           OpenAPI 3.1 — autentícate con una{" "}

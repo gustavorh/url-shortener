@@ -4,19 +4,19 @@ import { AppSidebar } from "@/app/components/AppSidebar";
 import { Footer } from "@/app/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Términos de uso · Cortala",
+  title: "Términos de uso · Linkly",
   description:
-    "Reglas de uso del servicio Cortala: qué puedes hacer, qué no, y cuándo podemos desactivar un enlace.",
+    "Reglas de uso del servicio Linkly: qué puedes hacer, qué no, y cuándo podemos desactivar un enlace.",
 };
 
 const SECTIONS = [
   {
     id: "servicio",
-    title: "Qué es Cortala",
+    title: "Qué es Linkly",
     body: (
       <>
         <p>
-          Cortala es un servicio gratuito que acorta URLs y mide los clics
+          Linkly es un servicio gratuito que acorta URLs y mide los clics
           generados. No hay planes de pago, no hay funciones premium, no
           pedimos tarjeta de crédito.
         </p>
@@ -32,7 +32,7 @@ const SECTIONS = [
     title: "Uso aceptable",
     body: (
       <>
-        <p>No puedes usar Cortala para acortar enlaces que apunten a:</p>
+        <p>No puedes usar Linkly para acortar enlaces que apunten a:</p>
         <ul className="list-disc list-inside space-y-1 ml-2">
           <li>Malware, ransomware, exploits o cualquier carga maliciosa.</li>
           <li>Phishing, suplantación de identidad o estafas.</li>
@@ -67,10 +67,10 @@ const SECTIONS = [
         <p>
           Si crees que un enlace tuyo se desactivó por error, escríbenos a{" "}
           <a
-            href="mailto:hola@cortala.app"
+            href="mailto:hola@linkly.app"
             className="text-indigo-600 dark:text-indigo-400 hover:underline"
           >
-            hola@cortala.app
+            hola@linkly.app
           </a>{" "}
           y lo revisamos.
         </p>
@@ -83,7 +83,7 @@ const SECTIONS = [
     body: (
       <>
         <p>
-          Cortala se ofrece &laquo;tal cual&raquo;. Hacemos lo razonable para
+          Linkly se ofrece &laquo;tal cual&raquo;. Hacemos lo razonable para
           que esté disponible las 24 horas, pero no garantizamos un SLA ni
           nos hacemos responsables de pérdidas derivadas de caídas, errores
           o cambios en el servicio.

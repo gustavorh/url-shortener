@@ -1,6 +1,6 @@
-// Public entry point for @cortala/schemas. Re-exports every versioned
-// schema namespace so consumers can `import { foo } from "@cortala/schemas"`
-// or pick a single version via the subpath export (`@cortala/schemas/v1`).
+// Public entry point for @linkly/schemas. Re-exports every versioned
+// schema namespace so consumers can `import { foo } from "@linkly/schemas"`
+// or pick a single version via the subpath export (`@linkly/schemas/v1`).
 
 export * from "./v1";
 export * from "./webhooks";

@@ -4,9 +4,9 @@ import { AppSidebar } from "@/app/components/AppSidebar";
 import { Footer } from "@/app/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Política de privacidad · Cortala",
+  title: "Política de privacidad · Linkly",
   description:
-    "Qué datos guarda Cortala, cómo se anonimizan los clics, qué cookies usamos y cómo borrar tu cuenta.",
+    "Qué datos guarda Linkly, cómo se anonimizan los clics, qué cookies usamos y cómo borrar tu cuenta.",
 };
 
 const SECTIONS = [
@@ -86,7 +86,7 @@ const SECTIONS = [
         <ul className="list-disc list-inside space-y-1 ml-2">
           <li>
             Webhooks que tú configures: cuando creas un webhook desde el
-            dashboard, Cortala envía los eventos de tus enlaces a la URL
+            dashboard, Linkly envía los eventos de tus enlaces a la URL
             que hayas indicado, firmados con HMAC-SHA256.
           </li>
           <li>
@@ -125,10 +125,10 @@ const SECTIONS = [
       <p>
         Para cualquier consulta sobre privacidad, escribe a{" "}
         <a
-          href="mailto:hola@cortala.app"
+          href="mailto:hola@linkly.app"
           className="text-indigo-600 dark:text-indigo-400 hover:underline"
         >
-          hola@cortala.app
+          hola@linkly.app
         </a>
         . Atendemos solicitudes de acceso, rectificación y borrado dentro
         de los 30 días naturales.

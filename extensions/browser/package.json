@@ -1,8 +1,8 @@
 {
-  "name": "@cortala/extension",
+  "name": "@linkly/extension",
   "version": "0.1.0",
   "private": true,
-  "description": "Extensión MV3 para Chrome y Firefox que acorta enlaces con Cortala desde la barra del navegador.",
+  "description": "Extensión MV3 para Chrome y Firefox que acorta enlaces con Linkly desde la barra del navegador.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -20,7 +20,7 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "@cortala/schemas": "workspace:*",
+    "@linkly/schemas": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

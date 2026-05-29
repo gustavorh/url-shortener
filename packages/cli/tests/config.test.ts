@@ -12,13 +12,13 @@ import {
 const dirs: string[] = [];
 
 beforeEach(async () => {
-  const dir = await fs.mkdtemp(join(tmpdir(), "cortala-cli-test-"));
-  process.env.CORTALA_CONFIG_PATH = join(dir, "config.json");
+  const dir = await fs.mkdtemp(join(tmpdir(), "linkly-cli-test-"));
+  process.env.LINKLY_CONFIG_PATH = join(dir, "config.json");
   dirs.push(dir);
 });
 
 afterEach(async () => {
-  delete process.env.CORTALA_CONFIG_PATH;
+  delete process.env.LINKLY_CONFIG_PATH;
   for (const dir of dirs.splice(0)) {
     await fs.rm(dir, { recursive: true, force: true });
   }

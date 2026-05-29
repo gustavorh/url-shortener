@@ -100,7 +100,7 @@ export async function emitTestEvent(webhookId: string): Promise<string | null> {
     url: webhook.url,
     secret: webhook.secret,
     event: "test.ping",
-    payload: { message: "Hello from Cortala — this is a test delivery." },
+    payload: { message: "Hello from Linkly — this is a test delivery." },
     enqueuedAt: Date.now(),
   });
   if (!ok) {

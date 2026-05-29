@@ -2,7 +2,7 @@ import pc from "picocolors";
 import { requireConfig } from "../config.js";
 import { api } from "../client.js";
 
-// `cortala whoami` — shows the account behind the saved API key, plus
+// `linkly whoami` — shows the account behind the saved API key, plus
 // totals (link count, click count). Handy as a quick "am I logged in?".
 export async function runWhoami(): Promise<void> {
   const cfg = await requireConfig();

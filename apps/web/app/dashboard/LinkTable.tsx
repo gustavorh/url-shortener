@@ -147,7 +147,7 @@ export function LinkTable({ links, baseUrl }: Props) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `cortala-links-${selected.size}.csv`;
+      a.download = `linkly-links-${selected.size}.csv`;
       a.click();
       URL.revokeObjectURL(url);
       clearSelection();

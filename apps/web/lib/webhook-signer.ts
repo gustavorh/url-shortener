@@ -4,9 +4,9 @@ import crypto from "node:crypto";
 // keeps the verification snippet in the README trivial.
 //
 // Wire format on the request:
-//   X-Cortala-Signature: t=<unix-seconds>,v1=<hmac-sha256-hex>
-//   X-Cortala-Event:     <event-name>
-//   X-Cortala-Delivery:  <delivery-uuid>
+//   X-Linkly-Signature: t=<unix-seconds>,v1=<hmac-sha256-hex>
+//   X-Linkly-Event:     <event-name>
+//   X-Linkly-Delivery:  <delivery-uuid>
 //
 // The signed string is `${t}.${rawBody}` so subscribers can reject
 // replayed requests by comparing the timestamp to wall-clock time.

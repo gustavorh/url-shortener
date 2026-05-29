@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { auth } from "@/auth";
 import { Webhook } from "@/models";
-import { CreateWebhookBodySchema } from "@cortala/schemas/webhooks";
+import { CreateWebhookBodySchema } from "@linkly/schemas/webhooks";
 import { parseJsonBody } from "@/lib/api-validation";
 import { generateWebhookSecret } from "@/lib/webhook-signer";
 

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Url } from "@/models";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { getLinkStats } from "@/lib/stats-queries";
-import { LinkIdParamSchema } from "@cortala/schemas/v1";
+import { LinkIdParamSchema } from "@linkly/schemas/v1";
 import { parsePathParam } from "@/lib/api-validation";
 
 export const runtime = "nodejs";

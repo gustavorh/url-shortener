@@ -5,17 +5,17 @@ import Redis from "ioredis";
 // callers fall back to in-process behaviour.
 
 const globalForRedis = globalThis as unknown as {
-  __cortalaRedis?: Redis | null;
+  __linklyRedis?: Redis | null;
 };
 
 export function getRedisClient(): Redis | null {
-  if (globalForRedis.__cortalaRedis !== undefined) {
-    return globalForRedis.__cortalaRedis;
+  if (globalForRedis.__linklyRedis !== undefined) {
+    return globalForRedis.__linklyRedis;
   }
 
   const url = process.env.REDIS_URL;
   if (!url) {
-    globalForRedis.__cortalaRedis = null;
+    globalForRedis.__linklyRedis = null;
     return null;
   }
 
@@ -28,11 +28,11 @@ export function getRedisClient(): Redis | null {
         times > 3 ? null : Math.min(times * 200, 1000),
     });
     client.on("error", (err) => console.error("Redis error:", err.message));
-    globalForRedis.__cortalaRedis = client;
+    globalForRedis.__linklyRedis = client;
     return client;
   } catch (err) {
     console.error("Failed to initialize Redis:", err);
-    globalForRedis.__cortalaRedis = null;
+    globalForRedis.__linklyRedis = null;
     return null;
   }
 }

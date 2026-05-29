@@ -2,7 +2,7 @@
 // Keeping them as discriminated unions plays nicely with TypeScript and
 // avoids stringly-typed handler dispatch.
 
-import type { CreateLinkBody } from "@cortala/schemas/v1";
+import type { CreateLinkBody } from "@linkly/schemas/v1";
 
 export type ExtensionMessage =
   | { type: "shorten"; body: CreateLinkBody }

@@ -27,7 +27,7 @@ async function main(): Promise<void> {
     LinkStatsResponseSchema,
     MeResponseSchema,
     ApiErrorSchema,
-  } = await import("@cortala/schemas/v1");
+  } = await import("@linkly/schemas/v1");
 
   const registry = new OpenAPIRegistry();
 
@@ -50,7 +50,7 @@ async function main(): Promise<void> {
     scheme: "bearer",
     bearerFormat: "crtl_...",
     description:
-      "API key obtained from the Cortala dashboard. Send as `Authorization: Bearer <key>`.",
+      "API key obtained from the Linkly dashboard. Send as `Authorization: Bearer <key>`.",
   });
 
   const apiError = (description: string) => ({
@@ -162,14 +162,14 @@ async function main(): Promise<void> {
   const document = generator.generateDocument({
     openapi: "3.1.0",
     info: {
-      title: "Cortala API",
+      title: "Linkly API",
       version: "1.0.0",
       description:
-        "REST API pública del acortador Cortala. Autentícate con una API key creada en el panel.",
+        "REST API pública del acortador Linkly. Autentícate con una API key creada en el panel.",
     },
     servers: [
       {
-        url: "https://cortala.example.com",
+        url: "https://linkly.example.com",
         description: "Producción (sustituye por tu propio dominio).",
       },
       {

@@ -1,7 +1,7 @@
-# Cortala — extensión de navegador
+# Linkly — extensión de navegador
 
 Extensión MV3 para **Chrome** y **Firefox** que acorta enlaces con tu
-instancia de Cortala desde la barra del navegador. Misma API REST que
+instancia de Linkly desde la barra del navegador. Misma API REST que
 la web app y la CLI: usa la API key que generes en *Mi panel → Claves
 de API* y los schemas Zod compartidos en
 [`packages/schemas`](../../packages/schemas/) validan cada respuesta.
@@ -9,16 +9,16 @@ de API* y los schemas Zod compartidos en
 ## Cargar localmente (desarrollo)
 
 ```bash
-pnpm --filter @cortala/extension dev          # Chrome con hot reload
-pnpm --filter @cortala/extension dev:firefox  # Firefox con hot reload
+pnpm --filter @linkly/extension dev          # Chrome con hot reload
+pnpm --filter @linkly/extension dev:firefox  # Firefox con hot reload
 ```
 
 WXT abre un navegador con la extensión cargada en modo desarrollador.
 Alternativa manual:
 
 ```bash
-pnpm --filter @cortala/extension build        # Chrome (.output/chrome-mv3)
-pnpm --filter @cortala/extension build:firefox # Firefox (.output/firefox-mv2)
+pnpm --filter @linkly/extension build        # Chrome (.output/chrome-mv3)
+pnpm --filter @linkly/extension build:firefox # Firefox (.output/firefox-mv2)
 ```
 
 Luego, en Chrome: `chrome://extensions` → activa *Developer mode* →
@@ -50,8 +50,8 @@ Botones extra en el resultado:
 ## Empaquetar para publicar
 
 ```bash
-pnpm --filter @cortala/extension zip          # Chrome Web Store
-pnpm --filter @cortala/extension zip:firefox  # addons.mozilla.org
+pnpm --filter @linkly/extension zip          # Chrome Web Store
+pnpm --filter @linkly/extension zip:firefox  # addons.mozilla.org
 ```
 
 Genera ZIPs en `.output/`.
@@ -64,7 +64,7 @@ entrypoints/
   popup/               UI del popup (HTML + TS + CSS plain, sin framework)
   options/             página de opciones (mismo enfoque)
 lib/
-  client.ts            cliente HTTP tipado, valida con @cortala/schemas/v1
+  client.ts            cliente HTTP tipado, valida con @linkly/schemas/v1
   storage.ts           wrapper sobre browser.storage.local (wxt/utils/storage)
   messages.ts          tipos discriminated-union para mensajes background↔popup
 wxt.config.ts          config del manifest cross-browser

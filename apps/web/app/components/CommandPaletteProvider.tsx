@@ -10,7 +10,7 @@ import { CommandPalette } from "./CommandPalette";
 // before login, and unauthenticated users would hit a 401 on the link
 // search endpoint anyway.
 
-export const COMMAND_PALETTE_EVENT = "cortala:open-palette";
+export const COMMAND_PALETTE_EVENT = "linkly:open-palette";
 
 // Lets any client component open the palette without prop-drilling a
 // setter. Used by the sidebar's "⌘K" hint button.

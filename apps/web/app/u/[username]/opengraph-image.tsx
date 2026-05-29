@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { User } from "@/models";
 
 export const runtime = "nodejs";
-export const alt = "Perfil en Cortala";
+export const alt = "Perfil en Linkly";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,7 +14,7 @@ export default async function OpengraphImage({
 }) {
   const { username } = await params;
   const user = await User.findOne({ where: { username }, raw: true });
-  const displayName = user?.name || user?.username || "Cortala";
+  const displayName = user?.name || user?.username || "Linkly";
 
   return new ImageResponse(
     (
@@ -36,7 +36,7 @@ export default async function OpengraphImage({
           /u/{username}
         </div>
         <div style={{ fontSize: 26, opacity: 0.7, marginTop: 48 }}>
-          Creado con Cortala
+          Creado con Linkly
         </div>
       </div>
     ),

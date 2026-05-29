@@ -25,7 +25,11 @@ function providers(): NextAuthConfig["providers"] {
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
-        const user = await User.findOne({ where: { email } });
+        // Registration stores emails lowercased, so look up the same way —
+        // otherwise "Admin@x.com" at login never matches "admin@x.com".
+        const user = await User.findOne({
+          where: { email: email.toLowerCase() },
+        });
         // OAuth-only users (passwordHash === null) can never log in via
         // Credentials — that path is reserved for accounts that set a
         // local password.

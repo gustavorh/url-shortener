@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Shared Zod schemas for the in-app notifications feature. The single-package
-// project doesn't have a separate `@cortala/schemas` workspace, so we keep
+// project doesn't have a separate `@linkly/schemas` workspace, so we keep
 // these next to the rest of the lib code instead.
 
 export const NotificationTypeSchema = z.enum([

@@ -1,5 +1,5 @@
-// Tiny typed HTTP client for the Cortala REST API v1. Validates responses
-// with the shared @cortala/schemas package so the CLI catches surface
+// Tiny typed HTTP client for the Linkly REST API v1. Validates responses
+// with the shared @linkly/schemas package so the CLI catches surface
 // changes immediately instead of crashing later on missing fields.
 
 import {
@@ -15,8 +15,8 @@ import {
   type ListLinksResponse,
   type LinkStatsResponse,
   type MeResponse,
-} from "@cortala/schemas/v1";
-import type { CortalaConfig } from "./config.js";
+} from "@linkly/schemas/v1";
+import type { LinklyConfig } from "./config.js";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -28,7 +28,7 @@ export class ApiError extends Error {
 }
 
 async function call<T>(
-  cfg: CortalaConfig,
+  cfg: LinklyConfig,
   method: string,
   path: string,
   body: unknown | undefined,
@@ -41,7 +41,7 @@ async function call<T>(
       Authorization: `Bearer ${cfg.apiKey}`,
       "Content-Type": "application/json",
       Accept: "application/json",
-      "User-Agent": "cortala-cli",
+      "User-Agent": "linkly-cli",
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
@@ -63,13 +63,13 @@ async function call<T>(
 }
 
 export const api = {
-  async me(cfg: CortalaConfig): Promise<MeResponse> {
+  async me(cfg: LinklyConfig): Promise<MeResponse> {
     return call(cfg, "GET", "/api/v1/me", undefined, (d) =>
       MeResponseSchema.parse(d)
     );
   },
 
-  async createLink(cfg: CortalaConfig, body: CreateLinkBody): Promise<CreatedLink> {
+  async createLink(cfg: LinklyConfig, body: CreateLinkBody): Promise<CreatedLink> {
     const parsed = CreateLinkBodySchema.parse(body);
     return call(cfg, "POST", "/api/v1/links", parsed, (d) =>
       CreatedLinkSchema.parse(d)
@@ -77,7 +77,7 @@ export const api = {
   },
 
   async listLinks(
-    cfg: CortalaConfig,
+    cfg: LinklyConfig,
     query: { limit?: number; offset?: number; search?: string; tag?: string } = {}
   ): Promise<ListLinksResponse> {
     const params = new URLSearchParams();
@@ -91,13 +91,13 @@ export const api = {
     );
   },
 
-  async getLink(cfg: CortalaConfig, id: string): Promise<LinkDetail> {
+  async getLink(cfg: LinklyConfig, id: string): Promise<LinkDetail> {
     return call(cfg, "GET", `/api/v1/links/${encodeURIComponent(id)}`, undefined, (d) =>
       LinkDetailSchema.parse(d)
     );
   },
 
-  async getStats(cfg: CortalaConfig, id: string): Promise<LinkStatsResponse> {
+  async getStats(cfg: LinklyConfig, id: string): Promise<LinkStatsResponse> {
     return call(
       cfg,
       "GET",

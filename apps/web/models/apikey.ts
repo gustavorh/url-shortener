@@ -26,14 +26,16 @@ class ApiKey
   extends Model<ApiKeyAttributes, ApiKeyCreationAttributes>
   implements ApiKeyAttributes
 {
-  public id!: string;
-  public userId!: string;
-  public name!: string;
-  public keyHash!: string;
-  public prefix!: string;
-  public lastUsedAt?: Date | null;
-  public revokedAt?: Date | null;
-  public createdAt!: Date;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: string;
+  declare userId: string;
+  declare name: string;
+  declare keyHash: string;
+  declare prefix: string;
+  declare lastUsedAt?: Date | null;
+  declare revokedAt?: Date | null;
+  declare createdAt: Date;
 }
 
 ApiKey.init(

@@ -10,7 +10,7 @@ export interface ListOptions {
   json?: boolean;
 }
 
-// `cortala list [options]` — fetches and prints the caller's links. With
+// `linkly list [options]` — fetches and prints the caller's links. With
 // --json, dumps the raw API response unchanged for piping into jq.
 export async function runList(opts: ListOptions): Promise<void> {
   const cfg = await requireConfig();
