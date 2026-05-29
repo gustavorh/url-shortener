@@ -35,15 +35,17 @@ class Webhook
   extends Model<WebhookAttributes, WebhookCreationAttributes>
   implements WebhookAttributes
 {
-  public id!: string;
-  public userId!: string;
-  public url!: string;
-  public secret!: string;
-  public events!: string;
-  public active!: boolean;
-  public description!: string | null;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: string;
+  declare userId: string;
+  declare url: string;
+  declare secret: string;
+  declare events: string;
+  declare active: boolean;
+  declare description: string | null;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Webhook.init(

@@ -38,15 +38,17 @@ class WebhookDelivery
   extends Model<WebhookDeliveryAttributes, WebhookDeliveryCreationAttributes>
   implements WebhookDeliveryAttributes
 {
-  public id!: string;
-  public webhookId!: string;
-  public event!: string;
-  public status!: WebhookDeliveryStatus;
-  public attempts!: number;
-  public responseStatus!: number | null;
-  public lastError!: string | null;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: string;
+  declare webhookId: string;
+  declare event: string;
+  declare status: WebhookDeliveryStatus;
+  declare attempts: number;
+  declare responseStatus: number | null;
+  declare lastError: string | null;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 WebhookDelivery.init(

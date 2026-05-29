@@ -49,17 +49,21 @@ class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: string;
-  public email!: string;
-  public passwordHash!: string | null;
-  public name?: string | null;
-  public username?: string | null;
-  public bio?: string | null;
-  public provider?: AuthProvider | null;
-  public providerId?: string | null;
-  public image?: string | null;
-  public locale!: UserLocale;
-  public createdAt!: Date;
+  // `declare` (not `public x!: T`) is required: a real class field emits an
+  // own property that shadows Sequelize's prototype getter/setter, so reads
+  // like `user.passwordHash` return undefined. See the "caveat with public
+  // class fields" note in the Sequelize docs.
+  declare id: string;
+  declare email: string;
+  declare passwordHash: string | null;
+  declare name?: string | null;
+  declare username?: string | null;
+  declare bio?: string | null;
+  declare provider?: AuthProvider | null;
+  declare providerId?: string | null;
+  declare image?: string | null;
+  declare locale: UserLocale;
+  declare createdAt: Date;
 }
 
 User.init(

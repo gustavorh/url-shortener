@@ -46,19 +46,22 @@ interface UrlCreationAttributes
 }
 
 class Url extends Model<UrlAttributes, UrlCreationAttributes> implements UrlAttributes {
-  public id!: string;
-  public originalUrl!: string;
-  public expirationDate?: Date | null;
-  public creationDate!: Date;
-  public userId?: string | null;
-  public title?: string | null;
-  public tags?: string | null;
-  public passwordHash?: string | null;
-  public maxClicks?: number | null;
-  public disabled?: boolean;
-  public activeFrom?: Date | null;
-  public description?: string | null;
-  public deletedAt?: Date | null;
+  // Use `declare` so these stay type-only: a real class field shadows
+  // Sequelize's prototype getter/setter and makes instance reads return
+  // undefined. See the Sequelize "public class fields" caveat.
+  declare id: string;
+  declare originalUrl: string;
+  declare expirationDate?: Date | null;
+  declare creationDate: Date;
+  declare userId?: string | null;
+  declare title?: string | null;
+  declare tags?: string | null;
+  declare passwordHash?: string | null;
+  declare maxClicks?: number | null;
+  declare disabled?: boolean;
+  declare activeFrom?: Date | null;
+  declare description?: string | null;
+  declare deletedAt?: Date | null;
 }
 
 Url.init(

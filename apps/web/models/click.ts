@@ -25,18 +25,20 @@ class Click
   extends Model<ClickAttributes, ClickCreationAttributes>
   implements ClickAttributes
 {
-  public id!: number;
-  public urlId!: string;
-  public timestamp!: Date;
-  public ip?: string | null;
-  public userAgent?: string | null;
-  public referrer?: string | null;
-  public referrerDomain?: string | null;
-  public country?: string | null;
-  public deviceType?: string | null;
-  public browser?: string | null;
-  public os?: string | null;
-  public targetUrl?: string | null;
+  // `declare` keeps these type-only; a real class field would shadow
+  // Sequelize's prototype getter/setter (instance reads return undefined).
+  declare id: number;
+  declare urlId: string;
+  declare timestamp: Date;
+  declare ip?: string | null;
+  declare userAgent?: string | null;
+  declare referrer?: string | null;
+  declare referrerDomain?: string | null;
+  declare country?: string | null;
+  declare deviceType?: string | null;
+  declare browser?: string | null;
+  declare os?: string | null;
+  declare targetUrl?: string | null;
 }
 
 Click.init(
