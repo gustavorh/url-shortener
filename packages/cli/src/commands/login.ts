@@ -14,15 +14,15 @@ interface LoginOptions {
   apiKey?: string;
 }
 
-// `cortala login` — prompts for the API key (or accepts it via --api-key),
+// `linkly login` — prompts for the API key (or accepts it via --api-key),
 // validates it against /api/v1/me, and writes the config to disk with
 // mode 0600.
 export async function runLogin(opts: LoginOptions): Promise<void> {
   const existing = await loadConfig();
   const baseUrl =
-    opts.baseUrl ?? existing?.baseUrl ?? process.env.CORTALA_URL ?? DEFAULT_BASE_URL;
+    opts.baseUrl ?? existing?.baseUrl ?? process.env.LINKLY_URL ?? DEFAULT_BASE_URL;
 
-  let apiKey = opts.apiKey ?? process.env.CORTALA_API_KEY ?? "";
+  let apiKey = opts.apiKey ?? process.env.LINKLY_API_KEY ?? "";
   if (!apiKey) {
     // Interactive prompt. We don't mask the input because readline doesn't
     // ship a portable mask helper and the user is in their own terminal —

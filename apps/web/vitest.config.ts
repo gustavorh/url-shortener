@@ -24,15 +24,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
-      "@cortala/schemas/v1": path.resolve(
+      "@linkly/schemas/v1": path.resolve(
         __dirname,
         "../../packages/schemas/src/v1.ts"
       ),
-      "@cortala/schemas/webhooks": path.resolve(
+      "@linkly/schemas/webhooks": path.resolve(
         __dirname,
         "../../packages/schemas/src/webhooks.ts"
       ),
-      "@cortala/schemas": path.resolve(
+      "@linkly/schemas": path.resolve(
         __dirname,
         "../../packages/schemas/src/index.ts"
       ),

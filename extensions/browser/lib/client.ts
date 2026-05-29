@@ -1,6 +1,6 @@
 // Same shape as the CLI's client (apps/cli/src/client.ts) but lives in
 // the extension so both surfaces hit /api/v1/* with the same headers and
-// validate responses through the shared @cortala/schemas package.
+// validate responses through the shared @linkly/schemas package.
 
 import {
   CreateLinkBodySchema,
@@ -9,7 +9,7 @@ import {
   type CreateLinkBody,
   type CreatedLink,
   type MeResponse,
-} from "@cortala/schemas/v1";
+} from "@linkly/schemas/v1";
 import type { ExtensionConfig } from "./storage";
 
 export class ApiError extends Error {

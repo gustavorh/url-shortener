@@ -11,9 +11,9 @@ export interface ShortenOptions {
   quiet?: boolean;
 }
 
-// `cortala shorten <url> [options]` — creates a short link and prints the
+// `linkly shorten <url> [options]` — creates a short link and prints the
 // resulting URL. With --quiet the output is just the bare short URL, which
-// makes the command pipeable (`cortala shorten ... | pbcopy`).
+// makes the command pipeable (`linkly shorten ... | pbcopy`).
 export async function runShorten(url: string, opts: ShortenOptions): Promise<void> {
   const cfg = await requireConfig();
   const maxClicks = opts.maxClicks ? Number(opts.maxClicks) : undefined;

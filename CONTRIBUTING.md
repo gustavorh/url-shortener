@@ -1,6 +1,6 @@
 # Guía de contribución
 
-Gracias por tu interés en mejorar **Cortala**.
+Gracias por tu interés en mejorar **Linkly**.
 
 ## Puesta en marcha
 

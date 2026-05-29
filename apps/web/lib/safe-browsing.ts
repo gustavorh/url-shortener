@@ -21,7 +21,7 @@ export async function isUrlUnsafe(url: string): Promise<boolean> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          client: { clientId: "cortala", clientVersion: "1.0" },
+          client: { clientId: "linkly", clientVersion: "1.0" },
           threatInfo: {
             threatTypes: THREAT_TYPES,
             platformTypes: ["ANY_PLATFORM"],

@@ -24,11 +24,11 @@ function createLimiter(): RateLimiterAbstract {
 }
 
 const globalForLimiter = globalThis as unknown as {
-  __cortalaShortenLimiter?: RateLimiterAbstract;
+  __linklyShortenLimiter?: RateLimiterAbstract;
 };
 const shortenLimiter: RateLimiterAbstract =
-  globalForLimiter.__cortalaShortenLimiter ??
-  (globalForLimiter.__cortalaShortenLimiter = createLimiter());
+  globalForLimiter.__linklyShortenLimiter ??
+  (globalForLimiter.__linklyShortenLimiter = createLimiter());
 
 export interface RateLimitResult {
   allowed: boolean;

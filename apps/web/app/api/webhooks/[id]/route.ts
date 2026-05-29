@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { Webhook } from "@/models";
-import { UpdateWebhookBodySchema } from "@cortala/schemas/webhooks";
+import { UpdateWebhookBodySchema } from "@linkly/schemas/webhooks";
 import { parseJsonBody } from "@/lib/api-validation";
 
 export const runtime = "nodejs";

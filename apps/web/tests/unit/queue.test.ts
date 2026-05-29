@@ -4,14 +4,14 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 // queue + redis client in globalThis (mirroring lib/redis.ts), so a stale
 // instance from one test must not leak into the next.
 type GlobalCache = {
-  __cortalaQueueRedis?: unknown;
-  __cortalaClickQueue?: unknown;
+  __linklyQueueRedis?: unknown;
+  __linklyClickQueue?: unknown;
 };
 
 function clearQueueGlobals(): void {
   const g = globalThis as unknown as GlobalCache;
-  delete g.__cortalaQueueRedis;
-  delete g.__cortalaClickQueue;
+  delete g.__linklyQueueRedis;
+  delete g.__linklyClickQueue;
 }
 
 describe("lib/queue gating", () => {

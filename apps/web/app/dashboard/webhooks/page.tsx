@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AppSidebar } from "../../components/AppSidebar";
 import { CopyButton } from "../../components/CopyButton";
 import { Dialog } from "../../components/Dialog";
-import { WEBHOOK_EVENTS } from "@cortala/schemas/webhooks";
+import { WEBHOOK_EVENTS } from "@linkly/schemas/webhooks";
 
 interface WebhookRow {
   id: string;
@@ -94,9 +94,9 @@ export default function WebhooksPage() {
             Recibe notificaciones HTTP cuando ocurren eventos en tus enlaces.
             Cada entrega lleva una firma{" "}
             <code className="text-sm bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded">
-              X-Cortala-Signature
+              X-Linkly-Signature
             </code>{" "}
-            (HMAC-SHA256) que verifica que el evento viene de Cortala.
+            (HMAC-SHA256) que verifica que el evento viene de Linkly.
           </p>
 
           {error && (
@@ -171,7 +171,7 @@ export default function WebhooksPage() {
         open={newSecret !== null}
         onClose={() => setNewSecret(null)}
         title="Guarda tu secret"
-        description="Esta es la única vez que verás este secret. Úsalo para verificar la firma X-Cortala-Signature en tu servidor."
+        description="Esta es la única vez que verás este secret. Úsalo para verificar la firma X-Linkly-Signature en tu servidor."
       >
         {newSecret && (
           <div className="space-y-4">
@@ -395,7 +395,7 @@ function WebhookForm({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-          placeholder="https://tu-dominio.com/webhooks/cortala"
+          placeholder="https://tu-dominio.com/webhooks/linkly"
         />
       </div>
 

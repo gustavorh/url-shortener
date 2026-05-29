@@ -14,7 +14,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@cortala/schemas':
+      '@linkly/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
       '@tailwindcss/postcss':
@@ -165,7 +165,7 @@ importers:
 
   extensions/browser:
     dependencies:
-      '@cortala/schemas':
+      '@linkly/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
       zod:
@@ -187,7 +187,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@cortala/schemas':
+      '@linkly/schemas':
         specifier: workspace:*
         version: link:../schemas
       commander:

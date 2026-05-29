@@ -12,9 +12,9 @@ export function newUser(prefix = "e2e"): TestUser {
   counter += 1;
   const stamp = Date.now().toString(36) + counter.toString(36);
   return {
-    email: `${prefix}-${stamp}@cortala-e2e.local`,
+    email: `${prefix}-${stamp}@linkly-e2e.local`,
     password: "Sup3rSecret-Pass!",
-    name: "Cortala Tester",
+    name: "Linkly Tester",
   };
 }
 

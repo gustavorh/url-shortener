@@ -1,13 +1,13 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Cortala API",
+    "title": "Linkly API",
     "version": "1.0.0",
-    "description": "REST API pública del acortador Cortala. Autentícate con una API key creada en el panel."
+    "description": "REST API pública del acortador Linkly. Autentícate con una API key creada en el panel."
   },
   "servers": [
     {
-      "url": "https://cortala.example.com",
+      "url": "https://linkly.example.com",
       "description": "Producción (sustituye por tu propio dominio)."
     },
     {
@@ -21,7 +21,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "crtl_...",
-        "description": "API key obtained from the Cortala dashboard. Send as `Authorization: Bearer <key>`."
+        "description": "API key obtained from the Linkly dashboard. Send as `Authorization: Bearer <key>`."
       }
     },
     "schemas": {

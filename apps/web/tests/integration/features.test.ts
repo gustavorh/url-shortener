@@ -18,7 +18,7 @@ describe.skipIf(!runIntegration)("features (MySQL integration)", () => {
   let userId: string;
 
   beforeAll(async () => {
-    process.env.DB_NAME = process.env.DB_NAME_TEST || "cortala_test";
+    process.env.DB_NAME = process.env.DB_NAME_TEST || "linkly_test";
     sequelize = (await import("@/lib/db")).default;
     models = await import("@/models");
     ({ createShortLink, LinkCreationError } = await import(

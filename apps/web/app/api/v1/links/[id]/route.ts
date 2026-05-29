@@ -6,7 +6,7 @@ import { authenticateApiKey } from "@/lib/api-auth";
 import { buildShortUrl } from "@/lib/short-url";
 import { getTotalClicks } from "@/lib/stats-queries";
 import { splitTags } from "@/lib/tags";
-import { LinkIdParamSchema } from "@cortala/schemas/v1";
+import { LinkIdParamSchema } from "@linkly/schemas/v1";
 import { parsePathParam } from "@/lib/api-validation";
 
 export const runtime = "nodejs";

@@ -19,10 +19,10 @@ function AuthBrand() {
   return (
     <Link href="/" className="flex items-center justify-center gap-2.5 mb-6">
       <span className="grid h-10 w-10 place-items-center rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-lg font-bold">
-        C
+        L
       </span>
       <span className="text-xl font-bold text-gray-900 dark:text-white">
-        Cortala
+        Linkly
       </span>
     </Link>
   );

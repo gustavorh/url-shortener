@@ -36,7 +36,7 @@ test.describe("register → dashboard → stats", () => {
     page,
   }) => {
     await page.goto("/login");
-    await page.getByLabel("Correo electrónico").fill("nope@cortala-e2e.local");
+    await page.getByLabel("Correo electrónico").fill("nope@linkly-e2e.local");
     await page.getByLabel("Contraseña").fill("WrongPassword!1");
     await page.getByRole("button", { name: "Iniciar sesión" }).click();
 

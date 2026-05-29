@@ -1,11 +1,11 @@
 # Arquitectura
 
-Documento de diseño de **Cortala**. Para una visión general y la guía de
+Documento de diseño de **Linkly**. Para una visión general y la guía de
 puesta en marcha, ver el [README](./README.md).
 
 ## Visión general
 
-Cortala es una aplicación **monolítica de Next.js 15** (App Router): el
+Linkly es una aplicación **monolítica de Next.js 15** (App Router): el
 frontend (React Server/Client Components) y la API (route handlers) viven en
 el mismo proceso y despliegue. La persistencia es **MySQL** vía **Sequelize**;
 **Redis** es una dependencia opcional para caché y rate limiting.

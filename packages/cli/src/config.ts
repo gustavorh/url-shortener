@@ -1,4 +1,4 @@
-// Manages the on-disk CLI config — `~/.config/cortala/config.json` by
+// Manages the on-disk CLI config — `~/.config/linkly/config.json` by
 // default, overridable via $XDG_CONFIG_HOME. Stored with mode 0600 because
 // it contains the user's API key.
 
@@ -6,7 +6,7 @@ import { promises as fs } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
-export interface CortalaConfig {
+export interface LinklyConfig {
   baseUrl: string;
   apiKey: string;
 }
@@ -18,13 +18,13 @@ function configHome(): string {
 }
 
 export function configPath(): string {
-  return process.env.CORTALA_CONFIG_PATH || join(configHome(), "cortala", "config.json");
+  return process.env.LINKLY_CONFIG_PATH || join(configHome(), "linkly", "config.json");
 }
 
-export async function loadConfig(): Promise<CortalaConfig | null> {
+export async function loadConfig(): Promise<LinklyConfig | null> {
   try {
     const raw = await fs.readFile(configPath(), "utf8");
-    const parsed = JSON.parse(raw) as Partial<CortalaConfig>;
+    const parsed = JSON.parse(raw) as Partial<LinklyConfig>;
     if (!parsed.apiKey || !parsed.baseUrl) return null;
     return { baseUrl: parsed.baseUrl, apiKey: parsed.apiKey };
   } catch (err) {
@@ -33,7 +33,7 @@ export async function loadConfig(): Promise<CortalaConfig | null> {
   }
 }
 
-export async function saveConfig(cfg: CortalaConfig): Promise<void> {
+export async function saveConfig(cfg: LinklyConfig): Promise<void> {
   const path = configPath();
   await fs.mkdir(dirname(path), { recursive: true });
   // Write then chmod — on POSIX the chmod must follow the write because
@@ -59,11 +59,11 @@ export async function clearConfig(): Promise<boolean> {
 
 // Read the config and throw a helpful error if the user hasn't logged in.
 // Used by every authenticated command so the message stays uniform.
-export async function requireConfig(): Promise<CortalaConfig> {
+export async function requireConfig(): Promise<LinklyConfig> {
   const cfg = await loadConfig();
   if (!cfg) {
     throw new Error(
-      "No has iniciado sesión. Ejecuta `cortala login` para guardar tu API key."
+      "No has iniciado sesión. Ejecuta `linkly login` para guardar tu API key."
     );
   }
   return cfg;

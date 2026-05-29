@@ -35,27 +35,27 @@ export type WebhookJobData = {
 };
 
 export const QUEUE_NAMES = {
-  CLICKS: "cortala-clicks",
-  WEBHOOKS: "cortala-webhooks",
+  CLICKS: "linkly-clicks",
+  WEBHOOKS: "linkly-webhooks",
 } as const;
 
 const globalForQueue = globalThis as unknown as {
-  __cortalaQueueRedis?: Redis | null;
-  __cortalaClickQueue?: Queue<ClickJobData> | null;
-  __cortalaWebhookQueue?: Queue<WebhookJobData> | null;
+  __linklyQueueRedis?: Redis | null;
+  __linklyClickQueue?: Queue<ClickJobData> | null;
+  __linklyWebhookQueue?: Queue<WebhookJobData> | null;
 };
 
 // BullMQ requires `maxRetriesPerRequest: null` because workers issue blocking
 // commands that must not time out. We keep this connection separate from
 // lib/redis.ts (which uses `maxRetriesPerRequest: 2` for the cache path).
 export function getQueueRedis(): Redis | null {
-  if (globalForQueue.__cortalaQueueRedis !== undefined) {
-    return globalForQueue.__cortalaQueueRedis;
+  if (globalForQueue.__linklyQueueRedis !== undefined) {
+    return globalForQueue.__linklyQueueRedis;
   }
 
   const url = process.env.REDIS_URL;
   if (!url) {
-    globalForQueue.__cortalaQueueRedis = null;
+    globalForQueue.__linklyQueueRedis = null;
     return null;
   }
 
@@ -67,11 +67,11 @@ export function getQueueRedis(): Redis | null {
     client.on("error", (err) =>
       console.error("Queue Redis error:", err.message)
     );
-    globalForQueue.__cortalaQueueRedis = client;
+    globalForQueue.__linklyQueueRedis = client;
     return client;
   } catch (err) {
     console.error("Failed to initialize queue Redis:", err);
-    globalForQueue.__cortalaQueueRedis = null;
+    globalForQueue.__linklyQueueRedis = null;
     return null;
   }
 }
@@ -79,13 +79,13 @@ export function getQueueRedis(): Redis | null {
 export function getClickQueue(): Queue<ClickJobData> | null {
   if (process.env.CLICK_QUEUE_DISABLED === "1") return null;
 
-  if (globalForQueue.__cortalaClickQueue !== undefined) {
-    return globalForQueue.__cortalaClickQueue;
+  if (globalForQueue.__linklyClickQueue !== undefined) {
+    return globalForQueue.__linklyClickQueue;
   }
 
   const connection = getQueueRedis();
   if (!connection) {
-    globalForQueue.__cortalaClickQueue = null;
+    globalForQueue.__linklyClickQueue = null;
     return null;
   }
 
@@ -99,11 +99,11 @@ export function getClickQueue(): Queue<ClickJobData> | null {
         removeOnFail: { count: 5000 },
       },
     });
-    globalForQueue.__cortalaClickQueue = queue;
+    globalForQueue.__linklyClickQueue = queue;
     return queue;
   } catch (err) {
     console.error("Failed to create click queue:", err);
-    globalForQueue.__cortalaClickQueue = null;
+    globalForQueue.__linklyClickQueue = null;
     return null;
   }
 }
@@ -136,13 +136,13 @@ export async function enqueueClick(
 export function getWebhookQueue(): Queue<WebhookJobData> | null {
   if (process.env.WEBHOOKS_QUEUE_DISABLED === "1") return null;
 
-  if (globalForQueue.__cortalaWebhookQueue !== undefined) {
-    return globalForQueue.__cortalaWebhookQueue;
+  if (globalForQueue.__linklyWebhookQueue !== undefined) {
+    return globalForQueue.__linklyWebhookQueue;
   }
 
   const connection = getQueueRedis();
   if (!connection) {
-    globalForQueue.__cortalaWebhookQueue = null;
+    globalForQueue.__linklyWebhookQueue = null;
     return null;
   }
 
@@ -156,11 +156,11 @@ export function getWebhookQueue(): Queue<WebhookJobData> | null {
         removeOnFail: { count: 2000 },
       },
     });
-    globalForQueue.__cortalaWebhookQueue = queue;
+    globalForQueue.__linklyWebhookQueue = queue;
     return queue;
   } catch (err) {
     console.error("Failed to create webhook queue:", err);
-    globalForQueue.__cortalaWebhookQueue = null;
+    globalForQueue.__linklyWebhookQueue = null;
     return null;
   }
 }

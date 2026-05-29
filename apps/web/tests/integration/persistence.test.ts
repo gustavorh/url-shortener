@@ -17,7 +17,7 @@ describe.skipIf(!runIntegration)("persistence (MySQL integration)", () => {
 
   beforeAll(async () => {
     // Point the DB layer at the isolated test database before importing it.
-    process.env.DB_NAME = process.env.DB_NAME_TEST || "cortala_test";
+    process.env.DB_NAME = process.env.DB_NAME_TEST || "linkly_test";
     sequelize = (await import("@/lib/db")).default;
 
     const models = await import("@/models");

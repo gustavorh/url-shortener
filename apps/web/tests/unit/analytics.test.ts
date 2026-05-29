@@ -6,14 +6,14 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 // suite never tries to open a Redis connection.
 
 type GlobalCache = {
-  __cortalaQueueRedis?: unknown;
-  __cortalaClickQueue?: unknown;
+  __linklyQueueRedis?: unknown;
+  __linklyClickQueue?: unknown;
 };
 
 function clearQueueGlobals(): void {
   const g = globalThis as unknown as GlobalCache;
-  delete g.__cortalaQueueRedis;
-  delete g.__cortalaClickQueue;
+  delete g.__linklyQueueRedis;
+  delete g.__linklyClickQueue;
 }
 
 describe("lib/analytics buildClickPayload", () => {

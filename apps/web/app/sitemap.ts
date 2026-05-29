@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cortala.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://linkly.com";
 
 // Lists the public, indexable pages for search engines.
 export default function sitemap(): MetadataRoute.Sitemap {

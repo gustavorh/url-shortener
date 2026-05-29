@@ -9,7 +9,7 @@ import { createIfMissing } from "@/lib/notifications-service";
 // can't be detected synchronously: expirations and click-limit milestones.
 // Runs as its own process via scripts/start-notifications-worker.ts.
 
-export const NOTIFICATIONS_QUEUE = "cortala-notifications";
+export const NOTIFICATIONS_QUEUE = "linkly-notifications";
 const SCAN_JOB = "scan";
 const DIGEST_JOB = "weekly-digest";
 

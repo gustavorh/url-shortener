@@ -52,7 +52,7 @@ describe("privacy page", () => {
   });
 
   it("provides a contact email", () => {
-    expect(PRIVACY).toMatch(/mailto:hola@cortala\.app/);
+    expect(PRIVACY).toMatch(/mailto:hola@linkly\.app/);
   });
 });
 
@@ -70,7 +70,7 @@ describe("terms page", () => {
 
   it("explains link deactivation and how to appeal", () => {
     expect(TERMS).toMatch(/desactivamos/);
-    expect(TERMS).toMatch(/mailto:hola@cortala\.app/);
+    expect(TERMS).toMatch(/mailto:hola@linkly\.app/);
   });
 
   it("links to the privacy policy", () => {

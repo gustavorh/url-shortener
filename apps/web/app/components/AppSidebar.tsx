@@ -75,7 +75,7 @@ function Brand() {
       </span>
       <span>
         <span className="block text-lg font-bold leading-none text-gray-900 dark:text-white">
-          Cortala
+          Linkly
         </span>
         <span className="block text-xs text-gray-500 dark:text-gray-400">
           Acortador de URLs
@@ -175,7 +175,7 @@ export function AppSidebar({ active }: { active?: ActiveItem }) {
             <LocaleSwitcher />
           </div>
           <p className="mt-3 px-1.5 text-xs text-gray-500 dark:text-gray-400">
-            © {new Date().getFullYear()} Cortala
+            © {new Date().getFullYear()} Linkly
           </p>
         </div>
       </nav>

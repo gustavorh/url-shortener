@@ -5,7 +5,7 @@
 //
 // `passwordHash` becomes nullable because OAuth-only users never set one.
 // (provider, providerId) gets a unique index so two different sessions
-// from the same external account converge on the same Cortala user.
+// from the same external account converge on the same Linkly user.
 
 module.exports = {
   async up(queryInterface, Sequelize) {

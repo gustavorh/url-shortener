@@ -1,7 +1,7 @@
 import pc from "picocolors";
 import { clearConfig, configPath } from "../config.js";
 
-// `cortala logout` — removes the on-disk config. Idempotent: silently
+// `linkly logout` — removes the on-disk config. Idempotent: silently
 // succeeds even when nothing was saved.
 export async function runLogout(): Promise<void> {
   const removed = await clearConfig();
