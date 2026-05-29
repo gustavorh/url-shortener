@@ -35,7 +35,8 @@ test.describe("API key issuance and usage", () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      data: { originalUrl: target },
+      // The public v1 API contract uses `url` (see CreateLinkBodySchema).
+      data: { url: target },
     });
     expect(apiResponse.status(), await apiResponse.text()).toBe(201);
     const body = (await apiResponse.json()) as {

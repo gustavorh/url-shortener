@@ -9,6 +9,9 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
+    // Resolves reserved test TLDs (.test/.example) past the SSRF DNS guard so
+    // link-creation tests work on clean DNS (CI). See tests/setup-dns.ts.
+    setupFiles: ["./tests/setup-dns.ts"],
     // Integration tests open real DB connections; keep them serial and patient.
     testTimeout: 20000,
     hookTimeout: 30000,
