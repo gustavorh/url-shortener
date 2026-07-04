@@ -1,63 +1,43 @@
-# Multi-stage Dockerfile for Next.js URL Shortener
-# Stage 1: Build stage
-FROM node:20-alpine AS builder
+# syntax=docker/dockerfile:1
+#
+# Imagen única de Linkly (@linkly/web) para producción. Sirve para los cuatro
+# roles del stack cambiando el CMD desde docker-compose:
+#   - web                  -> pnpm start            (Next.js, :3000)
+#   - worker               -> pnpm worker           (BullMQ, clicks)
+#   - webhook-worker       -> pnpm webhook-worker
+#   - notifications-worker -> pnpm notifications:worker
+#   - migrate (one-shot)   -> pnpm db:migrate        (sequelize-cli)
+#
+# Monorepo pnpm: mantenemos la estructura del workspace intacta para que los
+# alias de tsconfig (@/*, @linkly/schemas) resuelvan igual que en desarrollo.
 
-# Set working directory
+FROM node:20-slim
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable
+
 WORKDIR /app
 
-# Install dependencies for native modules
-RUN apk add --no-cache python3 make g++
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies (including dev dependencies for build)
-RUN npm ci --no-audit --no-fund
-
-# Copy source code
+# Instala el workspace de @linkly/web y sus dependencias (incluye dev deps,
+# necesarias para compilar Next).
 COPY . .
+RUN pnpm install --frozen-lockfile --filter @linkly/web...
 
-# Build the application
-RUN npm run build
+# NEXT_PUBLIC_* se hornea en el bundle del cliente en tiempo de build, así que
+# la URL pública debe estar disponible aquí. AUTH_SECRET solo es un placeholder
+# de build; el valor real llega en runtime vía env_file.
+ARG NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV AUTH_SECRET=build-time-placeholder-not-used-at-runtime
+RUN pnpm --filter @linkly/web build
 
-# Stage 2: Production stage
-FROM node:20-alpine AS production
-
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
-
-# Create app directory
-WORKDIR /app
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 -G nodejs
-
-# Copy package files for production dependencies
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production --no-audit --no-fund && \
-    npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/models ./models
-COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
-COPY --from=builder --chown=nextjs:nodejs /app/middleware.ts ./middleware.ts
-COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
-
-# Switch to non-root user
-USER nextjs
-
-# Expose port
-EXPOSE 8001
-
-# Set environment variables
 ENV NODE_ENV=production
-ENV PORT=8001
+WORKDIR /app/apps/web
 
-# Start the application with dumb-init for proper signal handling
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["npm", "start"]
+EXPOSE 3000
+
+# CMD por defecto = servidor web. docker-compose lo sobreescribe para workers
+# y para el job de migraciones.
+CMD ["pnpm", "start"]

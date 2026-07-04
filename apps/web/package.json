@@ -36,6 +36,7 @@
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.77.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.4.2",
     "geoip-lite": "^2.0.2",
     "ioredis": "^5.10.1",
     "mysql2": "^3.12.0",
@@ -50,8 +51,10 @@
     "react-dom": "^19.0.0",
     "recharts": "^3.8.1",
     "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.5",
     "swagger-ui-dist": "^5.32.6",
     "tailwindcss": "^4",
+    "tsx": "^4.22.3",
     "ua-parser-js": "^2.0.10",
     "uuid": "^11.1.0",
     "zod": "^4.4.3"
@@ -72,13 +75,10 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.7",
-    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "happy-dom": "^20.9.0",
-    "sequelize-cli": "^6.6.5",
-    "tsx": "^4.22.3",
     "typescript": "^5",
     "vitest": "^4.1.7"
   }
