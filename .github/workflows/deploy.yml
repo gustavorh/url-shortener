@@ -1,0 +1,37 @@
+name: Deploy to prod-host
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-linkly
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, prod-host]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync repo to services dir
+        run: |
+          mkdir -p "$HOME/services/linkly"
+          rsync -a --delete --exclude '.git' --exclude '.env' ./ "$HOME/services/linkly/"
+
+      - name: Build & deploy
+        run: |
+          cd "$HOME/services/linkly"
+          docker compose build
+          docker compose up -d --remove-orphans
+
+      - name: Smoke test (health via gateway)
+        run: >
+          curl -fsS --retry 5 --retry-delay 3
+          -H 'Host: linkly.home.gustavorh.com'
+          http://10.0.30.254:8080/api/health
+
+      - name: Prune dangling images
+        run: docker image prune -f

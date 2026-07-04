@@ -1,0 +1,117 @@
+name: linkly
+
+# Stack de producción de Linkly en prod-host.
+#
+# - `web` es el único servicio expuesto al gateway (Caddy) vía la red externa
+#   `edge`, con el alias `linkly-web`. El resto vive en la red interna.
+# - MySQL es externo (servidor 10.0.30.5); no se levanta aquí.
+# - Redis sí forma parte del stack (cola BullMQ de los workers).
+# - `migrate` corre una sola vez y aplica las migraciones antes de que arranquen
+#   el web y los workers (depends_on: service_completed_successfully).
+#
+# El `.env` vive en el servidor (~/services/linkly/.env) y NUNCA se commitea.
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  migrate:
+    image: linkly-web:latest
+    command: ["pnpm", "db:migrate"]
+    env_file:
+      - .env
+    restart: "no"
+    networks:
+      - internal
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+    image: linkly-web:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      edge:
+        aliases:
+          - linkly-web
+      internal: {}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://localhost:3000/api/health', r => process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\"",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  worker:
+    image: linkly-web:latest
+    command: ["pnpm", "worker"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+  webhook-worker:
+    image: linkly-web:latest
+    command: ["pnpm", "webhook-worker"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+  notifications-worker:
+    image: linkly-web:latest
+    command: ["pnpm", "notifications:worker"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+networks:
+  edge:
+    external: true
+  internal: {}
+
+volumes:
+  redis-data: {}
